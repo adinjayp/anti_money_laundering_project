@@ -1,0 +1,24 @@
+name: Deploy to Google Cloud VM
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Deploy to Google Cloud VM
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.GCP_VM_HOST }}
+        username: ${{ secrets.GCP_VM_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          # Commands to copy repository to VM
+          rsync -av --delete $GITHUB_WORKSPACE/ ${{ secrets.GCP_VM_USERNAME }}@${{ secrets.GCP_VM_HOST }}:/aml-project/
