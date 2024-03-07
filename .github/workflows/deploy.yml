@@ -28,5 +28,6 @@ jobs:
         script: |
           # Commands to copy repository to VM
           #rsync -avvv --delete -e 'ssh -o StrictHostKeyChecking=no' $GITHUB_WORKSPACE/ ${{ secrets.GCP_VM_USERNAME }}@${{ secrets.GCP_VM_HOST }}:/aml-project/
+          ssh -i ${{ secrets.SSH_PRIVATE_KEY }} bnsvishal@34.70.224.200
           rsync -avvv --delete -e 'ssh -o StrictHostKeyChecking=no' $GITHUB_WORKSPACE/ bnsvishal@$34.70.224.200:/aml-project/
 
