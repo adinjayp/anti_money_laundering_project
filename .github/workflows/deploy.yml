@@ -13,6 +13,12 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - name: Debugging
+      run: |
+        echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
+        echo "GCP_VM_USERNAME: ${{ secrets.GCP_VM_USERNAME }}"
+        echo "GCP_VM_HOST: ${{ secrets.GCP_VM_HOST }}"
+
     - name: Deploy to Google Cloud VM
       uses: appleboy/ssh-action@v1.0.3
       with:
@@ -21,4 +27,4 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           # Commands to copy repository to VM
-          rsync -av --delete -e 'ssh -o StrictHostKeyChecking=no' $GITHUB_WORKSPACE/ ${{ secrets.GCP_VM_USERNAME }}@${{ secrets.GCP_VM_HOST }}:/aml-project/
+          rsync -avvv --delete -e 'ssh -o StrictHostKeyChecking=no' $GITHUB_WORKSPACE/ ${{ secrets.GCP_VM_USERNAME }}@${{ secrets.GCP_VM_HOST }}:/aml-project/
