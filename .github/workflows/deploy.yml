@@ -27,5 +27,4 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           # Commands to copy the repository to the VM
-          # rsync -avvv --delete -e 'ssh -o StrictHostKeyChecking=no' $GITHUB_WORKSPACE/ ${{ secrets.GCP_VM_USERNAME }}@${{ secrets.GCP_VM_HOST }}:/aml-project/
           rsync -av --delete -e 'ssh -o StrictHostKeyChecking=no' $GITHUB_WORKSPACE/ bnsvishal@$34.70.224.200:/aml-project/
