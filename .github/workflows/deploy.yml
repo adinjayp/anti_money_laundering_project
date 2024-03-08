@@ -36,5 +36,5 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: ${{ secrets.SSH_PORT }}
         script: |
-          # Commands to copy the repository to the VM
-          rsync -av --delete -e 'ssh -o StrictHostKeyChecking=no' $GITHUB_WORKSPACE/ ${{ secrets.GCP_VM_USERNAME }}@${{ secrets.GCP_VM_HOST }}:/aml-project/
+          cd aml-project/anti_money_laundering_project
+          git pull origin master
