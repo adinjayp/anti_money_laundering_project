@@ -37,4 +37,4 @@ jobs:
         port: ${{ secrets.SSH_PORT }}
         script: |
           cd aml-project/anti_money_laundering_project
-          git pull origin master
+          git pull origin main
