@@ -18,7 +18,7 @@ jobs:
       with:
         host: ${{ secrets.GCP_VM_HOST }}
         username: ${{ secrets.GCP_VM_USERNAME }}
-        password: amlmlops
+        password: 'amlmlops'
         port: 22
         script: whoami
 
