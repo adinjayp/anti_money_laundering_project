@@ -3,6 +3,8 @@ import networkx as nx
 def extract_features(G, node):
     # Your feature extraction functions here
     features = {}
+    #Node
+    features['Node'] = node
     # Degree
     features['degree'] = G.degree[node]
     # In Degree
