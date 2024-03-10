@@ -1,34 +1,32 @@
-def merge_trans_with_gf(transactions_ddf, graph_ddf):
-    # Your functions to merge transactions with graph features here
-    # Create a dictionary from graph_ddf for faster lookups
-    graph_dict = dict(zip(graph_ddf['Node'], graph_ddf[['degree', 'in_degree', 'out_degree', 'clustering_coefficient', 'degree_centrality']].values))
+import dask.dataframe as dd
+
+def merge_trans_with_gf(transactions_ddf, graph_features_ddf):
     
-    def merge_partition(partition):
-        
-        for index, row in partition.iterrows():
-            
-            from_node = row['From_ID']
-            to_node = row['To_ID']
-            
-            if from_node in graph_dict:
-                graph_row = graph_dict[from_node]
-                partition.loc[index, 'from_degree'] = graph_row['degree']
-                partition.loc[index, 'from_in_degree'] = graph_row['in_degree']
-                partition.loc[index, 'from_out_degree'] = graph_row['out_degree']
-                partition.loc[index, 'from_clustering_coeff'] = graph_row['clustering_coefficient']
-                partition.loc[index, 'from_degree_centrality'] = graph_row['degree_centrality']
-                
-            if to_node in graph_dict:
-                graph_row = graph_dict[to_node]
-                partition.loc[index, 'to_degree'] = graph_row['degree']
-                partition.loc[index, 'to_in_degree'] = graph_row['in_degree']
-                partition.loc[index, 'to_out_degree'] = graph_row['out_degree']
-                partition.loc[index, 'to_clustering_coeff'] = graph_row['clustering_coefficient']
-                partition.loc[index, 'to_degree_centrality'] = graph_row['degree_centrality']
-                
-        return partition
+    # Merge on From_ID
+    merged_ddf = dd.merge(transactions_ddf, graph_features_ddf, left_on='From_ID', right_on='Node', how='left')
+
+    # Rename columns to avoid conflicts
+    merged_ddf = merged_ddf.rename(columns={
+        'degree': 'from_degree',
+        'in_degree': 'from_in_degree',
+        'out_degree': 'from_out_degree',
+        'clustering_coefficient': 'from_clustering_coeff',
+        'degree_centrality': 'from_degree_centrality'
+    })
     
-    # Apply the function to each partition
-    merged_ddf = transactions_ddf.map_partitions(merge_partition)
+    # Merge on To_ID
+    merged_ddf = dd.merge(merged_ddf, graph_features_ddf, left_on='To_ID', right_on='Node', how='left')
+
+    # Rename columns again
+    merged_ddf = merged_ddf.rename(columns={
+        'degree': 'to_degree',
+        'in_degree': 'to_in_degree',
+        'out_degree': 'to_out_degree',
+        'clustering_coefficient': 'to_clustering_coeff',
+        'degree_centrality': 'to_degree_centrality'
+    })
+    
+    # Drop redundant columns
+    merged_ddf = merged_ddf.drop(columns=['Node_x', 'Node_y'])
     
     return merged_ddf
