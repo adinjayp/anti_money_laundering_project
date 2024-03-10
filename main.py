@@ -35,10 +35,14 @@ def main():
     print("calling inititial preprocessing for train")
     initial_preprocessed_ddf, first_timestamp, currency_dict, payment_format_dict, bank_account_dict, account_dict = initial_preprocessing(train_dt, first_timestamp=-1)
     print("initital preprocessing on train is done")
+    print(initial_preprocessed_ddf.compute())
     # Create graph
     global G
     G, train_graph_ddf = create_graph(initial_preprocessed_ddf)
-
+    print(G, train_graph_ddf)
+    print(f"Graph attributes: {G.nodes}, {G.edges}")
+    print("Number of nodes:", G.number_of_nodes())
+    print("Number of edges:", G.number_of_edges())
     # Convert the list of unique nodes to a Dask DataFrame
     unique_nodes = list(set(train_graph_ddf['From_ID']).union(train_graph_ddf['To_ID']))
 
@@ -71,11 +75,12 @@ def main():
 
     # Merge transactions with graph features
     preprocessed_train_df = merge_trans_with_gf(train_graph_ddf, graph_features_ddf)
-
+    print(preprocessed_train_df.head())
     # Test set prep
-
+    print("begin test set prep")
     test_initial_preprocessed_ddf, first_timestamp, currency_dict, payment_format_dict, bank_account_dict, account_dict = initial_preprocessing_test(test_dt, first_timestamp, currency_dict, payment_format_dict, bank_account_dict, account_dict)
-    test_graph_ddf = add_edges_to_graph(G, test_initial_preprocessed_ddf)
+    G, test_graph_ddf = add_edges_to_graph(G, test_initial_preprocessed_ddf)
+    print(G)
     unique_nodes_test = list(set(test_graph_ddf['From_ID']).union(test_graph_ddf['To_ID']))
 
     #append unique nodes whenever new accounts from test set come up
@@ -104,7 +109,7 @@ def main():
     graph_features_ddf_test = dd.from_pandas(graph_features_df_test, npartitions=2)
 
     preprocessed_test_df = merge_trans_with_gf(test_graph_ddf, graph_features_ddf_test)
-
+    print(preprocessed_test_df.head())
 
 if __name__ == "__main__":
     main()
