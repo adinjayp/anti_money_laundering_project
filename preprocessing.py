@@ -71,35 +71,49 @@ def initial_preprocessing(raw_data, first_timestamp):
 
 def add_edges_to_graph(G, ddf):
     # Your functions to add edges to the graph here
+    print("G before add edge: ", G)
     def add_edges(partition):
+        G_partition = nx.DiGraph()
         for index, row in partition.iterrows():
-            G.add_edge(row['From_ID'], row['To_ID'], 
+            print(row['From_ID'])
+            G_partition.add_edge(row['From_ID'], row['To_ID'], 
                        timestamp=row['Timestamp'], 
                        amount_sent=row['Amount_Paid'], 
                        amount_received=row['Amount_Received'], 
                        received_currency=row['Receiving_Currency'], 
                        payment_format=row['Payment_Format'])
+        return G_partition
 
-    ddf.map_partitions(add_edges).compute()
-    return ddf
+    print(ddf.map_partitions(add_edges).compute())
+    graphs = ddf.map_partitions(add_edges).compute()
+    print("G in add_edges: ", G)
+    print("graphs partitions: ", graphs)
+    composed_G = nx.compose_all(graphs)
+    print("composed_G before merging with G: ", composed_G)
+    composed_G = nx.compose_all([G] + [composed_G])
+    print("composed_G after merging with G: ", composed_G)
+    return composed_G, ddf
 
 def create_graph(ddf):
     # Your graph creation functions here
     G = nx.DiGraph()
-    ddf = add_edges_to_graph(G, ddf)
-    
+    G, ddf = add_edges_to_graph(G, ddf)
+    print("G in create_graph: ", G)
+    print("ddf head after addedge: ", ddf)
     return G, ddf
+                                                
+                                                    
 
 
-input_file = "HI-Small_Trans.csv"
-raw_data = dt.fread(input_file, columns=dt.str32, fill=True)
+# input_file = "HI-Small_Trans.csv"
+# raw_data = dt.fread(input_file, columns=dt.str32, fill=True)
 
 # Convert the raw_data DataTable to a pandas DataFrame
-raw_data_df = raw_data.to_pandas()
+# raw_data_df = raw_data.to_pandas()
 
-print("Column names:", raw_data_df.columns)
-print("First few rows of data:")
-print(raw_data_df.head())
+# print("Column names:", raw_data_df.columns)
+# print("First few rows of data:")
+# print(raw_data_df.head())
 
 # Now, continue with the rest of your code...
 

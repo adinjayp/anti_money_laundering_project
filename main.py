@@ -9,23 +9,40 @@ import dask.dataframe as dd
 import numpy as np
 import ast
 import dask
+from dask.distributed import Client
+
+# Address of the Dask scheduler
+scheduler_address = 'tcp://10.128.0.5:8786'
+
+# Connect to the Dask cluster
+client = Client(scheduler_address)
+client.upload_file('feature_extraction.py')
+client.upload_file('graph_operations.py')
+client.upload_file('preprocessing.py')
 
 
 def main():
     # Read data and perform initial preprocessing
-    raw_data = dt.fread("HI-Small_Trans.csv", columns=dt.str32)
+    # raw_data = dt.fread("HI-Small_Trans.csv", columns=dt.str32)
     # Read data from GCS bucket in VM
-    #gcs_bucket_path = "gs://aml_mlops_bucket/HI-Small_Trans.csv"
+    gcs_bucket_path = "gs://aml_mlops_bucket/HI-Small_Trans.csv"
+    raw_data_pandas = pd.read_csv(gcs_bucket_path).astype(str)
+    raw_data = dt.Frame(raw_data_pandas)
     # raw_data = dt.fread(gcs_bucket_path, columns=dt.str32)
     train_df, test_df = train_test_split(raw_data.to_pandas(), test_size=0.2, random_state=42, stratify=raw_data['Is Laundering'])
     train_dt = dt.Frame(train_df)
     test_dt = dt.Frame(test_df)
+    print("calling inititial preprocessing for train")
     initial_preprocessed_ddf, first_timestamp, currency_dict, payment_format_dict, bank_account_dict, account_dict = initial_preprocessing(train_dt, first_timestamp=-1)
-
+    print("initital preprocessing on train is done")
+    print(initial_preprocessed_ddf.compute())
     # Create graph
     global G
     G, train_graph_ddf = create_graph(initial_preprocessed_ddf)
-
+    print(G, train_graph_ddf)
+    print(f"Graph attributes: {G.nodes}, {G.edges}")
+    print("Number of nodes:", G.number_of_nodes())
+    print("Number of edges:", G.number_of_edges())
     # Convert the list of unique nodes to a Dask DataFrame
     unique_nodes = list(set(train_graph_ddf['From_ID']).union(train_graph_ddf['To_ID']))
 
@@ -58,11 +75,12 @@ def main():
 
     # Merge transactions with graph features
     preprocessed_train_df = merge_trans_with_gf(train_graph_ddf, graph_features_ddf)
-
+    print(preprocessed_train_df.head())
     # Test set prep
-
+    print("begin test set prep")
     test_initial_preprocessed_ddf, first_timestamp, currency_dict, payment_format_dict, bank_account_dict, account_dict = initial_preprocessing_test(test_dt, first_timestamp, currency_dict, payment_format_dict, bank_account_dict, account_dict)
-    test_graph_ddf = add_edges_to_graph(G, test_initial_preprocessed_ddf)
+    G, test_graph_ddf = add_edges_to_graph(G, test_initial_preprocessed_ddf)
+    print(G)
     unique_nodes_test = list(set(test_graph_ddf['From_ID']).union(test_graph_ddf['To_ID']))
 
     #append unique nodes whenever new accounts from test set come up
@@ -91,7 +109,7 @@ def main():
     graph_features_ddf_test = dd.from_pandas(graph_features_df_test, npartitions=2)
 
     preprocessed_test_df = merge_trans_with_gf(test_graph_ddf, graph_features_ddf_test)
-
+    print(preprocessed_test_df.head())
 
 if __name__ == "__main__":
     main()
