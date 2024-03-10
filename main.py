@@ -9,6 +9,16 @@ import dask.dataframe as dd
 import numpy as np
 import ast
 import dask
+from dask.distributed import Client
+
+# Address of the Dask scheduler
+scheduler_address = 'tcp://10.128.0.5:8786'
+
+# Connect to the Dask cluster
+client = Client(scheduler_address)
+client.upload_file('feature_extraction.py')
+client.upload_file('graph_operations.py')
+client.upload_file('preprocessing.py')
 
 
 def main():
@@ -16,14 +26,15 @@ def main():
     # raw_data = dt.fread("HI-Small_Trans.csv", columns=dt.str32)
     # Read data from GCS bucket in VM
     gcs_bucket_path = "gs://aml_mlops_bucket/HI-Small_Trans.csv"
-    raw_data_pandas = pd.read_csv(gcs_bucket_path)
-    raw_data = dt.Frame({col: raw_data_pandas[col].astype(str) for col in raw_data_pandas.columns})
+    raw_data_pandas = pd.read_csv(gcs_bucket_path).astype(str)
+    raw_data = dt.Frame(raw_data_pandas)
     # raw_data = dt.fread(gcs_bucket_path, columns=dt.str32)
     train_df, test_df = train_test_split(raw_data.to_pandas(), test_size=0.2, random_state=42, stratify=raw_data['Is Laundering'])
     train_dt = dt.Frame(train_df)
     test_dt = dt.Frame(test_df)
+    print("calling inititial preprocessing for train")
     initial_preprocessed_ddf, first_timestamp, currency_dict, payment_format_dict, bank_account_dict, account_dict = initial_preprocessing(train_dt, first_timestamp=-1)
-
+    print("initital preprocessing on train is done")
     # Create graph
     global G
     G, train_graph_ddf = create_graph(initial_preprocessed_ddf)
