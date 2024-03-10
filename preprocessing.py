@@ -91,15 +91,15 @@ def create_graph(ddf):
     return G, ddf
 
 
-input_file = "HI-Small_Trans.csv"
-raw_data = dt.fread(input_file, columns=dt.str32, fill=True)
+# input_file = "HI-Small_Trans.csv"
+# raw_data = dt.fread(input_file, columns=dt.str32, fill=True)
 
 # Convert the raw_data DataTable to a pandas DataFrame
-raw_data_df = raw_data.to_pandas()
+# raw_data_df = raw_data.to_pandas()
 
-print("Column names:", raw_data_df.columns)
-print("First few rows of data:")
-print(raw_data_df.head())
+# print("Column names:", raw_data_df.columns)
+# print("First few rows of data:")
+# print(raw_data_df.head())
 
 # Now, continue with the rest of your code...
 

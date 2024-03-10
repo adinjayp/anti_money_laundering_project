@@ -13,9 +13,11 @@ import dask
 
 def main():
     # Read data and perform initial preprocessing
-    raw_data = dt.fread("HI-Small_Trans.csv", columns=dt.str32)
+    # raw_data = dt.fread("HI-Small_Trans.csv", columns=dt.str32)
     # Read data from GCS bucket in VM
-    #gcs_bucket_path = "gs://aml_mlops_bucket/HI-Small_Trans.csv"
+    gcs_bucket_path = "gs://aml_mlops_bucket/HI-Small_Trans.csv"
+    raw_data_pandas = pd.read_csv(gcs_bucket_path)
+    raw_data = dt.Frame({col: raw_data_pandas[col].astype(str) for col in raw_data_pandas.columns})
     # raw_data = dt.fread(gcs_bucket_path, columns=dt.str32)
     train_df, test_df = train_test_split(raw_data.to_pandas(), test_size=0.2, random_state=42, stratify=raw_data['Is Laundering'])
     train_dt = dt.Frame(train_df)
