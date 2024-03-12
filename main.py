@@ -25,7 +25,7 @@ def main():
     # Read data and perform initial preprocessing
     # raw_data = dt.fread("HI-Small_Trans.csv", columns=dt.str32)
     # Read data from GCS bucket in VM
-    gcs_bucket_path = "gs://aml_mlops_bucket/HI-Small_Trans.csv"
+    gcs_bucket_path = "gs://aml_mlops_bucket/HI_Small_Trans.csv"
     raw_data_pandas = pd.read_csv(gcs_bucket_path).astype(str)
     raw_data = dt.Frame(raw_data_pandas)
     # raw_data = dt.fread(gcs_bucket_path, columns=dt.str32)
@@ -40,7 +40,7 @@ def main():
     global G
     G, train_graph_ddf = create_graph(initial_preprocessed_ddf)
     print(G, train_graph_ddf)
-    print(f"Graph attributes: {G.nodes}, {G.edges}")
+    # print(f"Graph attributes: {G.nodes}, {G.edges}")
     print("Number of nodes:", G.number_of_nodes())
     print("Number of edges:", G.number_of_edges())
     # Convert the list of unique nodes to a Dask DataFrame
@@ -50,16 +50,17 @@ def main():
     unique_nodes_dd = dd.from_pandas(pd.DataFrame(unique_nodes, columns=['Node']), npartitions=2)
 
     # Apply extract_features function to each partition
-    graph_features = unique_nodes_dd.map_partitions(lambda df: df.apply(lambda row: extract_features(G, row['Node']), axis=1))
+    #graph_features = unique_nodes_dd.map_partitions(lambda df: df.apply(lambda row: extract_features(G, row['Node']), axis=1))
+    graph_features = unique_nodes_dd.map_partitions(lambda df: df.apply(lambda row: {key: str(value) for key, value in extract_features(G, row['Node']).items()}, axis=1))
 
     # Example of delayed graph features
-    graph_features = [dask.delayed(lambda x: x)(string_data) for string_data in graph_features]
+    #graph_features = [dask.delayed(lambda x: x)(string_data) for string_data in graph_features]
 
     # Compute delayed objects
-    graph_features_computed = dask.compute(*graph_features)
+    #graph_features_computed = dask.compute(*graph_features)
 
     # Convert each string to a dictionary
-    dicts = [ast.literal_eval(string_data) for string_data in graph_features_computed]
+    dicts = [ast.literal_eval(str(string_data)) for string_data in graph_features]
 
     # Create a list of lists containing the dictionary values for each entry
     list_of_lists = [list(data_dict.values()) for data_dict in dicts]
@@ -86,16 +87,18 @@ def main():
     #append unique nodes whenever new accounts from test set come up
     unique_nodes_dd_test = dd.from_pandas(pd.DataFrame(unique_nodes_test, columns=['Node']), npartitions=2)
 
-    graph_features_test = unique_nodes_dd_test.map_partitions(lambda df: df.apply(lambda row: extract_features(G, row['Node']), axis=1))
+    #graph_features_test = unique_nodes_dd_test.map_partitions(lambda df: df.apply(lambda row: extract_features(G, row['Node']), axis=1))
+    graph_features_test = unique_nodes_dd_test.map_partitions(lambda df: df.apply(lambda row: {key: str(value) for key, value in extract_features(G, row['Node']).items()}, axis=1))
+
 
     # Example of delayed graph features
-    graph_features_test = [dask.delayed(lambda x: x)(string_data) for string_data in graph_features_test]
+    #graph_features_test = [dask.delayed(lambda x: x)(string_data) for string_data in graph_features_test]
 
     # Compute delayed objects
-    graph_features_computed_test = dask.compute(*graph_features_test)
+    #graph_features_computed_test = dask.compute(*graph_features_test)
 
     # Convert each string to a dictionary
-    dicts_test = [ast.literal_eval(string_data) for string_data in graph_features_computed_test]
+    dicts_test = [ast.literal_eval(str(string_data)) for string_data in graph_features_test]
 
     # Create a list of lists containing the dictionary values for each entry
     list_of_lists_test = [list(data_dict.values()) for data_dict in dicts_test]
