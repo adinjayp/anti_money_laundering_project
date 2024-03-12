@@ -1,6 +1,7 @@
 import networkx as nx
 
 def extract_features(G, node):
+    print("Extracting features for node: ", node)
     # Your feature extraction functions here
     features = {}
     #Node
