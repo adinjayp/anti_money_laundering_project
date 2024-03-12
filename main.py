@@ -10,6 +10,10 @@ import numpy as np
 import ast
 import dask
 from dask.distributed import Client
+from google.cloud import storage
+import pickle
+import json
+from datetime import datetime
 
 # Address of the Dask scheduler
 scheduler_address = 'tcp://10.128.0.5:8786'
@@ -30,8 +34,8 @@ def main():
     raw_data = dt.Frame(raw_data_pandas)
     # raw_data = dt.fread(gcs_bucket_path, columns=dt.str32)
     train_df, test_df = train_test_split(raw_data.to_pandas(), test_size=0.2, random_state=42, stratify=raw_data['Is Laundering'])
-    train_dt = dt.Frame(train_df)
-    test_dt = dt.Frame(test_df)
+    train_dt = dt.Frame(train_df).head(10000)
+    test_dt = dt.Frame(test_df).head(2000)
     print("calling inititial preprocessing for train")
     initial_preprocessed_ddf, first_timestamp, currency_dict, payment_format_dict, bank_account_dict, account_dict = initial_preprocessing(train_dt, first_timestamp=-1)
     print("initital preprocessing on train is done")
@@ -113,6 +117,59 @@ def main():
 
     preprocessed_test_df = merge_trans_with_gf(test_graph_ddf, graph_features_ddf_test)
     print(preprocessed_test_df.head())
+
+    #code to push G and other files to cloud VM
+
+    # Initialize a Google Cloud Storage client
+    storage_client = storage.Client()
+
+    # Serialize the graph to a bytes object
+    graph_bytes = pickle.dumps(G)
+
+    # Specify the name of your GCP bucket
+    bucket_name = 'aml_mlops_bucket'
+
+    # Specify the name for the file in the bucket
+    file_name = 'graph.gpickle' 
+
+    # Upload the serialized graph to the bucket
+    bucket = storage_client.bucket(bucket_name)
+    blob = bucket.blob(file_name)
+    blob.upload_from_string(graph_bytes, content_type='application/octet-stream')
+
+    print(f'Graph saved to gs://{bucket_name}/{file_name}')
+
+    # Convert the dictionary to a JSON string
+    json_account_dict = json.dumps(account_dict)
+    json_currency_dict = json.dumps(currency_dict)
+    json_payment_format_dict = json.dumps(payment_format_dict)
+    json_bank_account_dict = json.dumps(bank_account_dict)
+    json_first_timestamp = json.dumps({"first_timestamp": first_timestamp})
+
+    # Specify the name of the file to be saved in the bucket
+    file_name_account_dict = "account_dict.json"
+    file_name_currency_dict = "currency_dict.json"
+    file_name_payment_format_dict = "payment_format_dict.json"
+    file_name_bank_account_dict = "bank_account_dict.json"
+    file_name_first_timestamp = "first_timestamp.json"
+
+    # Define the blob object
+    blob_data_dict = bucket.blob(file_name_account_dict)
+    blob_currency_dict = bucket.blob(file_name_currency_dict)
+    blob_payment_format_dict = bucket.blob(file_name_payment_format_dict)
+    blob_bank_account_dict = bucket.blob(file_name_bank_account_dict)
+    blob_first_timestamp = bucket.blob(file_name_first_timestamp)
+
+
+    # Upload the JSON data to the bucket
+    blob_data_dict.upload_from_string(json_account_dict)
+    blob_currency_dict.upload_from_string(json_currency_dict)
+    blob_payment_format_dict.upload_from_string(json_payment_format_dict)
+    blob_bank_account_dict.upload_from_string(json_bank_account_dict)
+    blob_first_timestamp.upload_from_string(json_first_timestamp)
+
+
+    print("Data uploaded successfully to GCS bucket:", bucket_name)
 
 if __name__ == "__main__":
     main()
