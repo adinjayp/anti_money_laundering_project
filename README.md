@@ -197,6 +197,10 @@ We used GCP to host our data and all other services on it. We created 3 VM insta
 
 GCP empowers efficient implementation of machine learning pipelines while ensuring proper management of intermediate files generated during modular tasks. Its functionalities are particularly well-suited for the temporary storage and retrieval of data needed within the various stages of a modularized workflow.
 
+**Google Cloud Storage Bucket**
+![picture alt](Bucket.jpg)
+
+
 **Facilitating Access with Service Accounts** 
 
 To leverage GCP's services, initialization of a service account is essential. This account serves as a secure identity for your application within the GCP ecosystem. It grants the application the necessary permissions to access and utilize GCP's resources and services.
@@ -241,3 +245,16 @@ We performed EDA on the train and validation data separately in a Jupyter notebo
 
 #### 6. Data preparation for inference dataset
 * `inference.py`: Retrieves updated graph and other dictionaries, performs data validation checks, performs preprocessing and updates the graph and pushes the updated data to the bucket.
+
+## Data Card After Preprocessing and Feature Engineering
+
+Preprocessed_train_data with graph features
+
+* **From_ID:** The From Account Node number in the graph. Original account number can be retrieved from the account_dict from the bucket. (int64)
+* **To_ID:** The To Account Node number in the graph. (int64)
+* **Timestamp:** Formatted timestamp (int64)
+* **Amount_Paid:** No change from original dataset. (Float64)
+* **Payment_Currency:** Payment currency encoded to number. currency_dict in the bucket can be used to retrieve the original currency from the numbers. (int64)
+* **Amount_Received:** No change from original dataset. (Float64)
+* **Receiving_Currency:** Receiving currency encoded to number. currency_dict in the bucket can be used to retrieve the original currency from the numbers. (int64)
+* **Payment_Format:** Payment format encoded to number. payment_format_dict in the bucket can be used to retrieve the original currency from the numbers. (int64)
