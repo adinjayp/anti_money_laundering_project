@@ -6,6 +6,7 @@ from steps.create_graph import create_graph
 from steps.feature_extraction import extract_features
 from steps.dask_handling import create_dask_dataframe
 from steps.graph_operations import merge_trans_with_gf
+from steps.data_split import data_split
 import networkx as nx
 import pandas as pd
 import dask.dataframe as dd
@@ -26,9 +27,7 @@ client.upload_file('preprocessing.py')
 
 def main():
     raw_data = ingest_data()
-    train_df, test_df = train_test_split(raw_data.to_pandas(), test_size=0.2, random_state=42, stratify=raw_data['Is Laundering'])
-    train_dt = dt.Frame(train_df)
-    test_dt = dt.Frame(test_df)
+    train_dt, test_dt = data_split(raw_data)
     initial_preprocessed_ddf, first_timestamp, currency_dict, payment_format_dict, bank_account_dict, account_dict = initial_preprocessing(train_dt, first_timestamp=-1)
     global G
     G, train_graph_ddf = create_graph(initial_preprocessed_ddf)

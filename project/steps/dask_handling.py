@@ -13,13 +13,13 @@ def create_dask_dataframe(graph_features):
     logging.info("Starting Dask DataFrame creation")
 
     try:
-        graph_features = [dask.delayed(lambda x: x)(string_data) for string_data in graph_features]
+        # graph_features = [dask.delayed(lambda x: x)(string_data) for string_data in graph_features]
 
-        # Compute delayed objects
-        graph_features_computed = dask.compute(*graph_features)
+        # # Compute delayed objects
+        # graph_features_computed = dask.compute(*graph_features)
 
         # Convert each string to a dictionary
-        dicts = [ast.literal_eval(string_data) for string_data in graph_features_computed]
+        dicts = [ast.literal_eval(string_data) for string_data in graph_features]
 
         # Create a list of lists containing the dictionary values for each entry
         list_of_lists = [list(data_dict.values()) for data_dict in dicts]

@@ -11,7 +11,7 @@ class IngestData:
 
     def __init__(self) -> None:
         """Initialize the data ingestion class."""
-        gcs_bucket_path = "gs://aml_mlops_bucket/HI-Small_Trans.csv"
+        gcs_bucket_path = "/home/adiax/project7/anti_money_laundering_project/data/HI_Small_Trans.csv.dvc"
 
     def get_data(self) -> pd.DataFrame:
         logging.info(f"Ingesting data from Google Cloud Storage")
@@ -33,48 +33,4 @@ def ingest_data() -> dt.Frame:
     except Exception as e:
         logging.error("Error while ingesting data")
         raise e
-
-
-
-
-
-
-
-
-
-# import logging
-
-# import pandas as pd
-# from zenml import step
-
-
-# class IngestData:
-#     """
-#     Data ingestion class which ingests data from the source and returns a DataFrame.
-#     """
-
-#     def __init__(self,datapath:str) -> None:
-#         """Initialize the data ingestion class."""
-#         self.data_path = datapath
-
-#     def get_data(self) -> pd.DataFrame:
-#         logging.info(f"Ingesting data from")
-#         return pd.read_csv(self.data_path) # We can add local path also directly here ot via bucket
-
-
-# @step
-# def ingest_data(data_path: str) -> pd.DataFrame:
-#     """
-#     Args:
-#         None
-#     Returns:
-#         df: pd.DataFrame
-#     """
-#     try:
-#         ingest_data = IngestData()
-#         df = ingest_data.get_data()
-#         return df
-#     except Exception as e:
-#         logging.error("Error while Ingesting data")
-#         raise e
 
