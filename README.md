@@ -165,6 +165,10 @@ We used GCP to host our data and all other services on it. We created 3 VM insta
 
 GCP empowers efficient implementation of machine learning pipelines while ensuring proper management of intermediate files generated during modular tasks. Its functionalities are particularly well-suited for the temporary storage and retrieval of data needed within the various stages of a modularized workflow.
 
+**Google Cloud Storage Bucket**
+![picture alt](Bucket.jpg)
+
+
 **Facilitating Access with Service Accounts** 
 
 To leverage GCP's services, initialization of a service account is essential. This account serves as a secure identity for your application within the GCP ecosystem. It grants the application the necessary permissions to access and utilize GCP's resources and services.
