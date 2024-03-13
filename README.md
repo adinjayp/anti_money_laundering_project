@@ -209,3 +209,16 @@ We performed EDA on the train and validation data separately in a Jupyter notebo
 
 #### 6. Data preparation for inference dataset
 * `inference.py`: Retrieves updated graph and other dictionaries, performs data validation checks, performs preprocessing and updates the graph and pushes the updated data to the bucket.
+
+## Data Card After Preprocessing and Feature Engineering
+
+Preprocessed_train_data with graph features
+
+* **From_ID:** The From Account Node number in the graph. Original account number can be retrieved from the account_dict from the bucket. (int64)
+* **To_ID:** The To Account Node number in the graph. (int64)
+* **Timestamp:** Formatted timestamp (int64)
+* **Amount_Paid:** No change from original dataset. (Float64)
+* **Payment_Currency:** Payment currency encoded to number. currency_dict in the bucket can be used to retrieve the original currency from the numbers. (int64)
+* **Amount_Received:** No change from original dataset. (Float64)
+* **Receiving_Currency:** Receiving currency encoded to number. currency_dict in the bucket can be used to retrieve the original currency from the numbers. (int64)
+* **Payment_Format:** Payment format encoded to number. payment_format_dict in the bucket can be used to retrieve the original currency from the numbers. (int64)
