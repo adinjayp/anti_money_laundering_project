@@ -197,9 +197,6 @@ We used GCP to host our data and all other services on it. We created 3 VM insta
 
 GCP empowers efficient implementation of machine learning pipelines while ensuring proper management of intermediate files generated during modular tasks. Its functionalities are particularly well-suited for the temporary storage and retrieval of data needed within the various stages of a modularized workflow.
 
-**Google Cloud Storage Bucket**
-![picture alt](Bucket.jpg)
-
 
 **Facilitating Access with Service Accounts** 
 
@@ -245,6 +242,9 @@ We performed EDA on the train and validation data separately in a Jupyter notebo
 
 #### 6. Data preparation for inference dataset
 * `inference.py`: Retrieves updated graph and other dictionaries, performs data validation checks, performs preprocessing and updates the graph and pushes the updated data to the bucket.
+
+**Google Cloud Storage Bucket**
+![picture alt](Bucket.jpg)
 
 ## Data Card After Preprocessing and Feature Engineering
 
