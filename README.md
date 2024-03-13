@@ -116,23 +116,21 @@ pip install airflow
 ```
 git clone https://github.com/adinjayp/anti_money_laundering_project/blob/main/AML%20Data%20Preprocessing.ipynb
 ```
+7. Installing DVC and Dependencies
+```
+pip install dvc[gs]
+pip install dvc[all]
+```
+* Connecting To Bucket on GCS
+```
+dvc remote modify --local myremote credentialpath <JSON_PATH = './skilful-alpha-415221-4b349448e629.json'>
+```
+8. After your code is deployed from GitHub through Actions to the VM, you are good to run the project. Run python `airflowdag.py`
 
-7. After your code is deployed from GitHub through Actions to the VM, you are good to run the project. Run python `airflowdag.py`
 
 
 
 
-
-
-<style>
-  .wide-divider {
-    border-top: 1px solid #ddd; /* Adjust border style and color as needed */
-    width: 100%;  /* Adjust width as desired */
-    margin: 10px 0;  /* Adjust margins for spacing */
-  }
-</style>
-
-<div class="wide-divider"></div>
 
 
 ## Tool used for MLOps
