@@ -195,7 +195,7 @@ We performed EDA on the train and validation data separately in a Jupyter notebo
 * `ingest_data.py`: Retrieves train and test data from Google Cloud Storage bucket.
 * `data_split.py`: Splits the train data into train and validation datasets.
 
-`**	All below files are in the src folder**`
+`**All below files are in the src folder**`
 #### 4. Initial Preprocessing and Graph creation
 
 * `preprocessing.py`: Performs initial preprocessing on the transaction data like timestamp formatting and converting account numbers to nodes.
