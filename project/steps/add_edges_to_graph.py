@@ -13,6 +13,16 @@ import logging
 
 # Configure logging
 logging.basicConfig(filename='add_edges.log', level=logging.INFO)
+# Define a stream handler to write log messages to the terminal
+console = logging.StreamHandler()
+console.setLevel(logging.INFO)
+
+# Create a formatter and set it to the handler
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+console.setFormatter(formatter)
+
+# Add the handler to the root logger
+logging.getLogger('').addHandler(console)
 
 def add_edges_to_graph(G, ddf):
     logging.info("Starting adding edges to the graph")

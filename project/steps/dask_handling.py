@@ -8,6 +8,16 @@ from dask.distributed import Client
 
 # Configure logging
 logging.basicConfig(filename='dask_dataframe_creation.log', level=logging.INFO)
+# Define a stream handler to write log messages to the terminal
+console = logging.StreamHandler()
+console.setLevel(logging.INFO)
+
+# Create a formatter and set it to the handler
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+console.setFormatter(formatter)
+
+# Add the handler to the root logger
+logging.getLogger('').addHandler(console)
 
 def create_dask_dataframe(graph_features):
     logging.info("Starting Dask DataFrame creation")

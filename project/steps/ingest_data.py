@@ -1,4 +1,3 @@
-
 import logging
 import pandas as pd
 import dask.dataframe as dd
@@ -11,7 +10,7 @@ class IngestData:
 
     def __init__(self) -> None:
         """Initialize the data ingestion class."""
-        gcs_bucket_path = "/home/adiax/project7/anti_money_laundering_project/data/HI_Small_Trans.csv.dvc"
+        self.gcs_bucket_path = "/home/adiax/project7/anti_money_laundering_project/data/HI_Small_Trans.csv.dvc"
 
     def get_data(self) -> pd.DataFrame:
         logging.info(f"Ingesting data from Google Cloud Storage")
@@ -26,11 +25,28 @@ def ingest_data() -> dt.Frame:
         df: pd.DataFrame, the ingested data
     """
     try:
+        logging.info("Starting data ingestion")
         ingest_obj = IngestData()
         df = ingest_obj.get_data()
+        logging.info("Data ingestion completed")
         raw_data = dt.Frame(df)
         return raw_data
     except Exception as e:
         logging.error("Error while ingesting data")
+        logging.exception(e)
         raise e
+
+# Configure logging
+logging.basicConfig(filename='data_ingestion.log', level=logging.INFO)
+
+# Define a stream handler to write log messages to the terminal
+console = logging.StreamHandler()
+console.setLevel(logging.INFO)
+
+# Create a formatter and set it to the handler
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+console.setFormatter(formatter)
+
+# Add the handler to the root logger
+logging.getLogger('').addHandler(console)
 

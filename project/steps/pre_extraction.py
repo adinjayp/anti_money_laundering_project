@@ -3,6 +3,16 @@ import networkx as nx
 
 # Configure logging
 logging.basicConfig(filename='feature_extraction.log', level=logging.INFO)
+# Define a stream handler to write log messages to the terminal
+console = logging.StreamHandler()
+console.setLevel(logging.INFO)
+
+# Create a formatter and set it to the handler
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+console.setFormatter(formatter)
+
+# Add the handler to the root logger
+logging.getLogger('').addHandler(console)
 
 def extract_features(G, node):
     logging.info(f"Extracting features for node {node}")

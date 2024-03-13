@@ -3,6 +3,16 @@ import dask.dataframe as dd
 
 # Configure logging
 logging.basicConfig(filename='merge_transactions_with_graph_features.log', level=logging.INFO)
+# Define a stream handler to write log messages to the terminal
+console = logging.StreamHandler()
+console.setLevel(logging.INFO)
+
+# Create a formatter and set it to the handler
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+console.setFormatter(formatter)
+
+# Add the handler to the root logger
+logging.getLogger('').addHandler(console)
 
 def merge_trans_with_gf(transactions_ddf, graph_features_ddf):
     logging.info("Starting merging transactions with graph features")
