@@ -154,6 +154,26 @@ Setting up Github Actions-
 ### TFDV
 Tensor Flow Data Validation is used to compare drift for the incoming batches of data and also to provide exploratory data analysis of the data.
 ### Airflow
+This Airflow Directed Acyclic Graph (DAG) orchestrates a series of tasks for an Antimoney Laundering (AML) project. The DAG is designed to ingest, preprocess, analyze, and merge transactional data with graph features using Dask distributed computing.
+ingest_data: Task to ingest data.
+data_split: Task to split the raw data.
+initial_preprocessing: Task to perform initial data preprocessing.
+create_graph: Task to create a graph representation of the data.
+process_graph_data: Task to extract features from the graph data.
+create_dask_dataframe: Task to create a Dask dataframe for parallel processing.
+merge_trans_with_gf: Task to merge transactions with graph features.
+Execution Flow:
+The execution flow of tasks is as follows:
+
+ingest_data -> data_split -> initial_preprocessing -> create_graph -> process_graph_data -> create_dask_dataframe -> merge_trans_with_gf
+
+Task Dependencies:
+ingest_data_task output feeds into data_split_task.
+data_split_task output is used by preprocess_data_task.
+preprocess_data_task output is utilized by create_graph_task.
+create_graph_task outputs are inputs for both process_graph_data_task and merge_trans_with_gf_task.
+process_graph_data_task output is consumed by create_dask_dataframe_task.
+create_dask_dataframe_task output is passed to merge_trans_with_gf_task.
 
 ### DVC
 DVC facilitates the versioning of datasets and machine learning models. By creating snapshots of the data used for training alongside the corresponding code, DVC ensures reproducibility and traceability. This allows you to recreate any previous state of your project, providing a vital audit trail.
