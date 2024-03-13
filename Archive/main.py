@@ -1,8 +1,8 @@
 import datatable as dt
 from sklearn.model_selection import train_test_split
-from preprocessing import initial_preprocessing, create_graph, add_edges_to_graph
-from graph_operations import merge_trans_with_gf
-from feature_extraction import extract_features
+from anti_money_laundering_project.Archive.preprocessing import initial_preprocessing, create_graph, add_edges_to_graph
+from anti_money_laundering_project.Archive.graph_operations import merge_trans_with_gf
+from anti_money_laundering_project.Archive.feature_extraction import extract_features
 import networkx as nx
 import pandas as pd
 import dask.dataframe as dd
