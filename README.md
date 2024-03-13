@@ -125,6 +125,18 @@ pip install dvc[all]
 ```
 dvc remote modify --local myremote credentialpath <JSON_PATH = './skilful-alpha-415221-4b349448e629.json'>
 ```
+9. Install airflow using pip and Initialize Airflow Database
+```
+pip install apache-airflow
+airflow db init
+```
+10. Start Airflow Web Server and Scheduler:
+Airflow consists of several components, primarily the web server and the scheduler.
+Start the web server by running:
+```
+airflow webserver --port 8080
+airflow scheduler
+```
 8. After your code is deployed from GitHub through Actions to the VM, you are good to run the project. Run python `airflowdag.py`
 
 
