@@ -169,7 +169,7 @@ Setting up Github Actions-
 
 
 ### TFDV
-Tensor Flow Data Validation is used to compare drift for the incoming batches of data and also to provide exploratory data analysis of the data.
+Tensor Flow Data Validation is used to provide exploratory data analysis of the train data and compare drift for the incoming batches of test data. TFDV_EDA.ipynb file is created for train data EDA. Test Data Validation will be done soon.
 ### Airflow
 This Airflow Directed Acyclic Graph (DAG) orchestrates a series of tasks for an Antimoney Laundering (AML) project. The DAG is designed to ingest, preprocess, analyze, and merge transactional data with graph features using Dask distributed computing.
 ingest_data: Task to ingest data.
@@ -222,7 +222,7 @@ ________________________________________________________________________________
    Data was downloaded from the [IBM Link](https://ibm.ent.box.com/v/AML-Anti-Money-Laundering-Data) and uploaded on board the Google Cloud Storage.
 
 #### 2. Exploratory Analysis and Tensor Flow Data Validation
-We performed EDA on the train and validation data separately in a Jupyter notebook - Data_EDA.ipynb. Since this data is clean transactional data, we found there were no null values or datatype issues to handle during preprocessing. This notebook is to understand the transactions, accounts, banks, the split of payment modes, etc.
+We performed EDA on the train and validation data separately in a Jupyter notebook - TFDV_EDA.ipynb. Since this data is clean transactional data, we found there were no null values or datatype issues to handle during preprocessing. This notebook is to understand the transactions, accounts, banks, the split of payment modes, etc.
 
 
 
