@@ -69,8 +69,13 @@ https://cloud.google.com/iam/docs/service-accounts-create
 
 2. Setting up Dask Cluster
 
-     Deploy a dataproc cluster with Dask. Create 1 Master VM and 2 Worker VMs to perform parallel computations
-* **Reference Guide to Setup VM and DASK:** 
+     Deploy a dataproc cluster with Dask. Create 1 Master VM and 2 Worker VMs to perform parallel computations.
+
+   	Machine type - c2d-highmem-4
+	CPU platform - AMD Milan
+	Create an external IP for the Master VM
+* **Reference Guide to Setup VM and DASK:**
+ 	
 ```
 https://cloud.google.com/blog/products/data-analytics/improve-data-science-experience-using-scalable-python-data-processing
 ```
