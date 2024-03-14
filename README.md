@@ -1,4 +1,4 @@
-# AML Detection using Machine Learning
+# Money Laundering Detection using Machine Learning
 [Adinjay Phadkule](https://github.com/adinjayp) | [Krishna Barfiwala](https://github.com/krishnabx) | [Navya Pragathi](https://github.com/Navya-89) | [Utkarsh Singh](https://github.com/UtkarshS007) |  [Vishal Basutkar](https://github.com/vishalbns) | [Yash Gaikwad](https://github.com/YashRGaikwad)
 
 ![alt text](Presentation1.png)
