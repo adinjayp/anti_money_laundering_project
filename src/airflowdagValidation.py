@@ -18,6 +18,7 @@ from graph_operations import merge_trans_with_gf
 from upload_files_to_bucket import upload_file_to_gcs
 from readValidationData import download_data_from_bucket
 from preprocessingTest import initial_preprocessing_test
+from perform_eda import perform_eda
 
 # G = None 
 # scheduler_address = 'tcp://10.128.0.5:8786'
@@ -52,10 +53,7 @@ with DAG(
     description="Antimoney Laundering Project",
     start_date=datetime(2024, 3, 10, 2),
     schedule_interval="@daily"
-) as dag:
-    
-   # First Will be EDA
-    
+) as dag:    
 
    # Tasks will be defined here
     read_validation_data_task = PythonOperator(
@@ -64,13 +62,19 @@ with DAG(
         dag=dag
     )
 
-    # data_split_task = PythonOperator(
-    #     task_id='data_split',
-    #     python_callable=data_split,
-    #     op_kwargs={'raw_data': ingest_data_task.output},
+    perform_EDA_task = PythonOperator(
+        task_id='perform_EDA',
+        python_callable=perform_eda,
+        op_kwargs={'df': read_validation_data_task.output[6]},
+        dag=dag
+    )
+
+    # perform_visualization_task = PythonOperator(
+    #     task_id='perform_EDA',
+    #     python_callable=perform_eda,
+    #     op_kwargs={'df': read_validation_data_task.output[6]},
     #     dag=dag
     # )
-
 
     preprocess_validation_data_task = PythonOperator(
         task_id='initial_preprocessing_test',
@@ -117,4 +121,4 @@ with DAG(
     )
 
     
-    read_validation_data_task >> preprocess_validation_data_task >> create_graph_task >> feature_Extraction_task >> create_dask_dataframe_task >> merge_trans_with_gf_task >> upload_files_to_gcs_task 
+    read_validation_data_task >> perform_EDA_task >> perform_visualization_task >> preprocess_validation_data_task >> create_graph_task >> feature_Extraction_task >> create_dask_dataframe_task >> merge_trans_with_gf_task >> upload_files_to_gcs_task 
