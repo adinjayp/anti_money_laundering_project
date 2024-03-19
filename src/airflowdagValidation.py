@@ -19,6 +19,8 @@ from upload_files_to_bucket import upload_file_to_gcs
 from readValidationData import download_data_from_bucket
 from preprocessingTest import initial_preprocessing_test
 from perform_eda import perform_eda
+from perform_visualization_EDA import analyze_with_tfdv
+from airflowdag import data_split_task
 
 # G = None 
 # scheduler_address = 'tcp://10.128.0.5:8786'
@@ -69,12 +71,12 @@ with DAG(
         dag=dag
     )
 
-    # perform_visualization_task = PythonOperator(
-    #     task_id='perform_EDA',
-    #     python_callable=perform_eda,
-    #     op_kwargs={'df': read_validation_data_task.output[6]},
-    #     dag=dag
-    # )
+    perform_visualization_task = PythonOperator(
+        task_id='perform_visualization_EDA',
+        python_callable=analyze_with_tfdv,
+        op_kwargs={'df1': data_split_task.output[2], 'df2': data_split_task.output[3] , 'aml_mlops_bucket': 'aml_mlops_bucket', 'output_folder': "tfdv_visualizations" },
+        dag=dag
+    )
 
     preprocess_validation_data_task = PythonOperator(
         task_id='initial_preprocessing_test',
