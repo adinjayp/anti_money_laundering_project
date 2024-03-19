@@ -116,12 +116,20 @@ pip install networkx
 pip install numpy
 pip install airflow
 ```
-6. Clone repository onto the Master Virtual machine
+6. Installation for TFDV
+
+```
+!python3 -m pip install scikit-learn
+pip install tensorflow_data_validation
+pip install utils
+```
+
+7. Clone repository onto the Master Virtual machine
 
 ```
 git clone https://github.com/adinjayp/anti_money_laundering_project/blob/main/AML%20Data%20Preprocessing.ipynb
 ```
-7. Installing DVC and Dependencies
+8. Installing DVC and Dependencies
 ```
 pip install dvc[gs]
 pip install dvc[all]
