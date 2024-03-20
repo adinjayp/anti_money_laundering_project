@@ -2,6 +2,11 @@ import logging
 from sklearn.model_selection import train_test_split    
 import datatable as dt
 import pandas as pd
+from google.cloud import storage
+import os
+import logging
+from upload_files_to_bucket import upload_file_to_gcs
+
 
 # Configure logging
 logging.basicConfig(filename='data_split.log', level=logging.INFO)
@@ -21,8 +26,10 @@ def data_split(raw_data):
 
     try:
         train_df, test_df = train_test_split(raw_data.to_pandas(), test_size=0.2, random_state=42, stratify=raw_data['Is Laundering'])
-        train_dt = dt.Frame(train_df)
-        test_dt = dt.Frame(test_df)
+        train_dt = dt.Frame(train_df[:10000])
+        test_dt = dt.Frame(test_df[:2000])
+
+        upload_file_to_gcs('aml_mlops_bucket', test_dt)
         
         logging.info("Data splitting finished")
         return train_dt, test_dt

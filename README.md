@@ -179,18 +179,20 @@ Setting up Github Actions-
 ### TFDV
 Tensor Flow Data Validation is used to provide exploratory data analysis of the train data, and validate and compare drift for the incoming batches of test data. TFDV_EDA.ipynb file is created for train data EDA. Test Data Validation will be done soon.
 ### Airflow
-This Airflow Directed Acyclic Graph (DAG) orchestrates a series of tasks for an Antimoney Laundering (AML) project. The DAG is designed to ingest, preprocess, analyze, and merge transactional data with graph features using Dask distributed computing.
+This Airflow Directed Acyclic Graph (DAG) orchestrates a series of tasks for an Antimoney Laundering (AML) project. The DAG is designed to ingest, preprocess, analyze, and merge transactional data with graph features using Dask distributed computing. There are two DAGS that are being used to understand the series of tasks that need to be performed. One of the DAGS works with tasks related to the train data while the other DAG deals with tasks in accordance with validation and test data. The following tasks are involved in the train DAG:- 
+
 ingest_data: Task to ingest data.
 data_split: Task to split the raw data.
-initial_preprocessing: Task to perform initial data preprocessing.
-create_graph: Task to create a graph representation of the data.
-process_graph_data: Task to extract features from the graph data.
-create_dask_dataframe: Task to create a Dask dataframe for parallel processing.
-merge_trans_with_gf: Task to merge transactions with graph features.
+preprocess_data_task: Task to perform initial data preprocessing.
+create_graph_task: Task to create a graph representation of the data.
+feature_Extraction_task: Task to extract features from the graph data.
+create_dask_dataframe_task: Task to create a Dask dataframe for parallel processing.
+merge_trans_with_gf_task: Task to merge transactions with graph features.
+upload_files_to_gcs_task: Task to upload the necessary files to the buckets to be stored for later use. 
 Execution Flow:
 The execution flow of tasks is as follows:
 
-ingest_data -> data_split -> initial_preprocessing -> create_graph -> process_graph_data -> create_dask_dataframe -> merge_trans_with_gf
+ingest_data_task >> data_split_task >> preprocess_data_task >> create_graph_task >> feature_Extraction_task >> create_dask_dataframe_task >> merge_trans_with_gf_task >> upload_files_to_gcs_task
 
 Task Dependencies:
 ingest_data_task output feeds into data_split_task.
@@ -199,6 +201,20 @@ preprocess_data_task output is utilized by create_graph_task.
 create_graph_task outputs are inputs for both process_graph_data_task and merge_trans_with_gf_task.
 process_graph_data_task output is consumed by create_dask_dataframe_task.
 create_dask_dataframe_task output is passed to merge_trans_with_gf_task.
+
+The validation and test DAG, similar to the train DAG performs almost similar tasks with a minor few changes in the functions passed. The tasks are as follows:- 
+
+ingest_validation_data_task: This performs the task read the validation and test datasets from the GCS buckets.
+EDA_task: Here, analysis and visualizations are produced to better understand the datasets.
+preprocess_validation_data_task: This tasks perform initial preprocessing of the validation and test dataset while using the dictionaries present in the GCS bucket to be passed as parameters to produce the desired results. 
+create_graph_task: This produced a graph of the given datasets.
+feature_Extraction_task: This tasks extracts the important features from the graphs that are required for the model.
+create_dask_dataframe_task: Task to create a Dask dataframe for parallel processing.
+merge_trans_with_gf_task: Task to merge transactions with graph features.
+upload_files_to_gcs_task: This task is used to upload the results and required files to the GCS buckets for later use. 
+The execution flow of tasks is as follows:
+
+read_validation_data_task >> preprocess_validation_data_task >> create_graph_task >> feature_Extraction_task >> create_dask_dataframe_task >> merge_trans_with_gf_task >> upload_files_to_gcs_task 
 
 ### DVC
 DVC facilitates the versioning of datasets and machine learning models. By creating snapshots of the data used for training alongside the corresponding code, DVC ensures reproducibility and traceability. This allows you to recreate any previous state of your project, providing a vital audit trail.
