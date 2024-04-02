@@ -28,7 +28,7 @@ logging.getLogger('').addHandler(console)
 
 def initial_preprocessing(raw_data, first_timestamp):
     logging.info("Starting initial preprocessing")
-
+    raw_data = dt.frame(raw_data)
     # Your initial preprocessing functions here
     data = []
 
