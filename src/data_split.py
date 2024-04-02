@@ -32,7 +32,7 @@ def data_split(raw_data):
         upload_file_to_gcs('aml_mlops_bucket', test_dt)
         
         logging.info("Data splitting finished")
-        return train_dt, test_dt
+        return {'train_df': train_dt.to_pandas(), 'test_df': test_dt.to_pandas()}
 
     except Exception as e:
         logging.error(f"An error occurred during data splitting: {e}")
