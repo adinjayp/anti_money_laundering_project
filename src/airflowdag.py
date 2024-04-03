@@ -39,7 +39,7 @@ default_args = {
     'start_date': datetime(2024, 3, 11),
     'email_on_failure': False,
     'email_on_retry': False,
-    'retries': 5,
+    'retries': 0,
     'retry_delay': timedelta(hours=5),
 } 
 
