@@ -39,7 +39,7 @@ from airflowdag import data_split_task
 # client.upload_file('graph_operations.py')
 
 default_args = {
-    'owner': 'adinjay',
+    'owner': 'amlmlops',
     'depends_on_past': False,
     'start_date': datetime(2024, 3, 11),
     'email_on_failure': False,
@@ -50,7 +50,7 @@ default_args = {
 
 
 with DAG(
-    dag_id='My_v2',
+    dag_id='DAG2',
     default_args=default_args,
     description="Antimoney Laundering Project",
     start_date=datetime(2024, 3, 10, 2),
