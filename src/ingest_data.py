@@ -29,7 +29,8 @@ def ingest_data() -> dt.Frame:
         ingest_obj = IngestData()
         df = ingest_obj.get_data()
         logging.info("Data ingestion completed")
-        raw_data = dt.Frame(df)
+        raw_data = df
+        #raw_data = dt.Frame(df)
         return raw_data
     except Exception as e:
         logging.error("Error while ingesting data")
