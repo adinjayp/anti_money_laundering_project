@@ -84,7 +84,7 @@ def initial_preprocessing(raw_data, first_timestamp):
         ddf = dd.from_pandas(pandas_df, npartitions=2)
 
         logging.info("Finished initial preprocessing")
-        return ddf, first_timestamp, currency_dict, payment_format_dict, bank_account_dict, account_dict
+        return {'ddf': ddf, 'first_timestamp': first_timestamp, 'currency_dict': currency_dict, 'payment_format_dict': payment_format_dict, 'bank_account_dict': bank_account_dict, 'account_dict': account_dict}
 
     except Exception as e:
         logging.error(f"An error occurred during preprocessing: {e}")

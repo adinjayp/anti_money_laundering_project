@@ -73,25 +73,25 @@ with DAG(
     create_graph_task = PythonOperator(
         task_id='create_graph',
         python_callable=create_graph,
-        op_kwargs={'initial_preprocessed_ddf': preprocess_data_task.output[0]},  # Pass the output of extract_features_task to create_graph
+        op_kwargs={'initial_preprocessed_ddf': preprocess_data_task.output['ddf']},  # Pass the output of extract_features_task to create_graph
         dag=dag
     )
     feature_Extraction_task = PythonOperator(
         task_id='process_graph_data',
         python_callable=process_graph_data,
-        op_kwargs={'G': create_graph_task.output[0], 'train_graph_ddf': create_graph_task.output[1]},  # Pass the outputs of preprocess_data_task and create_graph_task
+        op_kwargs={'G': create_graph_task.output['G'], 'train_graph_ddf': create_graph_task.output['ddf']},  # Pass the outputs of preprocess_data_task and create_graph_task
         dag=dag
     )
     create_dask_dataframe_task = PythonOperator(
         task_id='create_dask_dataframe',
         python_callable=create_dask_dataframe,
-        op_kwargs={'graph_features': feature_Extraction_task.output},  # Pass the output of process_graph_data_task to create_dask_dataframe
+        op_kwargs={'graph_features': feature_Extraction_task.output['graph_features']},  # Pass the output of process_graph_data_task to create_dask_dataframe
         dag=dag
     )
     merge_trans_with_gf_task = PythonOperator(
         task_id='merge_trans_with_gf',
         python_callable=merge_trans_with_gf,
-        op_kwargs={'transactions_ddf': create_graph_task.output[1], 'graph_features_ddf': create_dask_dataframe_task.output},  # Pass the outputs of preprocess_data_task and create_dask_dataframe_task
+        op_kwargs={'transactions_ddf': create_graph_task.output['ddf'], 'graph_features_ddf': create_dask_dataframe_task.output},  # Pass the outputs of preprocess_data_task and create_dask_dataframe_task
         dag=dag
     )
 
@@ -99,8 +99,8 @@ with DAG(
         task_id='upload_files_to_gcs',
         python_callable=upload_file_to_gcs,
         provide_context=True,  # Allows accessing task context
-        op_kwargs={'bucket_name': 'aml_mlops_bucket' ,'file_paths': [create_graph_task.output[0], preprocess_data_task.output[1], preprocess_data_task.output[2], preprocess_data_task.output[3], 
-                                  preprocess_data_task.output[4], preprocess_data_task.output[5], merge_trans_with_gf_task.output]},  # Define file paths here
+        op_kwargs={'bucket_name': 'aml_mlops_bucket' ,'file_paths': [create_graph_task.output['G'], preprocess_data_task.output['first_timestamp'], preprocess_data_task.output['currency_dict'], preprocess_data_task.output['payment_format_dict'], 
+                                  preprocess_data_task.output['bank_account_dict'], preprocess_data_task.output['account_dict'], merge_trans_with_gf_task.output]},  # Define file paths here
         dag=dag
     )
 

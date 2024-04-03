@@ -10,6 +10,8 @@ import dask.dataframe as dd
 import sys
 import os
 import logging
+from google.cloud import storage
+
 
 # Configure logging
 logging.basicConfig(filename='add_edges.log', level=logging.INFO)
@@ -24,8 +26,25 @@ console.setFormatter(formatter)
 # Add the handler to the root logger
 logging.getLogger('').addHandler(console)
 
-def add_edges_to_graph(G, ddf):
+def add_edges_to_graph(ddf):
     logging.info("Starting adding edges to the graph")
+
+     # GET G FROM BUCKET
+    # Initialize a Google Cloud Storage client
+    storage_client = storage.Client()
+
+    # Specify the name of the file containing the serialized graph
+    file_name = 'graph.gpickle'
+
+    # Download the serialized graph from the bucket
+    bucket = storage_client.bucket(bucket_name)
+    blob = bucket.blob(file_name)
+    graph_bytes = blob.download_as_string()
+
+    # Deserialize the graph using pickle
+    G = pickle.loads(graph_bytes)
+
+    logging.info("Successfully downloaded and deserialized graph from bucket.")
 
     try:
         # Your functions to add edges to the graph here
@@ -55,7 +74,7 @@ def add_edges_to_graph(G, ddf):
         logging.debug(f"Composed_G after merging with G: {composed_G}")
 
         logging.info("Finished adding edges to the graph")
-        return composed_G, ddf
+        return {'G': composed_G, 'ddf': ddf}
 
     except Exception as e:
         logging.error(f"An error occurred during adding edges to the graph: {e}")

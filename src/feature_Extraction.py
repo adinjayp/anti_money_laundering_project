@@ -37,7 +37,7 @@ def process_graph_data(G, train_graph_ddf):
 
         logging.info("Graph features calculated")
 
-        return graph_features
+        return {'graph_features': graph_features}
 
     except Exception as e:
         logging.error(f"An error occurred during graph data processing: {e}")

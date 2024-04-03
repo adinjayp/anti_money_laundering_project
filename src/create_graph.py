@@ -39,7 +39,7 @@ def create_graph(ddf):
         logging.debug(f"Graph attributes: {G.nodes}, {G.edges}")
         logging.debug("Number of nodes:", G.number_of_nodes())
         logging.debug("Number of edges:", G.number_of_edges())
-        return G, ddf
+        return {'G': G, 'ddf': ddf}
 
     except Exception as e:
         logging.error(f"An error occurred during graph creation: {e}")

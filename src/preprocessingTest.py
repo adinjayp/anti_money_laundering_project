@@ -25,7 +25,7 @@ logging.getLogger('').addHandler(console)
 
 def initial_preprocessing_test(raw_data, first_timestamp, currency_dict, payment_format_dict, bank_account_dict, account_dict):
     logging.info("Starting initial preprocessing")
-
+    raw_data = dt.Frame(raw_data)
     data = []
 
     def get_dict_value(name, collection):
@@ -75,7 +75,7 @@ def initial_preprocessing_test(raw_data, first_timestamp, currency_dict, payment
         ddf = dd.from_pandas(pandas_df, npartitions=2)
 
         logging.info("Finished initial preprocessing")
-        return ddf, first_timestamp, currency_dict, payment_format_dict, bank_account_dict, account_dict
+        return {'ddf': ddf, 'first_timestamp': first_timestamp, 'currency_dict':currency_dict, 'payment_format_dict': payment_format_dict, 'bank_account_dict': bank_account_dict, 'account_dict': account_dict}
 
     except Exception as e:
         logging.error(f"An error occurred during preprocessing: {e}")
