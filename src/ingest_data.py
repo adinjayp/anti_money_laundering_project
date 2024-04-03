@@ -10,7 +10,7 @@ class IngestData:
 
     def __init__(self) -> None:
         """Initialize the data ingestion class."""
-        self.gcs_bucket_path = "/home/adiax/project7/anti_money_laundering_project/data/HI_Small_Trans.csv.dvc"
+        self.gcs_bucket_path = "gs://aml_mlops_bucket/HI_Small_Trans.csv"
 
     def get_data(self) -> pd.DataFrame:
         logging.info(f"Ingesting data from Google Cloud Storage")
