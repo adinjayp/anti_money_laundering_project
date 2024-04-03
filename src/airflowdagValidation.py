@@ -70,14 +70,14 @@ with DAG(
         op_kwargs={'df': read_validation_data_task.output['test_df']},
         dag=dag
     )
-
+    '''
     perform_visualization_task = PythonOperator(
         task_id='perform_visualization_EDA',
         python_callable=analyze_with_tfdv,
         op_kwargs={'df1': data_split_task.output[2], 'df2': data_split_task.output[3] , 'aml_mlops_bucket': 'aml_mlops_bucket', 'output_folder': "tfdv_visualizations" },
         dag=dag
     )
-
+    '''
     preprocess_validation_data_task = PythonOperator(
         task_id='initial_preprocessing_test',
         python_callable=initial_preprocessing_test,
@@ -123,4 +123,4 @@ with DAG(
     )
 
     
-    read_validation_data_task >> perform_EDA_task >> perform_visualization_task >> preprocess_validation_data_task >> add_edges_task >> feature_Extraction_task >> create_dask_dataframe_task >> merge_trans_with_gf_task >> upload_files_to_gcs_task 
+    read_validation_data_task >> perform_EDA_task >> preprocess_validation_data_task >> add_edges_task >> feature_Extraction_task >> create_dask_dataframe_task >> merge_trans_with_gf_task >> upload_files_to_gcs_task 
