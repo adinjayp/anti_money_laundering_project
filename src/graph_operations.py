@@ -46,7 +46,7 @@ def merge_trans_with_gf(transactions_ddf, graph_features_ddf):
         merged_ddf = merged_ddf.drop(columns=['Node_x', 'Node_y'])
         
         logging.info("Merging transactions with graph features finished")
-        return merged_ddf
+        return {'merged_ddf': merged_ddf}
 
     except Exception as e:
         logging.error(f"An error occurred during merging transactions with graph features: {e}")

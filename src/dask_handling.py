@@ -43,7 +43,7 @@ def create_dask_dataframe(graph_features):
         graph_features_ddf = dd.from_pandas(graph_features_df, npartitions=2)
         
         logging.info("Dask DataFrame creation finished")
-        return graph_features_ddf
+        return {'graph_features_ddf': graph_features_ddf}
 
     except Exception as e:
         logging.error(f"An error occurred during Dask DataFrame creation: {e}")

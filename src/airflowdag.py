@@ -61,7 +61,7 @@ with DAG(
     data_split_task = PythonOperator(
         task_id='data_split',
         python_callable=data_split,
-        op_kwargs={'raw_data': ingest_data_task.output},
+        op_kwargs={'raw_data': ingest_data_task.output['raw_data']},
         dag=dag
     )
     preprocess_data_task = PythonOperator(
@@ -91,7 +91,7 @@ with DAG(
     merge_trans_with_gf_task = PythonOperator(
         task_id='merge_trans_with_gf',
         python_callable=merge_trans_with_gf,
-        op_kwargs={'transactions_ddf': create_graph_task.output['ddf'], 'graph_features_ddf': create_dask_dataframe_task.output},  # Pass the outputs of preprocess_data_task and create_dask_dataframe_task
+        op_kwargs={'transactions_ddf': create_graph_task.output['ddf'], 'graph_features_ddf': create_dask_dataframe_task.output['graph_features_ddf']},  # Pass the outputs of preprocess_data_task and create_dask_dataframe_task
         dag=dag
     )
 
@@ -100,7 +100,7 @@ with DAG(
         python_callable=upload_file_to_gcs,
         provide_context=True,  # Allows accessing task context
         op_kwargs={'bucket_name': 'aml_mlops_bucket' ,'file_paths': [create_graph_task.output['G'], preprocess_data_task.output['first_timestamp'], preprocess_data_task.output['currency_dict'], preprocess_data_task.output['payment_format_dict'], 
-                                  preprocess_data_task.output['bank_account_dict'], preprocess_data_task.output['account_dict'], merge_trans_with_gf_task.output]},  # Define file paths here
+                                  preprocess_data_task.output['bank_account_dict'], preprocess_data_task.output['account_dict'], merge_trans_with_gf_task.output['merged_ddf']]},  # Define file paths here
         dag=dag
     )
 
