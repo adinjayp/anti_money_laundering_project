@@ -78,7 +78,8 @@ with DAG(
     create_graph_task = PythonOperator(
         task_id='create_graph',
         python_callable=create_graph,
-        op_kwargs={'initial_preprocessed_ddf': preprocess_data_task.output['ddf']},  # Pass the output of extract_features_task to create_graph
+        provide_context=True,
+        #op_kwargs={'initial_preprocessed_ddf': preprocess_data_task.output['ddf']},  # Pass the output of extract_features_task to create_graph
         dag=dag
     )
     feature_Extraction_task = PythonOperator(

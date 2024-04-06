@@ -25,12 +25,13 @@ console.setFormatter(formatter)
 # Add the handler to the root logger
 logging.getLogger('').addHandler(console)
 
-def create_graph(ddf):
+def create_graph(**kwargs):
     logging.info("Starting graph creation")
 
     # Your graph creation functions here
     
     try:
+        ddf = kwargs['task_instance'].xcom_pull(task_ids='initial_preprocessing', key='preprocessing_data')['ddf']
         ddf = pickle.loads(ddf)
         G = nx.DiGraph()
         G, ddf = add_edges_to_graph(G, ddf)
@@ -41,6 +42,15 @@ def create_graph(ddf):
         logging.debug(f"Graph attributes: {G.nodes}, {G.edges}")
         logging.debug("Number of nodes:", G.number_of_nodes())
         logging.debug("Number of edges:", G.number_of_edges())
+        
+        G_bytes = pickle.loads(G)
+        ddf = pickle,loads(ddf)
+        G_data = {
+            'G': G_bytes,
+            'ddf': ddf,
+        }
+        # Push the dictionary to XCom
+        kwargs['task_instance'].xcom_push(key='G_data', value=G_data)
         return {'G': G, 'ddf': ddf}
 
     except Exception as e:
