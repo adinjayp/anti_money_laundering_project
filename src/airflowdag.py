@@ -61,7 +61,7 @@ with DAG(
     data_split_task = PythonOperator(
         task_id='data_split',
         python_callable=data_split,
-        op_kwargs={'raw_data': ingest_data_task.output['raw_data']},
+        op_kwargs=[ingest_data_task.output],
         dag=dag
     )
     preprocess_data_task = PythonOperator(
