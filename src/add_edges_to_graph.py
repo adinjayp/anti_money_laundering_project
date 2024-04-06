@@ -48,7 +48,7 @@ def add_edges_to_graph(ddf, G = None):
 
     try:
         # Your functions to add edges to the graph here
-        logging.debug(f"G before add edge: {G}")
+        logging.info(f"G before add edge: {G}")
 
         def add_edges(partition):
             G_partition = nx.DiGraph()
@@ -62,16 +62,16 @@ def add_edges_to_graph(ddf, G = None):
                                     payment_format=row['Payment_Format'])
             return G_partition
 
-        logging.debug("Computing graphs for partitions")
+        logging.info("Computing graphs for partitions")
         graphs = ddf.map_partitions(add_edges).compute()
-        logging.debug(f"Graphs partitions: {graphs}")
+        logging.info(f"Graphs partitions: {graphs}")
 
-        logging.debug("Composing graphs")
+        logging.info("Composing graphs")
         composed_G = nx.compose_all(graphs)
-        logging.debug(f"Composed_G before merging with G: {composed_G}")
+        logging.info(f"Composed_G before merging with G: {composed_G}")
 
         composed_G = nx.compose_all([G] + [composed_G])
-        logging.debug(f"Composed_G after merging with G: {composed_G}")
+        logging.info(f"Composed_G after merging with G: {composed_G}")
 
         logging.info("Finished adding edges to the graph")
         return composed_G, ddf

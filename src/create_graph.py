@@ -36,15 +36,15 @@ def create_graph(**kwargs):
         G = nx.DiGraph()
         G, ddf = add_edges_to_graph(ddf, G)
         logging.info("Graph edges added successfully")
-        logging.debug(f"Graph info: {G}")
+        logging.info(f"Graph info: {G}")
         logging.info("Graph creation finished")
-        logging.debug("ddf head after addedge: ", ddf)
-        logging.debug(f"Graph attributes: {G.nodes}, {G.edges}")
-        logging.debug("Number of nodes:", G.number_of_nodes())
-        logging.debug("Number of edges:", G.number_of_edges())
+        logging.info("ddf head after addedge: ", ddf)
+        logging.info(f"Graph attributes: {G.nodes}, {G.edges}")
+        logging.info("Number of nodes:", G.number_of_nodes())
+        logging.info("Number of edges:", G.number_of_edges())
         
-        G_bytes = pickle.loads(G)
-        ddf = pickle,loads(ddf)
+        G_bytes = pickle.dumps(G)
+        ddf = pickle.dumps(ddf)
         G_data = {
             'G': G_bytes,
             'ddf': ddf,
