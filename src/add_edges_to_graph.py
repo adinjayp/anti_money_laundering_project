@@ -26,25 +26,25 @@ console.setFormatter(formatter)
 # Add the handler to the root logger
 logging.getLogger('').addHandler(console)
 
-def add_edges_to_graph(ddf):
+def add_edges_to_graph(G = None, ddf):
     logging.info("Starting adding edges to the graph")
+    if G is None: 
+        # GET G FROM BUCKET
+        # Initialize a Google Cloud Storage client
+        storage_client = storage.Client()
 
-     # GET G FROM BUCKET
-    # Initialize a Google Cloud Storage client
-    storage_client = storage.Client()
+        # Specify the name of the file containing the serialized graph
+        file_name = 'graph.gpickle'
 
-    # Specify the name of the file containing the serialized graph
-    file_name = 'graph.gpickle'
+        # Download the serialized graph from the bucket
+        bucket = storage_client.bucket(bucket_name)
+        blob = bucket.blob(file_name)
+        graph_bytes = blob.download_as_string()
 
-    # Download the serialized graph from the bucket
-    bucket = storage_client.bucket(bucket_name)
-    blob = bucket.blob(file_name)
-    graph_bytes = blob.download_as_string()
+        # Deserialize the graph using pickle
+        G = pickle.loads(graph_bytes)
 
-    # Deserialize the graph using pickle
-    G = pickle.loads(graph_bytes)
-
-    logging.info("Successfully downloaded and deserialized graph from bucket.")
+        logging.info("Successfully downloaded and deserialized graph from bucket.")
 
     try:
         # Your functions to add edges to the graph here
