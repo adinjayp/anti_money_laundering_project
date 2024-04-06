@@ -74,7 +74,7 @@ def add_edges_to_graph(ddf, G = None):
         logging.debug(f"Composed_G after merging with G: {composed_G}")
 
         logging.info("Finished adding edges to the graph")
-        return {'G': composed_G, 'ddf': ddf}
+        return composed_G, ddf
 
     except Exception as e:
         logging.error(f"An error occurred during adding edges to the graph: {e}")

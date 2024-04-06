@@ -51,7 +51,7 @@ def create_graph(**kwargs):
         }
         # Push the dictionary to XCom
         kwargs['task_instance'].xcom_push(key='G_data', value=G_data)
-        return {'G': G, 'ddf': ddf}
+        return  G, ddf
 
     except Exception as e:
         logging.error(f"An error occurred during graph creation: {e}")
