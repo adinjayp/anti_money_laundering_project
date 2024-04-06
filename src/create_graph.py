@@ -6,8 +6,6 @@ import datatable as dt
 import numpy as np
 from datetime import datetime
 from datatable import f, join, sort
-import pandas as pd
-import dask.dataframe as dd
 import sys
 import os
 import logging
@@ -38,10 +36,10 @@ def create_graph(**kwargs):
         logging.info("Graph edges added successfully")
         logging.info(f"Graph info: {G}")
         logging.info("Graph creation finished")
-        logging.info("ddf head after addedge: ", ddf)
-        logging.info(f"Graph attributes: {G.nodes}, {G.edges}")
-        logging.info("Number of nodes:", G.number_of_nodes())
-        logging.info("Number of edges:", G.number_of_edges())
+        logging.info("ddf head after addedge: %s", str(ddf.head()))
+        logging.info(f"Graph attributes: Nodes: {G.nodes}, Edges: {G.edges}")
+        logging.info("Number of nodes: %d", G.number_of_nodes())
+        logging.info("Number of edges: %d", G.number_of_edges())
         
         G_bytes = pickle.dumps(G)
         ddf = pickle.dumps(ddf)
