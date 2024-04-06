@@ -32,8 +32,8 @@ def data_split(**kwargs):
         #upload_file_to_gcs('aml_mlops_bucket', test_dt)
         
         logging.info("Data splitting finished")
-        data_dict = {'df1': train_df, 'df2': test_df}
-        kwargs['task_instance'].xcom_push(key='raw_data', value=data_dict)
+        train_test_dfs = {'train_df': train_df, 'test_df': test_df}
+        kwargs['task_instance'].xcom_push(key='train_test_dfs', value=train_test_dfs)
         return {'train_df': train_dt.to_pandas(), 'test_df': test_dt.to_pandas()}
 
     except Exception as e:

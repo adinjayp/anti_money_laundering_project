@@ -70,7 +70,9 @@ with DAG(
     preprocess_data_task = PythonOperator(
         task_id='initial_preprocessing',
         python_callable=initial_preprocessing,
-        op_kwargs={'raw_data': data_split_task.output['train_df'],'first_timestamp': -1},
+        op_kwargs={'first_timestamp': -1},
+        provide_context=True,
+        #op_kwargs={'raw_data': data_split_task.output['train_df'],'first_timestamp': -1},
         dag=dag
     )    
     create_graph_task = PythonOperator(

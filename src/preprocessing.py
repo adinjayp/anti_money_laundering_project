@@ -26,8 +26,9 @@ console.setFormatter(formatter)
 # Add the handler to the root logger
 logging.getLogger('').addHandler(console)
 
-def initial_preprocessing(raw_data, first_timestamp):
+def initial_preprocessing(first_timestamp, **kwargs):
     logging.info("Starting initial preprocessing")
+    raw_data = kwargs['task_instance'].xcom_pull(task_ids='data_split', key='train_test_dfs')['train_df']
     raw_data = dt.frame(raw_data)
     # Your initial preprocessing functions here
     data = []
@@ -84,6 +85,19 @@ def initial_preprocessing(raw_data, first_timestamp):
         ddf = dd.from_pandas(pandas_df, npartitions=2)
 
         logging.info("Finished initial preprocessing")
+        # Combine all the data into a dictionary
+        preprocessing_data = {
+            'ddf': ddf,
+            'first_timestamp': first_timestamp,
+            'currency_dict': currency_dict,
+            'payment_format_dict': payment_format_dict,
+            'bank_account_dict': bank_account_dict,
+            'account_dict': account_dict
+        }
+        
+        # Push the dictionary to XCom
+        kwargs['task_instance'].xcom_push(key='preprocessing_data', value=preprocessing_data)
+
         return {'ddf': ddf, 'first_timestamp': first_timestamp, 'currency_dict': currency_dict, 'payment_format_dict': payment_format_dict, 'bank_account_dict': bank_account_dict, 'account_dict': account_dict}
 
     except Exception as e:
