@@ -11,6 +11,7 @@ import dask.dataframe as dd
 import sys
 import os
 import logging
+import pickle
 
 logging.basicConfig(filename='graph_creation.log', level=logging.INFO)
 # Define a stream handler to write log messages to the terminal
@@ -30,6 +31,7 @@ def create_graph(ddf):
     # Your graph creation functions here
     
     try:
+        ddf = pickle.loads(ddf)
         G = nx.DiGraph()
         G, ddf = add_edges_to_graph(G, ddf)
         logging.info("Graph edges added successfully")

@@ -11,6 +11,7 @@ import sys
 import os
 from sklearn.model_selection import train_test_split
 import logging
+import pickle
 
 
 # Configure logging
@@ -84,11 +85,12 @@ def initial_preprocessing(first_timestamp, **kwargs):
         pandas_df = pd.DataFrame(data, columns=['Index', 'From_ID', 'To_ID', 'Timestamp', 'Amount_Paid', 'Payment_Currency',
                                          'Amount_Received', 'Receiving_Currency', 'Payment_Format', 'Is_Laundering'])
         ddf = dd.from_pandas(pandas_df, npartitions=2)
+        ddf_bytes = pickle.dumps(ddf)
 
         logging.info("Finished initial preprocessing")
         # Combine all the data into a dictionary
         preprocessing_data = {
-            'ddf': ddf,
+            'ddf': ddf_bytes,
             'first_timestamp': first_timestamp,
             'currency_dict': currency_dict,
             'payment_format_dict': payment_format_dict,
