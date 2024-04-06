@@ -34,7 +34,9 @@ def data_split(**kwargs):
         logging.info("Data splitting finished")
         train_test_dfs = {'train_df': train_df, 'test_df': test_df}
         kwargs['task_instance'].xcom_push(key='train_test_dfs', value=train_test_dfs)
-        return {'train_df': train_dt.to_pandas(), 'test_df': test_dt.to_pandas()}
+        return {'train_df': train_df, 'test_df': test_df}
+
+        #return {'train_df': train_dt.to_pandas(), 'test_df': test_dt.to_pandas()}
 
     except Exception as e:
         logging.error(f"An error occurred during data splitting: {e}")
