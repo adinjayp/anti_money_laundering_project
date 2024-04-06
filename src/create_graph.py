@@ -34,7 +34,7 @@ def create_graph(**kwargs):
         ddf = kwargs['task_instance'].xcom_pull(task_ids='initial_preprocessing', key='preprocessing_data')['ddf']
         ddf = pickle.loads(ddf)
         G = nx.DiGraph()
-        G, ddf = add_edges_to_graph(G, ddf)
+        G, ddf = add_edges_to_graph(ddf, G)
         logging.info("Graph edges added successfully")
         logging.debug(f"Graph info: {G}")
         logging.info("Graph creation finished")
