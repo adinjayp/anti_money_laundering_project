@@ -29,7 +29,8 @@ logging.getLogger('').addHandler(console)
 def initial_preprocessing(first_timestamp, **kwargs):
     logging.info("Starting initial preprocessing")
     raw_data = kwargs['task_instance'].xcom_pull(task_ids='data_split', key='train_test_dfs')['train_df']
-    raw_data = dt.frame(raw_data)
+    print(raw_data.head(1))
+    raw_data = dt.Frame(raw_data)
     # Your initial preprocessing functions here
     data = []
 
