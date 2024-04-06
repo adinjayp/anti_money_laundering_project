@@ -28,10 +28,10 @@ def ingest_data(**kwargs) -> dt.Frame:
         logging.info("Starting data ingestion")
         ingest_obj = IngestData()
         df = ingest_obj.get_data()
-        logging.info("Data ingestion completed")
         raw_data = df
         #raw_data = dt.Frame(df)
         kwargs['task_instance'].xcom_push(key='raw_data', value=raw_data)
+        logging.info("Data ingestion completed")
         return raw_data
     except Exception as e:
         logging.error("Error while ingesting data")
