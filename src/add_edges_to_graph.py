@@ -26,7 +26,7 @@ console.setFormatter(formatter)
 # Add the handler to the root logger
 logging.getLogger('').addHandler(console)
 
-def add_edges_to_graph(G = None, ddf):
+def add_edges_to_graph(ddf, G = None):
     logging.info("Starting adding edges to the graph")
     if G is None: 
         # GET G FROM BUCKET
