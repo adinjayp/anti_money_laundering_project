@@ -49,7 +49,8 @@ with DAG(
     default_args=default_args,
     description="Antimoney Laundering Project",
     start_date=datetime(2024, 3, 10, 2),
-    schedule_interval="@daily"
+    schedule_interval="@daily",
+    max_active_runs=1
 ) as dag:
     
    # Tasks will be defined here
@@ -106,5 +107,14 @@ with DAG(
         dag=dag
     )
 
+    # Set up dependencies
+    data_split_task.set_upstream(ingest_data_task)
+    preprocess_data_task.set_upstream(data_split_task)
+    create_graph_task.set_upstream(preprocess_data_task)
+    feature_Extraction_task.set_upstream(create_graph_task)
+    create_dask_dataframe_task.set_upstream(feature_Extraction_task)
+    merge_trans_with_gf_task.set_upstream([create_graph_task, create_dask_dataframe_task])
+    upload_files_to_gcs_task.set_upstream(merge_trans_with_gf_task)
+
     
-    ingest_data_task >> data_split_task >> preprocess_data_task >> create_graph_task >> feature_Extraction_task >> create_dask_dataframe_task >> merge_trans_with_gf_task >> upload_files_to_gcs_task
+    #ingest_data_task >> data_split_task >> preprocess_data_task >> create_graph_task >> feature_Extraction_task >> create_dask_dataframe_task >> merge_trans_with_gf_task >> upload_files_to_gcs_task

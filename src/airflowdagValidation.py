@@ -54,7 +54,8 @@ with DAG(
     default_args=default_args,
     description="Antimoney Laundering Project",
     start_date=datetime(2024, 3, 10, 2),
-    schedule_interval="@daily"
+    schedule_interval="@daily",
+    max_active_runs=1
 ) as dag:    
 
    # Tasks will be defined here
