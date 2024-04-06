@@ -56,12 +56,14 @@ with DAG(
     ingest_data_task = PythonOperator(
         task_id='ingest_data',
         python_callable=ingest_data,
+        provide_context=True,
         dag=dag
     )
     data_split_task = PythonOperator(
         task_id='data_split',
         python_callable=data_split,
-        op_kwargs=[ingest_data_task.output],
+        #op_kwargs=[ingest_data_task.output],
+        provide_context=True,
         dag=dag
     )
     preprocess_data_task = PythonOperator(

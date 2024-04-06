@@ -17,7 +17,7 @@ class IngestData:
         raw_data_pandas = pd.read_csv(self.gcs_bucket_path).astype(str)
         return raw_data_pandas
 
-def ingest_data() -> dt.Frame:
+def ingest_data(**kwargs) -> dt.Frame:
     """
     Args:
         data_path: str, path to the data file
@@ -31,6 +31,7 @@ def ingest_data() -> dt.Frame:
         logging.info("Data ingestion completed")
         raw_data = df
         #raw_data = dt.Frame(df)
+        kwargs['task_instance'].xcom_push(key='raw_data', value=raw_data)
         return raw_data
     except Exception as e:
         logging.error("Error while ingesting data")

@@ -21,9 +21,9 @@ console.setFormatter(formatter)
 # Add the handler to the root logger
 logging.getLogger('').addHandler(console)
 
-def data_split(raw_data):
+def data_split(**kwargs):
     logging.info("Starting data splitting")
-
+    raw_data = kwargs['task_instance'].xcom_pull(task_ids='ingest_data_task', key='raw_data')
     try:
         train_df, test_df = train_test_split(raw_data, test_size=0.2, random_state=42, stratify=raw_data['Is Laundering'])
         train_dt = dt.Frame(train_df[:10000])
