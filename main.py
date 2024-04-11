@@ -139,6 +139,19 @@ def main():
 
     print(f'Graph saved to gs://{bucket_name}/{file_name}')
 
+    preprocessed_train_df
+    # Convert DataFrame to CSV format
+    preprocessed_train_df_csv = preprocessed_train_df.to_csv(index=False)
+    
+    # Specify file name
+    file_name = 'HI_Small_Trans_preprocessed.csv'
+    
+    # Define destination blob in the bucket
+    blob = bucket.blob(file_name)
+    
+    # Upload CSV data to the blob
+    blob.upload_from_string(preprocessed_train_df_csv)
+
     # Convert the dictionary to a JSON string
     json_account_dict = json.dumps(account_dict)
     json_currency_dict = json.dumps(currency_dict)
