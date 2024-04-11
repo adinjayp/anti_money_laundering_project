@@ -55,6 +55,8 @@ def process_graph_data(**kwargs):
         #graph_features = unique_nodes_dd.map_partitions(lambda df: df.apply(lambda row: extract_features(G, row['Node']), axis=1))
 
         logging.info("Graph features calculated")
+        logging.info("graph_features type: %s", str(type(graph_features)))
+        logging.info("graph_features head: %s", str(graph_features.head(1)))
 
         kwargs['task_instance'].xcom_push(key='graph_features', value=graph_features)
         return graph_features

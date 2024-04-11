@@ -23,7 +23,7 @@ def merge_trans_with_gf(**kwargs):
         transactions_ddf = pickle.loads(transactions_ddf)
         graph_features_ddf = kwargs['task_instance'].xcom_pull(task_ids='create_dask_dataframe', key='graph_features_ddf')
         logging.info("transactions_ddf type: %s", str(type(transactions_ddf)))
-        logging.info("graph_features_ddf type: %s", str(graph_features_ddf))
+        logging.info("graph_features_ddf type: %s", str(type(graph_features_ddf)))
         logging.info("transactions_ddf head after merge: %s", str(transactions_ddf.head(1)))
         logging.info("graph_features_ddf head after merge: %s", str(graph_features_ddf.head(1)))
         # Merge on From_ID
