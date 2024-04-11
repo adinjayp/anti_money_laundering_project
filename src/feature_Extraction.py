@@ -18,9 +18,32 @@ console.setFormatter(formatter)
 # Add the handler to the root logger
 logging.getLogger('').addHandler(console)
 
-def apply_extract_features(G, row):
-    logging.info("graph_row node: %s", str(row['Node']))
-    return extract_features(G, row['Node'])
+def extract_gfeatures(G, node):
+    logging.info(f"Extracting features for node {node}")
+
+    features = {}
+    try:
+        # Your feature extraction functions here
+        # Node
+        features['Node'] = node
+        # Degree
+        features['degree'] = G.degree[node]
+        # In Degree
+        features['in_degree'] = G.in_degree[node]
+        # Out Degree
+        features['out_degree'] = G.out_degree[node]
+        # Clustering Coefficient
+        features['clustering_coefficient'] = nx.clustering(G, node)
+        # Degree Centrality
+        features['degree_centrality'] = nx.degree_centrality(G)[node]
+
+        logging.info(f"Features extracted for node {node}: {features}")
+        return features
+
+    except Exception as e:
+        logging.error(f"An error occurred during feature extraction for node {node}: {e}")
+        return None
+
 
 def process_graph_data(**kwargs):
     logging.info("Starting graph data processing")
@@ -41,23 +64,10 @@ def process_graph_data(**kwargs):
 
         logging.info("Unique nodes converted to Dask DataFrame")
 
-        # Define metadata as a Pandas DataFrame
-        metadata = pd.DataFrame({
-            'Node': [0],  # Sample value for the 'Node' column
-            'degree': [0],  # Sample value for the 'degree' column
-            'in_degree': [0],  # Sample value for the 'in_degree' column
-            'out_degree': [0],  # Sample value for the 'out_degree' column
-            'clustering_coefficient': [0.0],  # Sample value for the 'clustering_coefficient' column
-            'degree_centrality': [0.0]  # Sample value for the 'degree_centrality' column
-        })
-
         # Step 3: Calculate graph features
-        graph_features = unique_nodes_dd.map_partitions(lambda df: df.apply(apply_extract_features, args=(G,), axis=1), meta=metadata)
-        #graph_features = unique_nodes_dd.map_partitions(lambda df: df.apply(lambda row: extract_features(G, row['Node']), axis=1))
+        graph_features = unique_nodes_dd.map_partitions(lambda df: df.apply(lambda row: extract_gfeatures(G, row['Node']), axis=1))
 
         logging.info("Graph features calculated")
-        logging.info("graph_features type: %s", str(type(graph_features)))
-        logging.info("graph_features head: %s", str(graph_features.head(1)))
 
         kwargs['task_instance'].xcom_push(key='graph_features', value=graph_features)
         return graph_features
