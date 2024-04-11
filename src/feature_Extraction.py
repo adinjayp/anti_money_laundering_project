@@ -63,6 +63,7 @@ def process_graph_data(**kwargs):
         unique_nodes_dd = dd.from_pandas(unique_nodes_df, npartitions=2)
 
         logging.info("Unique nodes converted to Dask DataFrame")
+        logging.info("Unique nodes: %s", str(unique_nodes_dd.head(1)))
 
         # Step 3: Calculate graph features
         graph_features = unique_nodes_dd.map_partitions(lambda df: df.apply(lambda row: extract_gfeatures(G, row['Node']), axis=1))
