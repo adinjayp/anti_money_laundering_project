@@ -106,7 +106,7 @@ with DAG(
         python_callable=upload_file_to_gcs,
         provide_context=True,  # Allows accessing task context
         #op_kwargs={'bucket_name': 'aml_mlops_bucket' ,'file_paths': [create_graph_task.output['G'], preprocess_data_task.output['first_timestamp'], preprocess_data_task.output['currency_dict'], preprocess_data_task.output['payment_format_dict'], 
-                                  preprocess_data_task.output['bank_account_dict'], preprocess_data_task.output['account_dict'], merge_trans_with_gf_task.output['merged_ddf']]},  # Define file paths here
+        #                          preprocess_data_task.output['bank_account_dict'], preprocess_data_task.output['account_dict'], merge_trans_with_gf_task.output['merged_ddf']]},  # Define file paths here
         dag=dag
     )
 
