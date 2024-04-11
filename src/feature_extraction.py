@@ -30,13 +30,7 @@ def extract_graph_features(**kwargs):
         G = pickle.loads(G_bytes)
         # Step 1: Extract unique nodes
         unique_nodes = list(set(train_graph_ddf['From_ID']).union(train_graph_ddf['To_ID']))
-        unique_nodes_df = pd.DataFrame(unique_nodes, columns=['Node'])
-        logging.info("Unique nodes: %s", str(unique_nodes_df))
-
         logging.info("Unique nodes extracted")
-
-        # Convert the list of unique nodes to a Dask DataFrame
-        unique_nodes = list(set(train_graph_ddf['From_ID']).union(train_graph_ddf['To_ID']))
 
         # Step 2: Convert to Dask DataFrame
         unique_nodes_dd = dd.from_pandas(pd.DataFrame(unique_nodes, columns=['Node']), npartitions=1)
