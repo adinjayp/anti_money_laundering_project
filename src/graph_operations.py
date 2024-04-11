@@ -18,6 +18,8 @@ def merge_trans_with_gf(transactions_ddf, graph_features_ddf):
     logging.info("Starting merging transactions with graph features")
 
     try:
+        transactions_ddf = kwargs['task_instance'].xcom_pull(task_ids='create_graph', key='G_data')['ddf']
+        graph_features_ddf = kwargs['task_instance'].xcom_pull(task_ids='create_dask_dataframe', key='graph_features_ddf')
         # Merge on From_ID
         merged_ddf = dd.merge(transactions_ddf, graph_features_ddf, left_on='From_ID', right_on='Node', how='left')
 
@@ -46,7 +48,9 @@ def merge_trans_with_gf(transactions_ddf, graph_features_ddf):
         merged_ddf = merged_ddf.drop(columns=['Node_x', 'Node_y'])
         
         logging.info("Merging transactions with graph features finished")
-        return {'merged_ddf': merged_ddf}
+        logging.info("merged_ddf head after merge: %s", str(merged_ddf.head(1)))
+        kwargs['task_instance'].xcom_push(key='merged_ddf', value=merged_ddf)
+        return merged_ddf
 
     except Exception as e:
         logging.error(f"An error occurred during merging transactions with graph features: {e}")

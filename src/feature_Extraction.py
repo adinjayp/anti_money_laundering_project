@@ -2,6 +2,7 @@ import logging
 import dask.dataframe as dd
 import pandas as pd
 from pre_extraction import extract_features
+import pickle
 
 # Configure logging
 logging.basicConfig(filename='process_graph_data.log', level=logging.INFO)
@@ -17,10 +18,13 @@ console.setFormatter(formatter)
 # Add the handler to the root logger
 logging.getLogger('').addHandler(console)
 
-def process_graph_data(G, train_graph_ddf):
+def process_graph_data(**kwargs):
     logging.info("Starting graph data processing")
 
     try:
+        train_graph_ddf = kwargs['task_instance'].xcom_pull(task_ids='create_graph', key='G_data')['ddf']
+        G_bytes = kwargs['task_instance'].xcom_pull(task_ids='create_graph', key='G_data')['G']
+        G = pickle.loads(G_bytes)
         # Step 1: Extract unique nodes
         unique_nodes = list(set(train_graph_ddf['From_ID']).union(train_graph_ddf['To_ID']))
         unique_nodes_df = pd.DataFrame(unique_nodes, columns=['Node'])
@@ -37,7 +41,8 @@ def process_graph_data(G, train_graph_ddf):
 
         logging.info("Graph features calculated")
 
-        return {'graph_features': graph_features}
+        kwargs['task_instance'].xcom_push(key='graph_features', value=graph_features)
+        return graph_features
 
     except Exception as e:
         logging.error(f"An error occurred during graph data processing: {e}")

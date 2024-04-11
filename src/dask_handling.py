@@ -19,10 +19,11 @@ console.setFormatter(formatter)
 # Add the handler to the root logger
 logging.getLogger('').addHandler(console)
 
-def create_dask_dataframe(graph_features):
+def create_dask_dataframe(**kwargs):
     logging.info("Starting Dask DataFrame creation")
 
     try:
+        graph_features = kwargs['task_instance'].xcom_pull(task_ids='process_graph_data', key='graph_features')
         # graph_features = [dask.delayed(lambda x: x)(string_data) for string_data in graph_features]
 
         # # Compute delayed objects
@@ -43,7 +44,8 @@ def create_dask_dataframe(graph_features):
         graph_features_ddf = dd.from_pandas(graph_features_df, npartitions=2)
         
         logging.info("Dask DataFrame creation finished")
-        return {'graph_features_ddf': graph_features_ddf}
+        kwargs['task_instance'].xcom_push(key='graph_features_ddf', value=graph_features_ddf)
+        return graph_features_ddf
 
     except Exception as e:
         logging.error(f"An error occurred during Dask DataFrame creation: {e}")
