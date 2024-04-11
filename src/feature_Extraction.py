@@ -20,33 +20,6 @@ console.setFormatter(formatter)
 # Add the handler to the root logger
 logging.getLogger('').addHandler(console)
 
-def extract_gfeatures(G, node):
-    logging.info(f"Extracting features for node {node}")
-
-    features = {}
-    try:
-        # Your feature extraction functions here
-        # Node
-        features['Node'] = node
-        # Degree
-        features['degree'] = G.degree[node]
-        # In Degree
-        features['in_degree'] = G.in_degree[node]
-        # Out Degree
-        features['out_degree'] = G.out_degree[node]
-        # Clustering Coefficient
-        features['clustering_coefficient'] = nx.clustering(G, node)
-        # Degree Centrality
-        features['degree_centrality'] = nx.degree_centrality(G)[node]
-
-        logging.info(f"Features extracted for node {node}: {features}")
-        return features
-
-    except Exception as e:
-        logging.error(f"An error occurred during feature extraction for node {node}: {e}")
-        return None
-
-
 def process_graph_data(**kwargs):
     logging.info("Starting graph data processing")
 
@@ -72,7 +45,7 @@ def process_graph_data(**kwargs):
 
         # Step 3: Apply extract_features function to each partition
         graph_features = unique_nodes_dd.map_partitions(lambda df: df.apply(lambda row: {key: str(value) for key, value in extract_features(G, row['Node']).items()}, axis=1))
-        logging.info("Graph features: %s", str(graph_features))
+        logging.info("Graph features: %s", str(graph_features.compute()))
         logging.info("Graph features calculated")
 
         kwargs['task_instance'].xcom_push(key='graph_features', value=graph_features)
