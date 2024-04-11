@@ -62,15 +62,17 @@ def process_graph_data(**kwargs):
 
         logging.info("Unique nodes extracted")
 
+        # Convert the list of unique nodes to a Dask DataFrame
+        unique_nodes = list(set(train_graph_ddf['From_ID']).union(train_graph_ddf['To_ID']))
+
         # Step 2: Convert to Dask DataFrame
-        unique_nodes_dd = dd.from_pandas(unique_nodes_df, npartitions=1)
-
+        unique_nodes_dd = dd.from_pandas(pd.DataFrame(unique_nodes, columns=['Node']), npartitions=2)
         logging.info("Unique nodes converted to Dask DataFrame")
-        logging.info("Unique nodes: %s", str(unique_nodes_dd.head(1)))
+        logging.info("Unique nodes: %s", str(unique_nodes_dd))
 
-        # Step 3: Calculate graph features
-        graph_features = unique_nodes_dd.map_partitions(lambda df: df.apply(lambda row: extract_gfeatures(G, row['Node']), axis=1))
-
+        # Step 3: Apply extract_features function to each partition
+        graph_features = unique_nodes_dd.map_partitions(lambda df: df.apply(lambda row: {key: str(value) for key, value in extract_features(G, row['Node']).items()}, axis=1))
+        logging.info("Graph features: %s", str(graph_features))
         logging.info("Graph features calculated")
 
         kwargs['task_instance'].xcom_push(key='graph_features', value=graph_features)
