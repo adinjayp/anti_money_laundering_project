@@ -12,7 +12,7 @@ from ingest_data import ingest_data
 from preprocessing import initial_preprocessing
 from create_graph import create_graph
 from data_split import data_split
-from feature_Extraction import process_graph_data
+from feature_extraction import extract_graph_features
 from dask_handling import create_dask_dataframe
 from graph_operations import merge_trans_with_gf
 from upload_files_to_bucket import upload_file_to_gcs
