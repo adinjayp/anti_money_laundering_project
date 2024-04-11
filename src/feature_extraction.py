@@ -39,11 +39,14 @@ def extract_graph_features(**kwargs):
 
         # Step 3: Apply extract_features function to each partition
         graph_features = unique_nodes_dd.map_partitions(lambda df: df.apply(lambda row: {key: str(value) for key, value in extract_features(G, row['Node']).items()}, axis=1))
-        #logging.info("Graph features: %s", str(graph_features.compute()))
+
+        # Trigger computation and wait for it to complete
+        computed_graph_features = graph_features.compute()
+
         logging.info("Graph features calculated")
 
         # Convert each string to a dictionary
-        dicts = [ast.literal_eval(string_data) for string_data in graph_features]
+        dicts = [ast.literal_eval(string_data) for string_data in computed_graph_features]
 
         # Create a list of lists containing the dictionary values for each entry
         list_of_lists = [list(data_dict.values()) for data_dict in dicts]
