@@ -88,12 +88,12 @@ with DAG(
         #op_kwargs={'G': create_graph_task.output['G'], 'train_graph_ddf': create_graph_task.output['ddf']},  # Pass the outputs of preprocess_data_task and create_graph_task
         dag=dag
     )
-    create_dask_dataframe_task = PythonOperator(
-        task_id='create_dask_dataframe',
-        python_callable=create_dask_dataframe,
+    #create_dask_dataframe_task = PythonOperator(
+    #    task_id='create_dask_dataframe',
+    #    python_callable=create_dask_dataframe,
         #op_kwargs={'graph_features': feature_Extraction_task.output['graph_features']},  # Pass the output of process_graph_data_task to create_dask_dataframe
-        dag=dag
-    )
+    #    dag=dag
+    #)
     merge_trans_with_gf_task = PythonOperator(
         task_id='merge_trans_with_gf',
         python_callable=merge_trans_with_gf,
@@ -115,8 +115,9 @@ with DAG(
     preprocess_data_task.set_upstream(data_split_task)
     create_graph_task.set_upstream(preprocess_data_task)
     feature_Extraction_task.set_upstream(create_graph_task)
-    create_dask_dataframe_task.set_upstream(feature_Extraction_task)
-    merge_trans_with_gf_task.set_upstream([create_graph_task, create_dask_dataframe_task])
+    #create_dask_dataframe_task.set_upstream(feature_Extraction_task)
+    #merge_trans_with_gf_task.set_upstream([create_graph_task, create_dask_dataframe_task])
+    merge_trans_with_gf_task.set_upstream([create_graph_task, feature_Extraction_task])
     upload_files_to_gcs_task.set_upstream(merge_trans_with_gf_task)
 
     
