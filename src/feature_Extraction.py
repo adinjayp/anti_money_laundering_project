@@ -3,6 +3,8 @@ import dask.dataframe as dd
 import pandas as pd
 from pre_extraction import extract_features
 import pickle
+import networkx as nx
+
 
 # Configure logging
 logging.basicConfig(filename='process_graph_data.log', level=logging.INFO)
@@ -56,11 +58,12 @@ def process_graph_data(**kwargs):
         # Step 1: Extract unique nodes
         unique_nodes = list(set(train_graph_ddf['From_ID']).union(train_graph_ddf['To_ID']))
         unique_nodes_df = pd.DataFrame(unique_nodes, columns=['Node'])
+        logging.info("Unique nodes: %s", str(unique_nodes_df))
 
         logging.info("Unique nodes extracted")
 
         # Step 2: Convert to Dask DataFrame
-        unique_nodes_dd = dd.from_pandas(unique_nodes_df, npartitions=2)
+        unique_nodes_dd = dd.from_pandas(unique_nodes_df, npartitions=1)
 
         logging.info("Unique nodes converted to Dask DataFrame")
         logging.info("Unique nodes: %s", str(unique_nodes_dd.head(1)))
