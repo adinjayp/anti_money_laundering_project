@@ -18,6 +18,9 @@ console.setFormatter(formatter)
 # Add the handler to the root logger
 logging.getLogger('').addHandler(console)
 
+def apply_extract_features(G, row):
+    return extract_features(G, row['Node'])
+
 def process_graph_data(**kwargs):
     logging.info("Starting graph data processing")
 
@@ -38,7 +41,8 @@ def process_graph_data(**kwargs):
         logging.info("Unique nodes converted to Dask DataFrame")
 
         # Step 3: Calculate graph features
-        graph_features = unique_nodes_dd.map_partitions(lambda df: df.apply(lambda row: extract_features(G, row['Node']), axis=1))
+        graph_features = unique_nodes_dd.map_partitions(lambda df: df.apply(apply_extract_features, args=(G,), axis=1))
+        #graph_features = unique_nodes_dd.map_partitions(lambda df: df.apply(lambda row: extract_features(G, row['Node']), axis=1))
 
         logging.info("Graph features calculated")
 
