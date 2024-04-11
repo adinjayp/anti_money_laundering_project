@@ -40,8 +40,18 @@ def process_graph_data(**kwargs):
 
         logging.info("Unique nodes converted to Dask DataFrame")
 
+        # Define metadata as a Pandas DataFrame
+        metadata = pd.DataFrame({
+            'Node': [0],  # Sample value for the 'Node' column
+            'degree': [0],  # Sample value for the 'degree' column
+            'in_degree': [0],  # Sample value for the 'in_degree' column
+            'out_degree': [0],  # Sample value for the 'out_degree' column
+            'clustering_coefficient': [0.0],  # Sample value for the 'clustering_coefficient' column
+            'degree_centrality': [0.0]  # Sample value for the 'degree_centrality' column
+        })
+
         # Step 3: Calculate graph features
-        graph_features = unique_nodes_dd.map_partitions(lambda df: df.apply(apply_extract_features, args=(G,), axis=1))
+        graph_features = unique_nodes_dd.map_partitions(lambda df: df.apply(apply_extract_features, args=(G,), axis=1), meta=metadata)
         #graph_features = unique_nodes_dd.map_partitions(lambda df: df.apply(lambda row: extract_features(G, row['Node']), axis=1))
 
         logging.info("Graph features calculated")
