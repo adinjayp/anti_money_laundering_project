@@ -36,7 +36,7 @@ def create_graph(**kwargs):
         logging.info("Graph edges added successfully")
         logging.info(f"Graph info: {G}")
         logging.info("Graph creation finished")
-        logging.info("ddf head after addedge: %s", str(ddf.head()))
+        logging.info("ddf head after addedge: %s", str(ddf.head().compute()))
         logging.info(f"Graph attributes: Nodes: {G.nodes}, Edges: {G.edges}")
         logging.info("Number of nodes: %d", G.number_of_nodes())
         logging.info("Number of edges: %d", G.number_of_edges())
