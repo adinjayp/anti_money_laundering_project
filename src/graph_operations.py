@@ -14,7 +14,7 @@ console.setFormatter(formatter)
 # Add the handler to the root logger
 logging.getLogger('').addHandler(console)
 
-def merge_trans_with_gf(transactions_ddf, graph_features_ddf):
+def merge_trans_with_gf(**kwargs):
     logging.info("Starting merging transactions with graph features")
 
     try:
