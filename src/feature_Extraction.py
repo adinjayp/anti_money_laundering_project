@@ -19,6 +19,7 @@ console.setFormatter(formatter)
 logging.getLogger('').addHandler(console)
 
 def apply_extract_features(G, row):
+        logging.info("graph_row node: %s", str(row['Node']))
     return extract_features(G, row['Node'])
 
 def process_graph_data(**kwargs):
