@@ -23,6 +23,7 @@ def process_graph_data(**kwargs):
 
     try:
         train_graph_ddf = kwargs['task_instance'].xcom_pull(task_ids='create_graph', key='G_data')['ddf']
+        train_graph_ddf = pickle.loads(train_graph_ddf)
         G_bytes = kwargs['task_instance'].xcom_pull(task_ids='create_graph', key='G_data')['G']
         G = pickle.loads(G_bytes)
         # Step 1: Extract unique nodes

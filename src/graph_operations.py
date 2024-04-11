@@ -1,5 +1,6 @@
 import logging
 import dask.dataframe as dd
+import pickle
 
 # Configure logging
 logging.basicConfig(filename='merge_transactions_with_graph_features.log', level=logging.INFO)
@@ -19,6 +20,7 @@ def merge_trans_with_gf(**kwargs):
 
     try:
         transactions_ddf = kwargs['task_instance'].xcom_pull(task_ids='create_graph', key='G_data')['ddf']
+        transactions_ddf = pickle.loads(transactions_ddf)
         graph_features_ddf = kwargs['task_instance'].xcom_pull(task_ids='create_dask_dataframe', key='graph_features_ddf')
         logging.info("transactions_ddf type: %s", str(type(transactions_ddf)))
         logging.info("graph_features_ddf type: %s", str(graph_features_ddf))

@@ -5,6 +5,7 @@ import pandas as pd
 import ast
 import dask
 from dask.distributed import Client
+import pickle
 
 # Configure logging
 logging.basicConfig(filename='dask_dataframe_creation.log', level=logging.INFO)
@@ -24,6 +25,7 @@ def create_dask_dataframe(**kwargs):
 
     try:
         graph_features = kwargs['task_instance'].xcom_pull(task_ids='process_graph_data', key='graph_features')
+        graph_features = pickle.loads(graph_features)
         # graph_features = [dask.delayed(lambda x: x)(string_data) for string_data in graph_features]
 
         # # Compute delayed objects
