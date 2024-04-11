@@ -94,18 +94,18 @@ with DAG(
     )
 
     feature_Extraction_task = PythonOperator(
-        task_id='process_graph_data',
-        python_callable=process_graph_data,
+        task_id='extract_graph_features',
+        python_callable=extract_graph_features,
         op_kwargs={'G': add_edges_task.output['G'], 'train_graph_ddf': add_edges_task.output['ddf']},  # Pass the outputs of preprocess_data_task and create_graph_task
         dag=dag
     )
 
-    create_dask_dataframe_task = PythonOperator(
-        task_id='create_dask_dataframe',
-        python_callable=create_dask_dataframe,
-        op_kwargs={'graph_features': feature_Extraction_task.output},  # Pass the output of process_graph_data_task to create_dask_dataframe
-        dag=dag
-    )
+    #create_dask_dataframe_task = PythonOperator(
+    #    task_id='create_dask_dataframe',
+    #    python_callable=create_dask_dataframe,
+    #    op_kwargs={'graph_features': feature_Extraction_task.output},  # Pass the output of process_graph_data_task to create_dask_dataframe
+    #    dag=dag
+    #)
 
     merge_trans_with_gf_task = PythonOperator(
         task_id='merge_trans_with_gf',

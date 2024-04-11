@@ -39,7 +39,7 @@ def extract_graph_features(**kwargs):
         unique_nodes = list(set(train_graph_ddf['From_ID']).union(train_graph_ddf['To_ID']))
 
         # Step 2: Convert to Dask DataFrame
-        unique_nodes_dd = dd.from_pandas(pd.DataFrame(unique_nodes, columns=['Node']), npartitions=2)
+        unique_nodes_dd = dd.from_pandas(pd.DataFrame(unique_nodes, columns=['Node']), npartitions=1)
         logging.info("Unique nodes converted to Dask DataFrame")
         logging.info("Unique nodes: %s", str(unique_nodes_dd))
 
@@ -60,7 +60,7 @@ def extract_graph_features(**kwargs):
         # Convert specific columns to the desired data types
         convert_dtype = {'Node': 'int64', 'degree': 'int64', 'in_degree': 'int64', 'out_degree': 'int64', 'clustering_coefficient': 'float64', 'degree_centrality': 'float64'}
         graph_features_df = lists_df.astype(convert_dtype)
-        graph_features_ddf = dd.from_pandas(graph_features_df, npartitions=2)
+        graph_features_ddf = dd.from_pandas(graph_features_df, npartitions=1)
         
         logging.info("Dask DataFrame creation finished")
         kwargs['task_instance'].xcom_push(key='graph_features_ddf', value=graph_features_ddf)
