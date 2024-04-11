@@ -24,7 +24,7 @@ def create_dask_dataframe(**kwargs):
     logging.info("Starting Dask DataFrame creation")
 
     try:
-        graph_features = kwargs['task_instance'].xcom_pull(task_ids='process_graph_data', key='graph_features')
+        graph_features = kwargs['task_instance'].xcom_pull(task_ids='process_graph_data', key='graph_features_bytes')
         graph_features = pickle.loads(graph_features)
         # graph_features = [dask.delayed(lambda x: x)(string_data) for string_data in graph_features]
 

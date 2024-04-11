@@ -47,8 +47,9 @@ def process_graph_data(**kwargs):
         graph_features = unique_nodes_dd.map_partitions(lambda df: df.apply(lambda row: {key: str(value) for key, value in extract_features(G, row['Node']).items()}, axis=1))
         logging.info("Graph features: %s", str(graph_features.compute()))
         logging.info("Graph features calculated")
+        graph_features_bytes = pickle.dumps(graph_features)
 
-        kwargs['task_instance'].xcom_push(key='graph_features', value=graph_features)
+        kwargs['task_instance'].xcom_push(key='graph_features_bytes', value=graph_features_bytes)
         return graph_features
 
     except Exception as e:
