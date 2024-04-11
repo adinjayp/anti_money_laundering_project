@@ -4,7 +4,7 @@ import pandas as pd
 from pre_extraction import extract_features
 import pickle
 import networkx as nx
-
+import ast
 
 # Configure logging
 logging.basicConfig(filename='process_graph_data.log', level=logging.INFO)
@@ -20,7 +20,7 @@ console.setFormatter(formatter)
 # Add the handler to the root logger
 logging.getLogger('').addHandler(console)
 
-def process_graph_data(**kwargs):
+def extract_graph_features(**kwargs):
     logging.info("Starting graph data processing")
 
     try:

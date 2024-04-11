@@ -83,8 +83,8 @@ with DAG(
         dag=dag
     )
     feature_Extraction_task = PythonOperator(
-        task_id='process_graph_data',
-        python_callable=process_graph_data,
+        task_id='extract_graph_features',
+        python_callable=extract_graph_features,
         #op_kwargs={'G': create_graph_task.output['G'], 'train_graph_ddf': create_graph_task.output['ddf']},  # Pass the outputs of preprocess_data_task and create_graph_task
         dag=dag
     )

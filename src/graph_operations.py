@@ -21,7 +21,7 @@ def merge_trans_with_gf(**kwargs):
     try:
         transactions_ddf = kwargs['task_instance'].xcom_pull(task_ids='create_graph', key='G_data')['ddf']
         transactions_ddf = pickle.loads(transactions_ddf)
-        graph_features_ddf = kwargs['task_instance'].xcom_pull(task_ids='process_graph_data', key='graph_features_ddf')
+        graph_features_ddf = kwargs['task_instance'].xcom_pull(task_ids='extract_graph_features', key='graph_features_ddf')
         logging.info("transactions_ddf type: %s", str(type(transactions_ddf)))
         logging.info("graph_features_ddf type: %s", str(type(graph_features_ddf)))
         logging.info("transactions_ddf head after merge: %s", str(transactions_ddf.head(1)))
