@@ -80,11 +80,11 @@ def download_data_from_bucket(bucket_name='aml_mlops_bucket', scheduler_address=
         # Read data from GCS bucket
         gcs_bucket_path = "gs://aml_mlops_bucket/"
         raw_data_pandas = pd.read_csv(gcs_bucket_path + 'HI_Medium_Trans_1.csv').astype(str)
-        test_dt = dt.Frame(raw_data_pandas).head()
+        test_df = aw_data_pandas.head(25)
 
         logging.info("Successfully read data from GCS bucket.")
 
-        return G, first_timestamp, currency_dict, payment_format_dict, bank_account_dict, test_dt, raw_data_pandas
+        return {'G': G, 'first_timestamp': first_timestamp, 'currency_dict': currency_dict, 'payment_format_dict': payment_format_dict,'bank_account_dict': bank_account_dict, 'test_df': test_df}
 
     except Exception as e:
         logging.error(f"An error occurred: {e}")

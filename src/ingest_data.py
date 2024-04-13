@@ -10,14 +10,14 @@ class IngestData:
 
     def __init__(self) -> None:
         """Initialize the data ingestion class."""
-        self.gcs_bucket_path = "/home/adiax/project7/anti_money_laundering_project/data/HI_Small_Trans.csv.dvc"
+        self.gcs_bucket_path = "gs://aml_mlops_bucket/HI_Small_Trans.csv"
 
     def get_data(self) -> pd.DataFrame:
         logging.info(f"Ingesting data from Google Cloud Storage")
         raw_data_pandas = pd.read_csv(self.gcs_bucket_path).astype(str)
-        return raw_data_pandas
+        return raw_data_pandas.head(10)
 
-def ingest_data() -> dt.Frame:
+def ingest_data(**kwargs) -> dt.Frame:
     """
     Args:
         data_path: str, path to the data file
@@ -28,8 +28,10 @@ def ingest_data() -> dt.Frame:
         logging.info("Starting data ingestion")
         ingest_obj = IngestData()
         df = ingest_obj.get_data()
+        raw_data = df
+        #raw_data = dt.Frame(df)
+        kwargs['task_instance'].xcom_push(key='raw_data', value=raw_data)
         logging.info("Data ingestion completed")
-        raw_data = dt.Frame(df)
         return raw_data
     except Exception as e:
         logging.error("Error while ingesting data")

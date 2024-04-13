@@ -64,7 +64,7 @@ file_path_currency_dict = 'currency_dict.json'
 file_name_payment_format_dict = "payment_format_dict.json"
 file_name_bank_account_dict = "bank_account_dict.json"
 file_name_first_timestamp = "first_timestamp.json"
-file_name_merged_ddf = "merged_ddf.csv"
+file_name_merged_ddf = "train_preprocessed_ddf.csv"
 
 # Upload files to GCS bucket
 graph_url = upload_file_to_gcs(bucket_name, file_path_graph)

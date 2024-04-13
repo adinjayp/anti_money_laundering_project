@@ -1,5 +1,6 @@
 import logging
 import dask.dataframe as dd
+import pickle
 
 # Configure logging
 logging.basicConfig(filename='merge_transactions_with_graph_features.log', level=logging.INFO)
@@ -14,10 +15,17 @@ console.setFormatter(formatter)
 # Add the handler to the root logger
 logging.getLogger('').addHandler(console)
 
-def merge_trans_with_gf(transactions_ddf, graph_features_ddf):
+def merge_trans_with_gf(**kwargs):
     logging.info("Starting merging transactions with graph features")
 
     try:
+        transactions_ddf = kwargs['task_instance'].xcom_pull(task_ids='create_graph', key='G_data')['ddf']
+        transactions_ddf = pickle.loads(transactions_ddf)
+        graph_features_ddf = kwargs['task_instance'].xcom_pull(task_ids='extract_graph_features', key='graph_features_ddf')
+        logging.info("transactions_ddf type: %s", str(type(transactions_ddf)))
+        logging.info("graph_features_ddf type: %s", str(type(graph_features_ddf)))
+        logging.info("transactions_ddf head after merge: %s", str(transactions_ddf.head(1)))
+        logging.info("graph_features_ddf head after merge: %s", str(graph_features_ddf.head(1)))
         # Merge on From_ID
         merged_ddf = dd.merge(transactions_ddf, graph_features_ddf, left_on='From_ID', right_on='Node', how='left')
 
@@ -46,6 +54,8 @@ def merge_trans_with_gf(transactions_ddf, graph_features_ddf):
         merged_ddf = merged_ddf.drop(columns=['Node_x', 'Node_y'])
         
         logging.info("Merging transactions with graph features finished")
+        logging.info("merged_ddf head after merge: %s", str(merged_ddf.head(1)))
+        kwargs['task_instance'].xcom_push(key='merged_ddf', value=merged_ddf)
         return merged_ddf
 
     except Exception as e:

@@ -10,6 +10,8 @@ import dask.dataframe as dd
 import sys
 import os
 import logging
+from google.cloud import storage
+
 
 # Configure logging
 logging.basicConfig(filename='add_edges.log', level=logging.INFO)
@@ -24,12 +26,29 @@ console.setFormatter(formatter)
 # Add the handler to the root logger
 logging.getLogger('').addHandler(console)
 
-def add_edges_to_graph(G, ddf):
+def add_edges_to_graph(ddf, G = None):
     logging.info("Starting adding edges to the graph")
+    if G is None: 
+        # GET G FROM BUCKET
+        # Initialize a Google Cloud Storage client
+        storage_client = storage.Client()
+
+        # Specify the name of the file containing the serialized graph
+        file_name = 'graph.gpickle'
+
+        # Download the serialized graph from the bucket
+        bucket = storage_client.bucket(bucket_name)
+        blob = bucket.blob(file_name)
+        graph_bytes = blob.download_as_string()
+
+        # Deserialize the graph using pickle
+        G = pickle.loads(graph_bytes)
+
+        logging.info("Successfully downloaded and deserialized graph from bucket.")
 
     try:
         # Your functions to add edges to the graph here
-        logging.debug(f"G before add edge: {G}")
+        logging.info(f"G before add edge: {G}")
 
         def add_edges(partition):
             G_partition = nx.DiGraph()
@@ -43,16 +62,16 @@ def add_edges_to_graph(G, ddf):
                                     payment_format=row['Payment_Format'])
             return G_partition
 
-        logging.debug("Computing graphs for partitions")
+        logging.info("Computing graphs for partitions")
         graphs = ddf.map_partitions(add_edges).compute()
-        logging.debug(f"Graphs partitions: {graphs}")
+        logging.info(f"Graphs partitions: {graphs}")
 
-        logging.debug("Composing graphs")
+        logging.info("Composing graphs")
         composed_G = nx.compose_all(graphs)
-        logging.debug(f"Composed_G before merging with G: {composed_G}")
+        logging.info(f"Composed_G before merging with G: {composed_G}")
 
         composed_G = nx.compose_all([G] + [composed_G])
-        logging.debug(f"Composed_G after merging with G: {composed_G}")
+        logging.info(f"Composed_G after merging with G: {composed_G}")
 
         logging.info("Finished adding edges to the graph")
         return composed_G, ddf

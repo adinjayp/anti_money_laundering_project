@@ -21,17 +21,17 @@ def extract_features(G, node):
     try:
         # Your feature extraction functions here
         # Node
-        features['Node'] = node
+        features['Node'] = int(node)
         # Degree
-        features['degree'] = G.degree[node]
+        features['degree'] = int(G.degree[node])
         # In Degree
-        features['in_degree'] = G.in_degree[node]
+        features['in_degree'] = int(G.in_degree[node])
         # Out Degree
-        features['out_degree'] = G.out_degree[node]
+        features['out_degree'] = int(G.out_degree[node])
         # Clustering Coefficient
-        features['clustering_coefficient'] = nx.clustering(G, node)
+        features['clustering_coefficient'] = float(nx.clustering(G, node))
         # Degree Centrality
-        features['degree_centrality'] = nx.degree_centrality(G)[node]
+        features['degree_centrality'] = float(nx.degree_centrality(G)[node])
 
         logging.info(f"Features extracted for node {node}: {features}")
         return features

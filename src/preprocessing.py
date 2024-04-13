@@ -11,6 +11,7 @@ import sys
 import os
 from sklearn.model_selection import train_test_split
 import logging
+import pickle
 
 
 # Configure logging
@@ -26,9 +27,11 @@ console.setFormatter(formatter)
 # Add the handler to the root logger
 logging.getLogger('').addHandler(console)
 
-def initial_preprocessing(raw_data, first_timestamp):
+def initial_preprocessing(first_timestamp, **kwargs):
     logging.info("Starting initial preprocessing")
-    raw_data = dt.frame(raw_data)
+    raw_data = kwargs['task_instance'].xcom_pull(task_ids='data_split', key='train_test_dfs')['train_df']
+    print(raw_data.head(1))
+    raw_data = dt.Frame(raw_data)
     # Your initial preprocessing functions here
     data = []
 
@@ -82,9 +85,23 @@ def initial_preprocessing(raw_data, first_timestamp):
         pandas_df = pd.DataFrame(data, columns=['Index', 'From_ID', 'To_ID', 'Timestamp', 'Amount_Paid', 'Payment_Currency',
                                          'Amount_Received', 'Receiving_Currency', 'Payment_Format', 'Is_Laundering'])
         ddf = dd.from_pandas(pandas_df, npartitions=2)
+        ddf_bytes = pickle.dumps(ddf)
 
         logging.info("Finished initial preprocessing")
-        return ddf, first_timestamp, currency_dict, payment_format_dict, bank_account_dict, account_dict
+        # Combine all the data into a dictionary
+        preprocessing_data = {
+            'ddf': ddf_bytes,
+            'first_timestamp': first_timestamp,
+            'currency_dict': currency_dict,
+            'payment_format_dict': payment_format_dict,
+            'bank_account_dict': bank_account_dict,
+            'account_dict': account_dict
+        }
+        
+        # Push the dictionary to XCom
+        kwargs['task_instance'].xcom_push(key='preprocessing_data', value=preprocessing_data)
+
+        return {'ddf': ddf, 'first_timestamp': first_timestamp, 'currency_dict': currency_dict, 'payment_format_dict': payment_format_dict, 'bank_account_dict': bank_account_dict, 'account_dict': account_dict}
 
     except Exception as e:
         logging.error(f"An error occurred during preprocessing: {e}")
