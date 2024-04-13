@@ -1,7 +1,7 @@
 import logging
 import dask.dataframe as dd
 import pandas as pd
-from project.steps.pre_extraction import extract_features
+from pre_extraction import extract_features
 
 # Configure logging
 logging.basicConfig(filename='process_graph_data.log', level=logging.INFO)
