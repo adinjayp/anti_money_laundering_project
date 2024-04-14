@@ -23,7 +23,7 @@ console.setFormatter(formatter)
 # Add the handler to the root logger
 logging.getLogger('').addHandler(console)
 
-def create_graph():
+def create_graph(**kwargs):
     logging.info("Starting graph creation")
 
     # Your graph creation functions here
