@@ -11,6 +11,7 @@ from airflow.operators.python_operator import PythonOperator
 from ingest_data import ingest_data
 from preprocessing import initial_preprocessing
 from create_graph import create_graph
+from add_edges_to_graph import add_edges_to_graph
 from data_split import data_split
 from feature_extraction import extract_graph_features
 from dask_handling import create_dask_dataframe
