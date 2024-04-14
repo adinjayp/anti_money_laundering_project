@@ -127,7 +127,7 @@ with DAG(
     #create_dask_dataframe_task.set_upstream(feature_Extraction_task)
     #merge_trans_with_gf_task.set_upstream([create_graph_task, create_dask_dataframe_task])
     merge_trans_with_gf_task.set_upstream([add_edges_task, feature_Extraction_task])
-    upload_files_to_gcs_task.set_upstream(merge_trans_with_gf_task)
+    upload_files_to_gcs_task.set_upstream([add_edges_task, preprocess_data_task, merge_trans_with_gf_task])
 
     
     #ingest_data_task >> data_split_task >> preprocess_data_task >> create_graph_task >> feature_Extraction_task >> create_dask_dataframe_task >> merge_trans_with_gf_task >> upload_files_to_gcs_task
