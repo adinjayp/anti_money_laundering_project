@@ -25,12 +25,19 @@ def upload_file_to_gcs(**kwargs):
 
     merged_ddf_bytes = kwargs['task_instance'].xcom_pull(task_ids='merge_trans_with_gf', key='merged_ddf_bytes')
 
+    # Convert the dictionary to a JSON string
+    json_account_dict = json.dumps(account_dict)
+    json_currency_dict = json.dumps(currency_dict)
+    json_payment_format_dict = json.dumps(payment_format_dict)
+    json_bank_account_dict = json.dumps(bank_account_dict)
+    json_first_timestamp = json.dumps({"first_timestamp": first_timestamp})
+
     files_to_push = [[G_bytes,'airflow_files/graphaf.gpickle'],
-    [first_timestamp, 'first_timestampaf.json'], 
-    [currency_dict, 'currency_dictaf.json'],
-    [payment_format_dict, 'payment_format_dictaf.json'],
-    [bank_account_dict, 'bank_account_dictaf.json'],
-    [account_dict, 'account_dictaf.json'],
+    [json_first_timestamp, 'first_timestampaf.json'], 
+    [json_currency_dict, 'currency_dictaf.json'],
+    [json_payment_format_dict, 'payment_format_dictaf.json'],
+    [json_bank_account_dict, 'bank_account_dictaf.json'],
+    [json_account_dict, 'account_dictaf.json'],
     [merged_ddf_bytes, "train_preprocessed_ddfaf_csv.pickle"]]
 
     bucket_name = 'aml_mlops_bucket'
