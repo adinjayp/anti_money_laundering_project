@@ -43,7 +43,7 @@ def extract_graph_features(**kwargs):
 
         # Trigger computation and wait for it to complete
         computed_graph_features = graph_features.compute()
-
+        logging.info("computed_graph_features: %s", str(computed_graph_features))
         logging.info("Graph features calculated")
 
         # Convert each string to a dictionary
