@@ -86,7 +86,7 @@ def add_edges_to_graph(dagtype, **kwargs):
             'ddf': ddf,
         }
         # Push the dictionary to XCom
-        kwargs['task_instance'].xcom_push(key='G_bytes', value=G_bytes)
+        kwargs['task_instance'].xcom_push(key='G_data', value=G_data)
         return composed_G, ddf
 
     except Exception as e:
