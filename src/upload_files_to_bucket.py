@@ -32,7 +32,7 @@ def upload_file_to_gcs(**kwargs):
     json_bank_account_dict = json.dumps(bank_account_dict)
     json_first_timestamp = json.dumps({"first_timestamp": first_timestamp})
 
-    files_to_push = [[G_bytes,'airflow_files/graphaf.gpickle'],
+    files_to_push = [[G_bytes,'graphaf.gpickle'],
     [json_first_timestamp, 'first_timestampaf.json'], 
     [json_currency_dict, 'currency_dictaf.json'],
     [json_payment_format_dict, 'payment_format_dictaf.json'],
@@ -62,7 +62,7 @@ def upload_file_to_gcs(**kwargs):
         
         for file in files_to_push:
             # Upload the file to the bucket
-            blob = bucket.blob(file[1])
+            blob = bucket.blob(f"{folder_name}/{file[1]}")
             blob.upload_from_string(file[0], content_type=content_type_finder(file[1]))
 
             # Construct the URL of the uploaded file
