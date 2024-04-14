@@ -62,13 +62,13 @@ def upload_file_to_gcs(**kwargs):
             file_url = f'gs://{bucket_name}/{folder_name}/{file[1]}'
 
             # Log the upload
-            logging.info(f"File '{file_path}' uploaded successfully to GCS bucket '{bucket_name}' as '{file_name}'")
+            logging.info(f"File '{file[1]}' uploaded successfully to GCS bucket '{bucket_name}' as '{file_url}'")
 
         return 
     
     except Exception as e:
         # Log error if upload fails
-        logging.error(f"An error occurred while uploading file '{file_path}' to GCS bucket '{bucket_name}': {e}")
+        logging.error(f"An error occurred while uploading files to GCS bucket '{bucket_name}': {e}")
         return None
 
 # Set up logging
