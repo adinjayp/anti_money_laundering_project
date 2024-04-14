@@ -55,8 +55,8 @@ def upload_file_to_gcs(**kwargs):
         # Specify the blob object
         bucket = storage_client.bucket(bucket_name)
         blob = bucket.blob(file_name)
-
-       for file in files_to_push:
+        
+        for file in files_to_push:
             # Upload the file to the bucket
             blob.upload_from_string(file[0], content_type=content_type_finder(file[1]))
 
@@ -66,7 +66,7 @@ def upload_file_to_gcs(**kwargs):
             # Log the upload
             logging.info(f"File '{file_path}' uploaded successfully to GCS bucket '{bucket_name}' as '{file_name}'")
 
-        return 
+    return 
     
     except Exception as e:
         # Log error if upload fails
