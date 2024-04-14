@@ -82,21 +82,21 @@ with DAG(
     preprocess_validation_data_task = PythonOperator(
         task_id='initial_preprocessing_test',
         python_callable=initial_preprocessing_test,
-        op_kwargs={'raw_data': read_validation_data_task.output['test_df'],'first_timestamp': read_validation_data_task.output['first_timestamp'], 'currency_dict': read_validation_data_task.output['currency_dict'] ,'payment_format_dict': read_validation_data_task.output['payment_format_dict'],'bank_account_dict': read_validation_data_task.output['bank_account_dict']},
+        #op_kwargs={'raw_data': read_validation_data_task.output['test_df'],'first_timestamp': read_validation_data_task.output['first_timestamp'], 'currency_dict': read_validation_data_task.output['currency_dict'] ,'payment_format_dict': read_validation_data_task.output['payment_format_dict'],'bank_account_dict': read_validation_data_task.output['bank_account_dict']},
         dag=dag
     )    
 
     add_edges_task = PythonOperator(
         task_id='add_edges_to_graph',
         python_callable=add_edges_to_graph,
-        op_kwargs={'initial_preprocessed_ddf': preprocess_validation_data_task.output['ddf']},  # Pass the output of extract_features_task to create_graph
+        #op_kwargs={'initial_preprocessed_ddf': preprocess_validation_data_task.output['ddf']},  # Pass the output of extract_features_task to create_graph
         dag=dag
     )
 
     feature_Extraction_task = PythonOperator(
         task_id='extract_graph_features',
         python_callable=extract_graph_features,
-        op_kwargs={'G': add_edges_task.output['G'], 'train_graph_ddf': add_edges_task.output['ddf']},  # Pass the outputs of preprocess_data_task and create_graph_task
+        #op_kwargs={'G': add_edges_task.output['G'], 'train_graph_ddf': add_edges_task.output['ddf']},  # Pass the outputs of preprocess_data_task and create_graph_task
         dag=dag
     )
 
@@ -110,7 +110,7 @@ with DAG(
     merge_trans_with_gf_task = PythonOperator(
         task_id='merge_trans_with_gf',
         python_callable=merge_trans_with_gf,
-        op_kwargs={'transactions_ddf': add_edges_task.output['ddf'], 'graph_features_ddf': create_dask_dataframe_task.output},  # Pass the outputs of preprocess_data_task and create_dask_dataframe_task
+        #op_kwargs={'transactions_ddf': add_edges_task.output['ddf'], 'graph_features_ddf': create_dask_dataframe_task.output},  # Pass the outputs of preprocess_data_task and create_dask_dataframe_task
         dag=dag
     )
 
@@ -118,8 +118,8 @@ with DAG(
         task_id='upload_files_to_gcs',
         python_callable=upload_file_to_gcs,
         provide_context=True,  # Allows accessing task context
-        op_kwargs={'bucket_name': 'aml_mlops_bucket' ,'file_paths': [add_edges_task.output['G'], preprocess_validation_data_task.output['first_timestamp'], preprocess_validation_data_task.output['currency_dict'], preprocess_validation_data_task.output['payment_format_dict'], 
-                                  preprocess_validation_data_task.output['bank_account_dict'], preprocess_validation_data_task.output['account_dict'], merge_trans_with_gf_task.output]},  # Define file paths here
+        #op_kwargs={'bucket_name': 'aml_mlops_bucket' ,'file_paths': [add_edges_task.output['G'], preprocess_validation_data_task.output['first_timestamp'], preprocess_validation_data_task.output['currency_dict'], preprocess_validation_data_task.output['payment_format_dict'], 
+        #                          preprocess_validation_data_task.output['bank_account_dict'], preprocess_validation_data_task.output['account_dict'], merge_trans_with_gf_task.output]},  # Define file paths here
         dag=dag
     )
 
