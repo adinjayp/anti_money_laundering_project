@@ -36,7 +36,7 @@ def add_edges_to_graph(dagtype, **kwargs):
         G_bytes = kwargs['task_instance'].xcom_pull(task_ids='create_graph', key='G_bytes')
         G = pickle.loads(G_bytes)
 
-    else if dagtype=='inference': 
+    elif dagtype=='inference': 
         # GET G FROM BUCKET
         storage_client = storage.Client()
         file_name = 'graph.gpickle'
