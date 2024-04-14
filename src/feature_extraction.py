@@ -39,7 +39,7 @@ def extract_graph_features(**kwargs):
         logging.info("Unique nodes: %s", str(unique_nodes_dd))
 
         # Step 3: Apply extract_features function to each partition
-        graph_features = unique_nodes_dd.map_partitions(lambda df: df.apply(lambda row: {key: str(value) for key, value in extract_features(G, row['Node']).items()}, axis=1))
+        graph_features = unique_nodes_dd.map_partitions(lambda df: df.apply(lambda row: {key: value for key, value in extract_features(G, row['Node']).items()}, axis=1))
 
         # Trigger computation and wait for it to complete
         computed_graph_features = graph_features.compute()
