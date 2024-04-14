@@ -84,7 +84,7 @@ def initial_preprocessing(first_timestamp, **kwargs):
         logging.info("Creating pandas DataFrame")
         pandas_df = pd.DataFrame(data, columns=['Index', 'From_ID', 'To_ID', 'Timestamp', 'Amount_Paid', 'Payment_Currency',
                                          'Amount_Received', 'Receiving_Currency', 'Payment_Format', 'Is_Laundering'])
-        ddf = dd.from_pandas(pandas_df, npartitions=2)
+        ddf = dd.from_pandas(pandas_df, npartitions=1)
         ddf_bytes = pickle.dumps(ddf)
 
         logging.info("Finished initial preprocessing")
