@@ -66,7 +66,7 @@ def upload_file_to_gcs(**kwargs):
             # Log the upload
             logging.info(f"File '{file_path}' uploaded successfully to GCS bucket '{bucket_name}' as '{file_name}'")
 
-    return 
+        return 
     
     except Exception as e:
         # Log error if upload fails
