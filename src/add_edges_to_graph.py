@@ -11,6 +11,7 @@ import sys
 import os
 import logging
 from google.cloud import storage
+import pickle
 
 
 # Configure logging
