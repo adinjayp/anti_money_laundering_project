@@ -82,13 +82,14 @@ with DAG(
     preprocess_validation_data_task = PythonOperator(
         task_id='initial_preprocessing_test',
         python_callable=initial_preprocessing_test,
-        #op_kwargs={'raw_data': read_validation_data_task.output['test_df'],'first_timestamp': read_validation_data_task.output['first_timestamp'], 'currency_dict': read_validation_data_task.output['currency_dict'] ,'payment_format_dict': read_validation_data_task.output['payment_format_dict'],'bank_account_dict': read_validation_data_task.output['bank_account_dict']},
+        op_kwargs={'raw_data': read_validation_data_task.output['test_df'],'first_timestamp': read_validation_data_task.output['first_timestamp'], 'currency_dict': read_validation_data_task.output['currency_dict'] ,'payment_format_dict': read_validation_data_task.output['payment_format_dict'],'bank_account_dict': read_validation_data_task.output['bank_account_dict']},
         dag=dag
     )    
 
     add_edges_task = PythonOperator(
         task_id='add_edges_to_graph',
         python_callable=add_edges_to_graph,
+        op_kwargs={'dagtype': 'inference'},
         #op_kwargs={'initial_preprocessed_ddf': preprocess_validation_data_task.output['ddf']},  # Pass the output of extract_features_task to create_graph
         dag=dag
     )
@@ -124,4 +125,14 @@ with DAG(
     )
 
     
-    read_validation_data_task >> perform_EDA_task >> preprocess_validation_data_task >> add_edges_task >> feature_Extraction_task >> create_dask_dataframe_task >> merge_trans_with_gf_task >> upload_files_to_gcs_task 
+    #read_validation_data_task >> perform_EDA_task >> preprocess_validation_data_task >> add_edges_task >> feature_Extraction_task >> merge_trans_with_gf_task >> upload_files_to_gcs_task 
+
+     # Set up dependencies
+    perform_EDA_task.set_upstream(read_validation_data_task)
+    preprocess_validation_data_task.set_upstream(read_validation_data_task)
+    add_edges_task.set_upstream(preprocess_validation_data_task)
+    feature_Extraction_task.set_upstream(add_edges_task)
+    #create_dask_dataframe_task.set_upstream(feature_Extraction_task)
+    #merge_trans_with_gf_task.set_upstream([create_graph_task, create_dask_dataframe_task])
+    merge_trans_with_gf_task.set_upstream([add_edges_task, feature_Extraction_task])
+    upload_files_to_gcs_task.set_upstream(merge_trans_with_gf_task)

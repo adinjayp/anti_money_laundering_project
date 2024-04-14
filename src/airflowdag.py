@@ -82,6 +82,13 @@ with DAG(
         #op_kwargs={'initial_preprocessed_ddf': preprocess_data_task.output['ddf']},  # Pass the output of extract_features_task to create_graph
         dag=dag
     )
+    add_edges_task = PythonOperator(
+        task_id='add_edges_to_graph',
+        op_kwargs={'dagtype': 'initial'},
+        python_callable=add_edges_to_graph,
+        #op_kwargs={'initial_preprocessed_ddf': preprocess_validation_data_task.output['ddf']},  # Pass the output of extract_features_task to create_graph
+        dag=dag
+    )
     feature_Extraction_task = PythonOperator(
         task_id='extract_graph_features',
         python_callable=extract_graph_features,
@@ -114,10 +121,11 @@ with DAG(
     data_split_task.set_upstream(ingest_data_task)
     preprocess_data_task.set_upstream(data_split_task)
     create_graph_task.set_upstream(preprocess_data_task)
-    feature_Extraction_task.set_upstream(create_graph_task)
+    add_edges_task.set_upstream(create_graph_task)
+    feature_Extraction_task.set_upstream(add_edges_task)
     #create_dask_dataframe_task.set_upstream(feature_Extraction_task)
     #merge_trans_with_gf_task.set_upstream([create_graph_task, create_dask_dataframe_task])
-    merge_trans_with_gf_task.set_upstream([create_graph_task, feature_Extraction_task])
+    merge_trans_with_gf_task.set_upstream([add_edges_task, feature_Extraction_task])
     upload_files_to_gcs_task.set_upstream(merge_trans_with_gf_task)
 
     

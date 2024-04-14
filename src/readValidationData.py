@@ -8,8 +8,10 @@ from dask.distributed import Client
 
 
 
-def download_data_from_bucket(bucket_name='aml_mlops_bucket', scheduler_address='tcp://10.128.0.5:8786'):
+def download_data_from_bucket():
     try:
+        bucket_name='aml_mlops_bucket'
+        scheduler_address='tcp://10.128.0.5:8786'
         # Configure logging
         logging.basicConfig(filename='bucket_download.log', level=logging.INFO)
         # Define a stream handler to write log messages to the terminal

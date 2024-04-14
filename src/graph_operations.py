@@ -19,7 +19,7 @@ def merge_trans_with_gf(**kwargs):
     logging.info("Starting merging transactions with graph features")
 
     try:
-        transactions_ddf = kwargs['task_instance'].xcom_pull(task_ids='create_graph', key='G_data')['ddf']
+        transactions_ddf = kwargs['task_instance'].xcom_pull(task_ids='add_edges_to_graph', key='G_data')['ddf']
         transactions_ddf = pickle.loads(transactions_ddf)
         graph_features_ddf = kwargs['task_instance'].xcom_pull(task_ids='extract_graph_features', key='graph_features_ddf')
         logging.info("transactions_ddf type: %s", str(type(transactions_ddf)))

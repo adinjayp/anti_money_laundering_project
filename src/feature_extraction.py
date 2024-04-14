@@ -24,12 +24,13 @@ def extract_graph_features(**kwargs):
     logging.info("Starting graph data processing")
 
     try:
-        train_graph_ddf = kwargs['task_instance'].xcom_pull(task_ids='create_graph', key='G_data')['ddf']
-        train_graph_ddf = pickle.loads(train_graph_ddf)
-        G_bytes = kwargs['task_instance'].xcom_pull(task_ids='create_graph', key='G_data')['G']
+        graph_ddf = kwargs['task_instance'].xcom_pull(task_ids='add_edges_to_graph', key='G_data')['ddf']
+        graph_ddf = pickle.loads(graph_ddf)
+        G_bytes = kwargs['task_instance'].xcom_pull(task_ids='add_edges_to_graph', key='G_data')['G']
         G = pickle.loads(G_bytes)
+
         # Step 1: Extract unique nodes
-        unique_nodes = list(set(train_graph_ddf['From_ID']).union(train_graph_ddf['To_ID']))
+        unique_nodes = list(set(graph_ddf['From_ID']).union(graph_ddf['To_ID']))
         logging.info("Unique nodes extracted")
 
         # Step 2: Convert to Dask DataFrame
