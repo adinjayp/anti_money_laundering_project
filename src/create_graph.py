@@ -48,7 +48,7 @@ def create_graph():
         #    'ddf': ddf,
         #}
         # Push the dictionary to XCom
-       kwargs['task_instance'].xcom_push(key='G_bytes', value=G_bytes)
+        kwargs['task_instance'].xcom_push(key='G_bytes', value=G_bytes)
         return  G
 
     except Exception as e:
