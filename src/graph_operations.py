@@ -55,7 +55,8 @@ def merge_trans_with_gf(**kwargs):
         
         logging.info("Merging transactions with graph features finished")
         logging.info("merged_ddf head after merge: %s", str(merged_ddf.head(1)))
-        kwargs['task_instance'].xcom_push(key='merged_ddf', value=merged_ddf)
+        merged_ddf_bytes = pickle.dumps(merged_ddf.compute())
+        kwargs['task_instance'].xcom_push(key='merged_ddf', value=merged_ddf_bytes)
         return merged_ddf
 
     except Exception as e:
