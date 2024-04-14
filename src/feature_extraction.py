@@ -47,10 +47,12 @@ def extract_graph_features(**kwargs):
         logging.info("Graph features calculated")
 
         # Convert each string to a dictionary
-        dicts = [ast.literal_eval(string_data) for string_data in computed_graph_features]
+        dicts = [ast.literal_eval(string_data) for str(string_data) in computed_graph_features]
+        logging.info("Converted each string to a dictionary")
 
         # Create a list of lists containing the dictionary values for each entry
         list_of_lists = [list(data_dict.values()) for data_dict in dicts]
+        logging.info("Created a list of lists containing the dictionary values for each entry")
 
         # Create a DataFrame from the list of lists
         lists_df = pd.DataFrame(list_of_lists, columns=dicts[0].keys())
