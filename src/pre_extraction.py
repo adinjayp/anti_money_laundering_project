@@ -33,7 +33,7 @@ def extract_features(G, node):
         # Degree Centrality
         features['degree_centrality'] = float(nx.degree_centrality(G)[node])
 
-        logging.info(f"Features extracted for node {node}: {features}")
+        #logging.info(f"Features extracted for node {node}: {features}")
         return features
 
     except Exception as e:
