@@ -88,7 +88,7 @@ def download_data_from_bucket():
         logging.info("Successfully read data from GCS bucket.")
 
         test_data_from_cloud = {
-            'G_bytes': G_bytes
+            'G_bytes': G_bytes,
             'test_df': test_df,
             'first_timestamp': first_timestamp,
             'currency_dict': currency_dict,
