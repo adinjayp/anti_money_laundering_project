@@ -15,7 +15,7 @@ class IngestData:
     def get_data(self) -> pd.DataFrame:
         logging.info(f"Ingesting data from Google Cloud Storage")
         raw_data_pandas = pd.read_csv(self.gcs_bucket_path).astype(str)
-        return raw_data_pandas.head(20000)
+        return raw_data_pandas.head(1000)
 
 def ingest_data(**kwargs) -> dt.Frame:
     """
