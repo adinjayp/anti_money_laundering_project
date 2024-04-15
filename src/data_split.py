@@ -26,7 +26,7 @@ def data_split(**kwargs):
     raw_data = kwargs['task_instance'].xcom_pull(task_ids='ingest_data', key='raw_data')
     print(raw_data.head(1))
     try:
-        train_df, test_df = train_test_split(raw_data, test_size=0.2, random_state=42, stratify=raw_data['Is Laundering'])
+        train_df, test_df = train_test_split(raw_data, test_size=0.2, random_state=42)
         #train_dt = dt.Frame(train_df[:10000])
         #test_dt = dt.Frame(test_df[:2000])
 
