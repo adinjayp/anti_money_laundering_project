@@ -23,7 +23,15 @@ console.setFormatter(formatter)
 logging.getLogger('').addHandler(console)
 
 
-def initial_preprocessing_test(raw_data, first_timestamp, currency_dict, payment_format_dict, bank_account_dict, account_dict):
+def initial_preprocessing_test(**kwargs):
+    
+    raw_data = kwargs['task_instance'].xcom_pull(task_ids='read_validation_data', key='test_data_from_cloud')['test_df']
+    first_timestamp = kwargs['task_instance'].xcom_pull(task_ids='read_validation_data', key='test_data_from_cloud')['first_timestamp']
+    currency_dict = kwargs['task_instance'].xcom_pull(task_ids='read_validation_data', key='test_data_from_cloud')['currency_dict']
+    payment_format_dict = kwargs['task_instance'].xcom_pull(task_ids='read_validation_data', key='test_data_from_cloud')['payment_format_dict']
+    bank_account_dict = kwargs['task_instance'].xcom_pull(task_ids='read_validation_data', key='test_data_from_cloud')['bank_account_dict']
+    account_dict = kwargs['task_instance'].xcom_pull(task_ids='read_validation_data', key='test_data_from_cloud')['account_dict']
+
     logging.info("Starting initial preprocessing")
     raw_data = dt.Frame(raw_data)
     data = []
@@ -75,6 +83,20 @@ def initial_preprocessing_test(raw_data, first_timestamp, currency_dict, payment
         ddf = dd.from_pandas(pandas_df, npartitions=2)
 
         logging.info("Finished initial preprocessing")
+
+        # Combine all the data into a dictionary
+        preprocessing_data = {
+            'ddf': ddf_bytes,
+            'first_timestamp': first_timestamp,
+            'currency_dict': currency_dict,
+            'payment_format_dict': payment_format_dict,
+            'bank_account_dict': bank_account_dict,
+            'account_dict': account_dict
+        }
+        
+        # Push the dictionary to XCom
+        kwargs['task_instance'].xcom_push(key='preprocessing_data', value=preprocessing_data)
+
         return {'ddf': ddf, 'first_timestamp': first_timestamp, 'currency_dict':currency_dict, 'payment_format_dict': payment_format_dict, 'bank_account_dict': bank_account_dict, 'account_dict': account_dict}
 
     except Exception as e:

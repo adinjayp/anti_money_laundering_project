@@ -3,20 +3,21 @@ import tensorflow_data_validation as tfdv
 import pandas as pd
 from sklearn.model_selection import train_test_split
 #from utils import add_extra_rows
-from tensorflow_metadata.proto.v0 import schema_pb2
+#from tensorflow_metadata.proto.v0 import schema_pb2
 import logging
 import pandas as pd
-from tensorflow.python.data.ops import dataset_ops  # TFDV functionality
-from tensorflow_metadata.proto.v0 import schema_pb2
+#from tensorflow.python.data.ops import dataset_ops  # TFDV functionality
+#from tensorflow_metadata.proto.v0 import schema_pb2
 from google.cloud import storage  
 import datetime# For accessing GCP buckets
 
-def perform_eda(df: pd.DataFrame) -> None:
+def perform_eda(**kwargs) -> None:
     logging.info("Starting exploratory data analysis")
-    print(df.head())
-    print(df.info())
-    print(df.describe(include='all'))
-    print(df.isna().sum())
+    df = kwargs['task_instance'].xcom_pull(task_ids='read_validation_data', key='test_data_from_cloud')['test_df']
+    logging.info("test_df.info: %s", str(df.info()))
+    logging.info("test_df.describe: %s", str(df.describe(include='all')))
+    logging.info("Number of null values: %s", str(df.isna().sum()))
+    logging.info("First few rows: %s", str(df.head()))
     
     null_values_total = df.isnull().sum()
     null_rows = None

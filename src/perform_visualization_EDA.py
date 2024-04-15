@@ -9,11 +9,13 @@ import pandas as pd
 from tensorflow.python.data.ops import dataset_ops  # TFDV functionality
 from tensorflow_metadata.proto.v0 import schema_pb2
 from google.cloud import storage  
-import datetime# For accessing GCP buckets
+import datetime
+from google.cloud import storage
+# For accessing GCP buckets
 
 
 
-def analyze_with_tfdv(df1: pd.DataFrame, df2: pd.DataFrame, aml_mlops_bucket: str, output_folder: str = "tfdv_visualizations") -> None:
+def analyze_with_tfdv(df1: pd.DataFrame, **kwargs) -> None:
   """
   Analyzes two DataFrames using TFDV and generates visualizations.
 
@@ -25,6 +27,21 @@ def analyze_with_tfdv(df1: pd.DataFrame, df2: pd.DataFrame, aml_mlops_bucket: st
   """
   try:
     logging.info("Starting TFDV analysis")
+
+    bucket_name = 'aml_mlops_bucket'
+    output_folder = 'EDA_TFDV_testdata_viz'
+
+    df1 = 
+    # GET G FROM BUCKET
+    storage_client = storage.Client()
+    file_name = 'train_preprocessed_ddfaf_csv.pickle'
+    bucket = storage_client.bucket(bucket_name)
+    blob = bucket.blob(file_name)
+    df1_bytes = blob.download_as_string()
+    df1 = pickle.load(df1_bytes).reset_index()
+    logging.info("Successfully downloaded and deserialized train df from bucket.")
+
+    df2 = kwargs['task_instance'].xcom_pull(task_ids='read_validation_data', key='test_data_from_cloud')['test_df']
 
     # Generate statistics for both DataFrames
     df1_stats = tfdv.generate_statistics_from_dataframe(df1)
@@ -46,10 +63,10 @@ def analyze_with_tfdv(df1: pd.DataFrame, df2: pd.DataFrame, aml_mlops_bucket: st
     )
     filename = f"comparison_{timestamp}.png"
     storage_client = storage.Client()
-    bucket = storage_client.bucket(aml_mlops_bucket)
-    blob = bucket.blob(f"{aml_mlops_bucket}/{output_folder}/{filename}")
+    bucket = storage_client.bucket(bucket_name)
+    blob = bucket.blob(f"{bucket_name}/{output_folder}/{filename}")
     blob.upload_from_string(fig.to_string_io(), content_type="image/png")
-    logging.info(f"Visualization saved: gs://{aml_mlops_bucket}/{output_folder}/{filename}")
+    logging.info(f"Visualization saved: gs://{bucket_name}/{output_folder}/{filename}")
 
     # Infer schema from the statistics
     schema = tfdv.infer_schema(statistics=df1_stats)

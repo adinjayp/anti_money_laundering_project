@@ -11,6 +11,7 @@ from dask.distributed import Client
 def download_data_from_bucket():
     try:
         bucket_name='aml_mlops_bucket'
+        folder_name = "airflow_files"
         scheduler_address='tcp://10.128.0.5:8786'
         # Configure logging
         logging.basicConfig(filename='bucket_download.log', level=logging.INFO)
@@ -24,25 +25,25 @@ def download_data_from_bucket():
         logging.getLogger('').addHandler(console)
 
         # Connect to the Dask cluster
-        client = Client(scheduler_address)
-        client.upload_file('feature_extraction.py')
-        client.upload_file('graph_operations.py')
-        client.upload_file('preprocessing.py')
+        #client = Client(scheduler_address)
+        #client.upload_file('feature_extraction.py')
+        #client.upload_file('graph_operations.py')
+        #client.upload_file('preprocessing.py')
 
         # GET G FROM BUCKET
         # Initialize a Google Cloud Storage client
         storage_client = storage.Client()
 
         # Specify the name of the file containing the serialized graph
-        file_name = 'graph.gpickle'
+        file_name = 'graphaf.gpickle'
 
         # Download the serialized graph from the bucket
         bucket = storage_client.bucket(bucket_name)
-        blob = bucket.blob(file_name)
+        blob = bucket.blob(f"{folder_name}/{file_name}")
         graph_bytes = blob.download_as_string()
 
         # Deserialize the graph using pickle
-        G = pickle.loads(graph_bytes)
+        #G = pickle.loads(graph_bytes)
 
         logging.info("Successfully downloaded and deserialized graph from bucket.")
 
@@ -85,6 +86,19 @@ def download_data_from_bucket():
         test_df = aw_data_pandas.head(25)
 
         logging.info("Successfully read data from GCS bucket.")
+
+        test_data_from_cloud = {
+            'G_bytes': G_bytes
+            'test_df': test_df,
+            'first_timestamp': first_timestamp,
+            'currency_dict': currency_dict,
+            'payment_format_dict': payment_format_dict,
+            'bank_account_dict': bank_account_dict,
+            'account_dict': account_dict
+        }
+
+        # Push the dictionary to XCom
+        kwargs['task_instance'].xcom_push(key='test_data_from_cloud', value=test_data_from_cloud)
 
         return {'G': G, 'first_timestamp': first_timestamp, 'currency_dict': currency_dict, 'payment_format_dict': payment_format_dict,'bank_account_dict': bank_account_dict, 'test_df': test_df}
 

@@ -68,21 +68,21 @@ with DAG(
     perform_EDA_task = PythonOperator(
         task_id='perform_EDA',
         python_callable=perform_eda,
-        op_kwargs={'df': read_validation_data_task.output['test_df']},
+        #op_kwargs={'df': read_validation_data_task.output['test_df']},
         dag=dag
     )
-    '''
+    
     perform_visualization_task = PythonOperator(
         task_id='perform_visualization_EDA',
         python_callable=analyze_with_tfdv,
-        op_kwargs={'df1': data_split_task.output[2], 'df2': data_split_task.output[3] , 'aml_mlops_bucket': 'aml_mlops_bucket', 'output_folder': "tfdv_visualizations" },
+        #op_kwargs={'df1': data_split_task.output[2], 'df2': data_split_task.output[3] },
         dag=dag
     )
-    '''
+    
     preprocess_validation_data_task = PythonOperator(
         task_id='initial_preprocessing_test',
         python_callable=initial_preprocessing_test,
-        op_kwargs={'raw_data': read_validation_data_task.output['test_df'],'first_timestamp': read_validation_data_task.output['first_timestamp'], 'currency_dict': read_validation_data_task.output['currency_dict'] ,'payment_format_dict': read_validation_data_task.output['payment_format_dict'],'bank_account_dict': read_validation_data_task.output['bank_account_dict']},
+        #op_kwargs={'raw_data': read_validation_data_task.output['test_df'],'first_timestamp': read_validation_data_task.output['first_timestamp'], 'currency_dict': read_validation_data_task.output['currency_dict'] ,'payment_format_dict': read_validation_data_task.output['payment_format_dict'],'bank_account_dict': read_validation_data_task.output['bank_account_dict']},
         dag=dag
     )    
 
@@ -129,10 +129,9 @@ with DAG(
 
      # Set up dependencies
     perform_EDA_task.set_upstream(read_validation_data_task)
+    perform_visualization_task.set_upstream(read_validation_data)
     preprocess_validation_data_task.set_upstream(read_validation_data_task)
     add_edges_task.set_upstream(preprocess_validation_data_task)
     feature_Extraction_task.set_upstream(add_edges_task)
-    #create_dask_dataframe_task.set_upstream(feature_Extraction_task)
-    #merge_trans_with_gf_task.set_upstream([create_graph_task, create_dask_dataframe_task])
     merge_trans_with_gf_task.set_upstream([add_edges_task, feature_Extraction_task])
-    upload_files_to_gcs_task.set_upstream(merge_trans_with_gf_task)
+    upload_files_to_gcs_task.set_upstream([add_edges_task, preprocess_data_task, merge_trans_with_gf_task])
