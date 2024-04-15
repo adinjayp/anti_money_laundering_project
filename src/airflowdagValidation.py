@@ -134,4 +134,4 @@ with DAG(
     add_edges_task.set_upstream(preprocess_validation_data_task)
     feature_Extraction_task.set_upstream(add_edges_task)
     merge_trans_with_gf_task.set_upstream([add_edges_task, feature_Extraction_task])
-    upload_files_to_gcs_task.set_upstream([add_edges_task, preprocess_data_task, merge_trans_with_gf_task])
+    upload_files_to_gcs_task.set_upstream([add_edges_task, preprocess_validation_data_task, merge_trans_with_gf_task])
