@@ -31,7 +31,6 @@ def analyze_with_tfdv(df1: pd.DataFrame, **kwargs) -> None:
     bucket_name = 'aml_mlops_bucket'
     output_folder = 'EDA_TFDV_testdata_viz'
 
-    df1 = 
     # GET G FROM BUCKET
     storage_client = storage.Client()
     file_name = 'train_preprocessed_ddfaf_csv.pickle'
