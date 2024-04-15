@@ -129,7 +129,7 @@ with DAG(
 
      # Set up dependencies
     perform_EDA_task.set_upstream(read_validation_data_task)
-    perform_visualization_task.set_upstream(read_validation_data)
+    perform_visualization_task.set_upstream(read_validation_data_task)
     preprocess_validation_data_task.set_upstream(read_validation_data_task)
     add_edges_task.set_upstream(preprocess_validation_data_task)
     feature_Extraction_task.set_upstream(add_edges_task)
