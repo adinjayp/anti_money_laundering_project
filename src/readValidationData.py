@@ -6,7 +6,7 @@ import pandas as pd
 import datatable as dt
 #from dask.distributed import Client
 
-def download_data_from_bucket():
+def download_data_from_bucket(**kwargs):
     try:
         bucket_name='aml_mlops_bucket'
         folder_name = "airflow_files"
