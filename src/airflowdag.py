@@ -110,7 +110,7 @@ with DAG(
 
     upload_files_to_gcs_task = PythonOperator(
         task_id='upload_files_to_gcs',
-        op_kwargs={'dagtype': 'initial'}
+        op_kwargs={'dagtype': 'initial'},
         python_callable=upload_file_to_gcs,
         provide_context=True,  # Allows accessing task context
         #op_kwargs={'bucket_name': 'aml_mlops_bucket' ,'file_paths': [create_graph_task.output['G'], preprocess_data_task.output['first_timestamp'], preprocess_data_task.output['currency_dict'], preprocess_data_task.output['payment_format_dict'], 
