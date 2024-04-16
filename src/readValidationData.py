@@ -70,7 +70,7 @@ def download_data_from_bucket():
         # Read data from GCS bucket
         gcs_bucket_path = "gs://aml_mlops_bucket/"
         raw_data_pandas = pd.read_csv(gcs_bucket_path + 'HI_Medium_Trans_1.csv').astype(str)
-        test_df = aw_data_pandas.head(25)
+        test_df = raw_data_pandas.head(25)
 
         logging.info("Successfully read data from GCS bucket.")
 
