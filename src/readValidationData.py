@@ -27,7 +27,7 @@ def download_data_from_bucket():
         # Download the serialized graph from the bucket
         bucket = storage_client.bucket(bucket_name)
         blob = bucket.blob(f"{folder_name}/{file_name}")
-        graph_bytes = blob.download_as_string()
+        G_bytes = blob.download_as_string()
 
         # Deserialize the graph using pickle
         #G = pickle.loads(graph_bytes)
