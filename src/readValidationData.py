@@ -6,26 +6,11 @@ import pandas as pd
 import datatable as dt
 #from dask.distributed import Client
 
-
-
 def download_data_from_bucket():
     try:
         bucket_name='aml_mlops_bucket'
         folder_name = "airflow_files"
         #scheduler_address='tcp://10.128.0.5:8786'
-        # Configure logging
-        logging.basicConfig(filename='bucket_download.log', level=logging.INFO)
-        # Define a stream handler to write log messages to the terminal
-        console = logging.StreamHandler()
-        console.setLevel(logging.INFO)
-        # Create a formatter and set it to the handler
-        formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-        console.setFormatter(formatter)
-        # Add the handler to the root logger
-        logging.getLogger('').addHandler(console)
-        logging.info("Successfully downloaded and deserialized graph from bucket.")
-
-        '''
         # Connect to the Dask cluster
         #client = Client(scheduler_address)
         #client.upload_file('feature_extraction.py')
@@ -103,7 +88,21 @@ def download_data_from_bucket():
         kwargs['task_instance'].xcom_push(key='test_data_from_cloud', value=test_data_from_cloud)
 
         return {'G': G, 'first_timestamp': first_timestamp, 'currency_dict': currency_dict, 'payment_format_dict': payment_format_dict,'bank_account_dict': bank_account_dict, 'test_df': test_df}
-        '''
+        
     except Exception as e:
         logging.error(f"An error occurred: {e}")
         return None, None, None, None, None, None
+
+
+# Configure logging
+logging.basicConfig(filename='bucket_download.log', level=logging.INFO)
+# Define a stream handler to write log messages to the terminal
+console = logging.StreamHandler()
+console.setLevel(logging.INFO)
+
+# Create a formatter and set it to the handler
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+console.setFormatter(formatter)
+
+# Add the handler to the root logger
+logging.getLogger('').addHandler(console)
