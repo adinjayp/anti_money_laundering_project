@@ -4,7 +4,7 @@ import pickle
 import json
 from google.cloud import storage
 
-def upload_file_to_gcs(**kwargs):
+def upload_file_to_gcs(dagtype, **kwargs):
     """
     Upload a file to Google Cloud Storage bucket.
     
@@ -16,14 +16,21 @@ def upload_file_to_gcs(**kwargs):
     str: URL of the uploaded file, or None if upload fails.
     """
     G_bytes = kwargs['task_instance'].xcom_pull(task_ids='add_edges_to_graph', key='G_data')['G']
-
-    first_timestamp = kwargs['task_instance'].xcom_pull(task_ids='initial_preprocessing', key='preprocessing_data')['first_timestamp']
-    currency_dict = kwargs['task_instance'].xcom_pull(task_ids='initial_preprocessing', key='preprocessing_data')['currency_dict']
-    payment_format_dict = kwargs['task_instance'].xcom_pull(task_ids='initial_preprocessing', key='preprocessing_data')['payment_format_dict']
-    bank_account_dict = kwargs['task_instance'].xcom_pull(task_ids='initial_preprocessing', key='preprocessing_data')['bank_account_dict']
-    account_dict = kwargs['task_instance'].xcom_pull(task_ids='initial_preprocessing', key='preprocessing_data')['account_dict']
-
     merged_ddf_bytes = kwargs['task_instance'].xcom_pull(task_ids='merge_trans_with_gf', key='merged_ddf_bytes')
+
+    if dagtype == 'initial':
+        first_timestamp = kwargs['task_instance'].xcom_pull(task_ids='initial_preprocessing', key='preprocessing_data')['first_timestamp']
+        currency_dict = kwargs['task_instance'].xcom_pull(task_ids='initial_preprocessing', key='preprocessing_data')['currency_dict']
+        payment_format_dict = kwargs['task_instance'].xcom_pull(task_ids='initial_preprocessing', key='preprocessing_data')['payment_format_dict']
+        bank_account_dict = kwargs['task_instance'].xcom_pull(task_ids='initial_preprocessing', key='preprocessing_data')['bank_account_dict']
+        account_dict = kwargs['task_instance'].xcom_pull(task_ids='initial_preprocessing', key='preprocessing_data')['account_dict']
+    
+    elif dagtype == 'inference':
+        first_timestamp = kwargs['task_instance'].xcom_pull(task_ids='initial_preprocessing_test', key='preprocessing_data')['first_timestamp']
+        currency_dict = kwargs['task_instance'].xcom_pull(task_ids='initial_preprocessing_test', key='preprocessing_data')['currency_dict']
+        payment_format_dict = kwargs['task_instance'].xcom_pull(task_ids='initial_preprocessing_test', key='preprocessing_data')['payment_format_dict']
+        bank_account_dict = kwargs['task_instance'].xcom_pull(task_ids='initial_preprocessing_test', key='preprocessing_data')['bank_account_dict']
+        account_dict = kwargs['task_instance'].xcom_pull(task_ids='initial_preprocessing_test', key='preprocessing_data')['account_dict']
 
     # Convert the dictionary to a JSON string
     json_account_dict = json.dumps(account_dict)
@@ -32,13 +39,15 @@ def upload_file_to_gcs(**kwargs):
     json_bank_account_dict = json.dumps(bank_account_dict)
     json_first_timestamp = json.dumps({"first_timestamp": first_timestamp})
 
+    ddf_file_name = "train_preprocessed_ddfaf_csv.pickle" if dagtype == 'initial' else "inference_preprocessed_ddfaf_csv.pickle"
+
     files_to_push = [[G_bytes,'graphaf.gpickle'],
     [json_first_timestamp, 'first_timestampaf.json'], 
     [json_currency_dict, 'currency_dictaf.json'],
     [json_payment_format_dict, 'payment_format_dictaf.json'],
     [json_bank_account_dict, 'bank_account_dictaf.json'],
     [json_account_dict, 'account_dictaf.json'],
-    [merged_ddf_bytes, "train_preprocessed_ddfaf_csv.pickle"]]
+    [merged_ddf_bytes, ddf_file_name]]
 
     bucket_name = 'aml_mlops_bucket'
     folder_name = "airflow_files"
