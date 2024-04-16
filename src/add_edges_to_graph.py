@@ -40,6 +40,7 @@ def add_edges_to_graph(dagtype, **kwargs):
     elif dagtype=='inference': 
         # GET G FROM BUCKET
         storage_client = storage.Client()
+        bucket_name = 'aml_mlops_bucket'
         file_name = 'graph.gpickle'
         bucket = storage_client.bucket(bucket_name)
         blob = bucket.blob(file_name)
