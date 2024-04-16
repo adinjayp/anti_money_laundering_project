@@ -90,7 +90,7 @@ def download_data_from_bucket(**kwargs):
         # Push the dictionary to XCom
         kwargs['task_instance'].xcom_push(key='test_data_from_cloud', value=test_data_from_cloud)
 
-        return {'G': G, 'first_timestamp': first_timestamp, 'currency_dict': currency_dict, 'payment_format_dict': payment_format_dict,'bank_account_dict': bank_account_dict, 'test_df': test_df}
+        return {'G': G_bytes, 'first_timestamp': first_timestamp, 'currency_dict': currency_dict, 'payment_format_dict': payment_format_dict,'bank_account_dict': bank_account_dict, 'test_df': test_df}
         
     except Exception as e:
         logging.error(f"An error occurred: {e}")

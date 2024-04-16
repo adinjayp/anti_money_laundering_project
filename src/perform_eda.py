@@ -27,12 +27,12 @@ def perform_eda(**kwargs) -> None:
             logging.warning(f"Null values found in column '{column}':")
             logging.warning(null_rows.to_string())  # Use logging for null rows
     
-    negative_amount_paid = df[df['Amount Paid'] < 0]
+    negative_amount_paid = df[df['Amount Paid'].astype(float) < 0]
     if not negative_amount_paid.empty:
         logging.warning("Rows with negative values in 'Amount Paid' column:")
         logging.warning(negative_amount_paid.to_string())
 
-    negative_amount_received = df[df['Amount Received'] < 0]
+    negative_amount_received = df[df['Amount Received'].astype(float) < 0]
     if not negative_amount_received.empty:
         logging.warning("\nRows with negative values in 'Amount Received' column:")
         logging.warning(negative_amount_received.to_string())

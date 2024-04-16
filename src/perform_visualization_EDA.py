@@ -15,7 +15,7 @@ from google.cloud import storage
 
 
 
-def analyze_with_tfdv(df1: pd.DataFrame, **kwargs) -> None:
+def analyze_with_tfdv(**kwargs) -> None:
   """
   Analyzes two DataFrames using TFDV and generates visualizations.
 
@@ -30,12 +30,14 @@ def analyze_with_tfdv(df1: pd.DataFrame, **kwargs) -> None:
 
     bucket_name = 'aml_mlops_bucket'
     output_folder = 'EDA_TFDV_testdata_viz'
+    folder_name = "airflow_files"
 
-    # GET G FROM BUCKET
+    # GET TRAIN DF1 FROM BUCKET
     storage_client = storage.Client()
+    
     file_name = 'train_preprocessed_ddfaf_csv.pickle'
     bucket = storage_client.bucket(bucket_name)
-    blob = bucket.blob(file_name)
+    blob = bucket.blob(f"{folder_name}/{file_name}")
     df1_bytes = blob.download_as_string()
     df1 = pickle.load(df1_bytes).reset_index()
     logging.info("Successfully downloaded and deserialized train df from bucket.")

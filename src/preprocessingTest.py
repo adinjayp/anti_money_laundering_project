@@ -8,6 +8,7 @@ import sys
 import os
 from sklearn.model_selection import train_test_split
 import logging
+import pickle
 
 # Configure logging
 logging.basicConfig(filename='preprocessingTest.log', level=logging.INFO)
@@ -80,9 +81,11 @@ def initial_preprocessing_test(**kwargs):
         logging.info("Creating pandas DataFrame")
         pandas_df = pd.DataFrame(data, columns=['Index', 'From_ID', 'To_ID', 'Timestamp', 'Amount_Paid', 'Payment_Currency',
                                          'Amount_Received', 'Receiving_Currency', 'Payment_Format', 'Is_Laundering'])
-        ddf = dd.from_pandas(pandas_df, npartitions=2)
+        ddf = dd.from_pandas(pandas_df, npartitions=1)
 
         logging.info("Finished initial preprocessing")
+
+        ddf_bytes = pickle.dumps(ddf)
 
         # Combine all the data into a dictionary
         preprocessing_data = {
