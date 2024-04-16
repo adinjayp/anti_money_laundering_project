@@ -71,6 +71,7 @@ def download_data_from_bucket():
         gcs_bucket_path = "gs://aml_mlops_bucket/"
         raw_data_pandas = pd.read_csv(gcs_bucket_path + 'HI_Medium_Trans_1.csv').astype(str)
         test_df = raw_data_pandas.head(25)
+        logging.info("test_df head: %s", str(test_df.head()))
 
         logging.info("Successfully read data from GCS bucket.")
 
@@ -83,6 +84,8 @@ def download_data_from_bucket():
             'bank_account_dict': bank_account_dict,
             'account_dict': account_dict
         }
+
+         logging.info("test_df head from xcom df: %s", str(test_data_from_cloud['test_df'].head()))
 
         # Push the dictionary to XCom
         kwargs['task_instance'].xcom_push(key='test_data_from_cloud', value=test_data_from_cloud)
