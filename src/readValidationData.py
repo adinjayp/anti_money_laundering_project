@@ -85,7 +85,7 @@ def download_data_from_bucket():
             'account_dict': account_dict
         }
 
-         logging.info("test_df head from xcom df: %s", str(test_data_from_cloud['test_df'].head()))
+        logging.info("test_df head from xcom df: %s", str(test_data_from_cloud['test_df'].head()))
 
         # Push the dictionary to XCom
         kwargs['task_instance'].xcom_push(key='test_data_from_cloud', value=test_data_from_cloud)
