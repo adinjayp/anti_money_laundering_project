@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Anti Money Laundering System</title>
+<style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('cash-money-bills-on-woodgrain.jpg'); /* Replace 'background_image.jpg' with the path to your image */
+            background-size: cover;
+            background-position: center;
+            background-blend-mode: lighten;
+            background-color: rgba(255,255,255,0.4);
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        .headline {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #000000;
+        }
+        .subheadline {
+            font-size: 18px;
+            margin-bottom: 30px;
+            color: #313030;
+        }
+        .upload-text {
+            font-size: 16px;
+            margin-bottom: 30px;
+            color: #424040;
+        }
+        .upload-button {
+            background-color: #0c9c11;
+            color: white;
+            padding: 15px 40px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .upload-button:hover {
+            background-color: #128317;
+        }
+        #csv-file {
+            display: none;
+        }
+        #prediction-result {
+            margin-top: 30px;
+            font-size: 18px;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="headline">Anti Money Laundering System</div>
+        <div class="subheadline">Safeguarding Financial Transactions</div>
+        <div class="upload-text">Please upload the CSV file of transactions in the required format.</div>
+        <label for="csv-file" class="upload-button">Upload CSV File</label>
+        <input type="file" id="csv-file" name="csv-file" accept=".csv">
+        <button onclick="submitFile()">Submit</button>
+    </div>
+
+    <div id="prediction-result"></div>
+
+    <script>
+        function submitFile() {
+            var fileInput = document.getElementById("csv-file");
+            var file = fileInput.files[0];
+            if (!file) {
+                alert("No file selected.");
+                return;
+            }
+            if (file.type !== 'text/csv') {
+                alert("Please select a CSV file.");
+                clearFile();
+                return;
+            }
+            uploadFile();
+        }
+
+        function clearFile() {
+            document.getElementById("csv-file").value = '';
+        }
+
+        function uploadFile() {
+            var formData = new FormData();
+            formData.append("file", document.getElementById("csv-file").files[0]);
+            fetch("/process_csv", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("prediction-result").innerText = "Prediction: " + data.prediction;
+            })
+            .catch(error => console.error("Error:", error));
+        }
+    </script>
+</body>
+</html>
