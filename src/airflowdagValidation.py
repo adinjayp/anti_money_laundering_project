@@ -21,6 +21,7 @@ from preprocessingTest import initial_preprocessing_test
 from perform_eda import perform_eda
 from perform_visualization_EDA import analyze_with_tfdv
 from airflowdag import data_split_task
+from model_inference import predict_custom_trained_model
 
 # G = None 
 # scheduler_address = 'tcp://10.128.0.5:8786'
@@ -125,6 +126,13 @@ with DAG(
         dag=dag
     )
 
+    prediction_task = PythonOperator(
+        task_id='predict_custom_trained_model',
+        python_callable=predict_custom_trained_model,
+        provide_context=True,  # Allows accessing task context
+        dag=dag
+    )
+
     
     #read_validation_data_task >> perform_EDA_task >> preprocess_validation_data_task >> add_edges_task >> feature_Extraction_task >> merge_trans_with_gf_task >> upload_files_to_gcs_task 
 
@@ -136,3 +144,4 @@ with DAG(
     feature_Extraction_task.set_upstream(add_edges_task)
     merge_trans_with_gf_task.set_upstream([add_edges_task, feature_Extraction_task])
     upload_files_to_gcs_task.set_upstream([add_edges_task, preprocess_validation_data_task, merge_trans_with_gf_task])
+    prediction_task.set_upstream(merge_trans_with_gf_task)
