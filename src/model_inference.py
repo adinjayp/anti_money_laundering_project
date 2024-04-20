@@ -47,24 +47,3 @@ def predict_custom_trained_model(
     predictions = response.predictions
     for prediction in predictions:
         print(" prediction:", dict(prediction))
-
-
-predict_custom_trained_model(
-    project="497741562136",
-    endpoint_id="1974151137439252480",
-    location="us-east1",
-    instances= {
-            "PT08.S1(CO)": 0.651435622,
-            "NMHC(GT)": 0.154088375,
-            "C6H6(GT)": 0.198980682,
-            "PT08.S2(NMHC)": 0.406771327,
-            "NOx(GT)": 0.608617903,
-            "PT08.S3(NOx)": 0.340316247,
-            "NO2(GT)": 0.604898307,
-            "PT08.S4(NO2)": 0.354166125,
-            "PT08.S5(O3)": 0.670583278,
-            "T": 0.080010396,
-            "RH": 0.098031541,
-            "AH": 0.146104239
-        }
-)
