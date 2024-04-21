@@ -71,8 +71,7 @@ def fetch_latest_model(bucket_name, prefix="model/model_"):
 
     return latest_blob_name
 
-
- def preprocess_data(df):
+def preprocess_data(df):
     #push inference dataframe to bucket
     inference_df_bytes = pickle.dumps(df)
     file_name = "inference_original_csv.pickle"
