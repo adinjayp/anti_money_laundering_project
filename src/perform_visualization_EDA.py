@@ -1,13 +1,11 @@
 import tensorflow as tf
 import tensorflow_data_validation as tfdv
 import pandas as pd
-from sklearn.model_selection import train_test_split
 #from utils import add_extra_rows
 from tensorflow_metadata.proto.v0 import schema_pb2
 import logging
 import pandas as pd
 from tensorflow.python.data.ops import dataset_ops  # TFDV functionality
-from tensorflow_metadata.proto.v0 import schema_pb2
 from google.cloud import storage  
 import datetime
 import gcsfs
@@ -15,8 +13,6 @@ import pickle
 
 # For accessing GCP buckets
 fs = gcsfs.GCSFileSystem()
-
-
 
 def analyze_with_tfdv(**kwargs) -> None:
   """
@@ -36,10 +32,20 @@ def analyze_with_tfdv(**kwargs) -> None:
     folder_name = "airflow_files"
 
     # GET TRAIN DF1 FROM BUCKET
+    # For accessing GCP buckets
+    fs = gcsfs.GCSFileSystem()
     storage_client = storage.Client()
 
-    with fs.open("gs://aml_mlops_bucket/airflow_files/train_preprocessed_ddfaf_csv.pickle", 'rb') as f:
-       df1 = pickle.load(f).reset_index()
+    file_name = 'train_preprocessed_ddfaf_csv.pickle'
+    bucket = storage_client.bucket(bucket_name)
+    blob = bucket.blob(f"{folder_name}/{file_name}")
+    df1_bytes = blob.download_as_string()
+    df1 = pickle.loads(df1_bytes)  # Adjusted to use pickle.loads() instead of pickle.load()
+    df1 = df1.reset_index()  # Reset the index
+    logging.info("Successfully downloaded and deserialized train df from bucket.")
+
+    # with fs.open("gs://aml_mlops_bucket/airflow_files/train_preprocessed_ddfaf_csv.pickle", 'rb') as f:
+    #    df1 = pickle.load(f).reset_index()
     logging.info("Successfully downloaded and deserialized train df from bucket.")
 
     df2 = kwargs['task_instance'].xcom_pull(task_ids='read_validation_data', key='test_data_from_cloud')['test_df']
