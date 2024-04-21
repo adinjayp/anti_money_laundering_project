@@ -27,4 +27,4 @@ AIP_HEALTH_ROUTE=/ping
 AIP_PREDICT_ROUTE=/predict
  
 # Service account key file path
-SERVICE_ACCOUNT_EMAIL= amlmlops-serviceacc@skilful-alpha-415221.iam.gserviceaccount.com
+SERVICE_ACCOUNT_EMAIL=vertexaiserviceacc@skilful-alpha-415221.iam.gserviceaccount.com

@@ -12,7 +12,7 @@ BUCKET ="aml_mlops_bucket"  # Should be same as AIP_STORAGE_URI specified in the
 CONTAINER_URI="us-east1-docker.pkg.dev/skilful-alpha-415221/amlartifactrepo/trainer:v1"
 MODEL_SERVING_CONTAINER_IMAGE_URI ="us-east1-docker.pkg.dev/skilful-alpha-415221/amlartifactrepo/serve:v1"
 DISPLAY_NAME="endpointdisplayname"
-SERVICE_ACCOUNT_EMAIL ="amlmlops-serviceacc@skilful-alpha-415221.iam.gserviceaccount.com"
+SERVICE_ACCOUNT_EMAIL ="vertexaiserviceacc@skilful-alpha-415221.iam.gserviceaccount.com"
 
 def initialize_aiplatform(project_id, region, bucket):
     """Initializes the AI platform with the given parameters.
