@@ -5,14 +5,14 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Configuration parameters
-REGION = os.getenv("REGION")
-PROJECT_ID = os.getenv("PROJECT_ID")
-BASE_OUTPUT_DIR =  os.getenv("BASE_OUTPUT_DIR")
-BUCKET = os.getenv("AIP_MODEL_DIR")  # Should be same as AIP_STORAGE_URI specified in the docker file
-CONTAINER_URI = os.getenv("CONTAINER_URI")
-MODEL_SERVING_CONTAINER_IMAGE_URI = os.getenv("MODEL_SERVING_CONTAINER_IMAGE_URI")
-DISPLAY_NAME = 'timeseriesmlopse2e'
-SERVICE_ACCOUNT_EMAIL = os.getenv("SERVICE_ACCOUNT_EMAIL")
+REGION="us-east1"
+PROJECT_ID="skilful-alpha-415221"
+BASE_OUTPUT_DIR="gs://aml_mlops_bucket"
+BUCKET ="aml_mlops_bucket"  # Should be same as AIP_STORAGE_URI specified in the docker file
+CONTAINER_URI="us-east1-docker.pkg.dev/skilful-alpha-415221/amlartifactrepo/trainer:v1"
+MODEL_SERVING_CONTAINER_IMAGE_URI ="us-east1-docker.pkg.dev/skilful-alpha-415221/amlartifactrepo/serve:v1"
+DISPLAY_NAME="endpointdisplayname"
+SERVICE_ACCOUNT_EMAIL ="amlmlops-serviceacc@skilful-alpha-415221.iam.gserviceaccount.com"
 
 def initialize_aiplatform(project_id, region, bucket):
     """Initializes the AI platform with the given parameters.
@@ -21,7 +21,7 @@ def initialize_aiplatform(project_id, region, bucket):
     :param bucket: GCS bucket
     """
 
-    aiplatform.init(project=project_id, location=region, staging_bucket=bucket)
+    aiplatform.init(project=project_id, location=region, staging_bucket='aml_mlops_bucket')
 
 def create_training_job(display_name, container_uri, model_serving_container_image_uri, bucket):
     """Creates a custom container training job.
