@@ -44,6 +44,44 @@ def analyze_with_tfdv(**kwargs) -> None:
 
     df2 = kwargs['task_instance'].xcom_pull(task_ids='read_validation_data', key='test_data_from_cloud')['test_df']
 
+    #checking for null values
+    null_values_total_df1 = df1.isnull().sum()
+    null_rows_df1 = None
+    for column in null_values_total_df1.index:
+            if null_values_total_df1[column] > 0:  # Check for null values before assignment
+                null_rows_df1 = df1.loc[df1[column].isnull(), :]
+                logging.warning(f"Null values found in column '{column}' in df1:")
+                logging.warning(null_rows_df1.to_string())  # Use logging for null rows
+        
+    negative_amount_paid_df1 = df1[df1['Amount Paid'] < 0]
+    if not negative_amount_paid_df1.empty:
+            logging.warning("Rows with negative values in 'Amount Paid' column in df1:")
+            logging.warning(negative_amount_paid_df1.to_string())
+
+    negative_amount_received_df1 = df1[df1['Amount Received'] < 0]
+    if not negative_amount_received_df1.empty:
+            logging.warning("\nRows with negative values in 'Amount Received' column in df1:")
+            logging.warning(negative_amount_received_df1.to_string())
+
+        # Additional code snippet for checking null values and negative values for df2
+    null_values_total_df2 = df2.isnull().sum()
+    null_rows_df2 = None
+    for column in null_values_total_df2.index:
+            if null_values_total_df2[column] > 0:  # Check for null values before assignment
+                null_rows_df2 = df2.loc[df2[column].isnull(), :]
+                logging.warning(f"Null values found in column '{column}' in df2:")
+                logging.warning(null_rows_df2.to_string())  # Use logging for null rows
+        
+    negative_amount_paid_df2 = df2[df2['Amount Paid'] < 0]
+    if not negative_amount_paid_df2.empty:
+            logging.warning("Rows with negative values in 'Amount Paid' column in df2:")
+            logging.warning(negative_amount_paid_df2.to_string())
+
+    negative_amount_received_df2 = df2[df2['Amount Received'] < 0]
+    if not negative_amount_received_df2.empty:
+            logging.warning("\nRows with negative values in 'Amount Received' column in df2:")
+            logging.warning(negative_amount_received_df2.to_string())
+
     # Generate statistics for both DataFrames
     df1_stats = tfdv.generate_statistics_from_dataframe(df1)
     df2_stats = tfdv.generate_statistics_from_dataframe(df2)
