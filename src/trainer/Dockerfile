@@ -7,7 +7,7 @@ ENV BUCKET_NAME=aml_bucket_mlops
 
 COPY trainer /trainer
 
-RUN pip install --no-cache-dir pandas google-cloud-storage scikit-learn joblib grpcio gcsfs python-dotenv
+RUN pip install --no-cache-dir pandas google-cloud-storage scikit-learn joblib grpcio gcsfs python-dotenv imbalanced-learn tensorflow
 
 
 ENTRYPOINT ["python", "-m", "trainer.train"]
