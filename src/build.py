@@ -5,12 +5,12 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Configuration parameters
-REGION="us-east1"
+REGION="us-central1"
 PROJECT_ID="skilful-alpha-415221"
-BASE_OUTPUT_DIR="gs://aml_mlops_bucket"
+BASE_OUTPUT_DIR="gs://aml_bucket_mlops"
 BUCKET ="aml_mlops_bucket"  # Should be same as AIP_STORAGE_URI specified in the docker file
-CONTAINER_URI="us-east1-docker.pkg.dev/skilful-alpha-415221/amlartifactrepo/trainer:v1"
-MODEL_SERVING_CONTAINER_IMAGE_URI ="us-east1-docker.pkg.dev/skilful-alpha-415221/amlartifactrepo/serve:v1"
+CONTAINER_URI="us-central1-docker.pkg.dev/skilful-alpha-415221/amlartifactrepo2/trainer:v1"
+MODEL_SERVING_CONTAINER_IMAGE_URI ="us-central1-docker.pkg.dev/skilful-alpha-415221/amlartifactrepo2/serve:v1"
 DISPLAY_NAME="endpointdisplayname"
 SERVICE_ACCOUNT_EMAIL ="vertexaiserviceacc@skilful-alpha-415221.iam.gserviceaccount.com"
 

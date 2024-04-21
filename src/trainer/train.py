@@ -29,8 +29,8 @@ load_dotenv()
 # Initialize variables
 fs = gcsfs.GCSFileSystem()
 storage_client = storage.Client()
-bucket_name ="aml_mlops_bucket"
-MODEL_DIR ="gs://aml_mlops_bucket/model"
+bucket_name ="aml_bucket_mlops"
+MODEL_DIR ="gs://aml_bucket_mlops/model"
  
 def load_data(gcs_train_data_path):
     """
@@ -46,7 +46,7 @@ def load_data(gcs_train_data_path):
     # Specify the path to the pickle file
     print("Load data is called")
     print("gcs_train_data_path: ", gcs_train_data_path)
-    val_pickle_file_path = 'gs://aml_mlops_bucket/airflow_files/inference_preprocessed_ddfaf_csv.pickle'
+    val_pickle_file_path = 'gs://aml_bucket_mlops/airflow_files/inference_preprocessed_ddfaf_csv.pickle'
  
     # Load the train pickled data from the file into a DataFrame
     with fs.open(gcs_train_data_path, 'rb') as f:
@@ -191,7 +191,7 @@ def main():
     and uploading the model to Google Cloud Storage.
     """
     # Load and transform data
-    gcs_train_data_path = "gs://aml_mlops_bucket/airflow_files/train_preprocessed_ddfaf_csv.pickle"
+    gcs_train_data_path = "gs://aml_bucket_mlops/airflow_files/train_preprocessed_ddfaf_csv.pickle"
     df_train, df_val = load_data(gcs_train_data_path)
     print(df_train.head())
     X_train, X_test, y_train, y_test = data_transform(df_train, df_val)
@@ -200,7 +200,7 @@ def main():
     model = train_model(X_train, y_train)
  
     # Save the model locally and upload to GCS
-    edt = pytz.timezone('US/Eastern')
+    edt = pytz.timezone('US/Central')
     current_time_edt = datetime.now(edt)
     version = current_time_edt.strftime('%Y%m%d_%H%M%S')
     local_model_path = "model.pkl"
