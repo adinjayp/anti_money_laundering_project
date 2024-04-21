@@ -4,7 +4,11 @@ import json
 from google.cloud import storage
 import pandas as pd
 import datatable as dt
+import gcsfs
 #from dask.distributed import Client
+
+fs = gcsfs.GCSFileSystem()
+
 
 def download_data_from_bucket(**kwargs):
     try:
@@ -71,6 +75,17 @@ def download_data_from_bucket(**kwargs):
         gcs_bucket_path = "gs://aml_mlops_bucket/"
         raw_data_pandas = pd.read_csv(gcs_bucket_path + 'HI_Medium_Trans_1.csv').astype(str)
         test_df = raw_data_pandas.head(25)
+
+        try:
+            # Load the train pickled data from the file into a DataFrame
+            gcs_test_data_path = "gs://aml_bucket_mlops/airflow_files/inference_original_csv.pickle"
+            with fs.open(gcs_test_data_path, 'rb') as f:
+               test_df = pickle.load(f).reset_index()
+
+        except Exception as e:
+            logging.error(f"An error occurred while loading inference_original_csv data: {e}")
+            # Handle the error or continue gracefully
+        
         logging.info("test_df head: %s", str(test_df.head()))
 
         logging.info("Successfully read data from GCS bucket.")
