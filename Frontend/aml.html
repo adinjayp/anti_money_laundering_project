@@ -104,6 +104,12 @@
             .then(response => response.json())
             .then(data => {
                 document.getElementById("prediction-result").innerText = "Prediction: " + data.prediction;
+                // Create download link for CSV file
+                var downloadLink = document.createElement('a');
+                downloadLink.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(data.csv_content));
+                downloadLink.setAttribute('download', 'prediction_result.csv');
+                downloadLink.innerText = 'Download CSV';
+                document.getElementById("prediction-result").appendChild(downloadLink);
             })
             .catch(error => console.error("Error:", error));
         }
