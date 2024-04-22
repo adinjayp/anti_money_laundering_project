@@ -150,7 +150,12 @@ Start the web server by running:
 airflow webserver --port 8080
 airflow scheduler
 ```
-11. After your code is deployed from GitHub through Actions to the VM, you are good to run the project. Run python `airflowdag.py`
+
+11. 2 DAGs are created for the projected:
+    - `airflowdag.py` - for initial training. Located in src/airflowdag.py
+    - `airflowdagValidation.py` - for inference. Located in src/airflowdagValidation.py
+
+13. After your code is deployed from GitHub through Actions to the VM, you are good to run the project. Run python `airflowdag.py`
 
 
 
