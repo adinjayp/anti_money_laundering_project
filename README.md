@@ -1,8 +1,7 @@
 # Money Laundering Detection using Machine Learning
 [Adinjay Phadkule](https://github.com/adinjayp) | [Krishna Barfiwala](https://github.com/krishnabx) | [Navya Pragathi](https://github.com/Navya-89) | [Utkarsh Singh](https://github.com/UtkarshS007) |  [Vishal Basutkar](https://github.com/vishalbns) | [Yash Gaikwad](https://github.com/YashRGaikwad)
 
-<p align="center"><img src="https://socialify.git.ci/adinjayp/anti_money_laundering_project/image?font=Raleway&amp;language=1&amp;name=1&amp;pattern=Charlie%20Brown&amp;theme=Dark" alt="project-image"></p>
-
+![alt text](Presentation1.png)
 ## Introduction
  Money laundering is a significant financial crime involving the process of making illicitly obtained money appear to come from a legitimate source. Our project aims to address this issue by creating an automated Anti-Money Laundering (AML) detection product using Machine Learning (ML). The goal is to develop a clean and streamlined solution that adheres to the latest MLOps recommendations and procedures learned in the IE7374 Machine Learning Operations course at Northeastern University, under the guidance of Prof. Ramin Mohammadi.
 
@@ -277,30 +276,6 @@ We performed EDA on the train and validation data separately in a Jupyter notebo
 
 #### 6. Data preparation for inference dataset
 * `inference.py`: Retrieves updated graph and other dictionaries, performs data validation checks, performs preprocessing and updates the graph and pushes the updated data to the bucket.
-
-#### 7. Building and Deploying the Model
-The `build.py` script is responsible for building and deploying the model to the Vertex AI Platform. It uses the aiplatform library to create a custom container training job and deploy the model to an endpoint. The `CustomContainerTrainingJob class` is a part of Google Cloud's Vertex AI Python client library, which allows users to create and manage custom container training jobs for machine learning models. A custom container training job enables you to run your training application in a Docker container that you can customize.
-
-
-#### 8. Building the Frontend and Backend
-* `aml.html`: This HTML file creates an interactive interface for users to upload transaction data, receive predictions on potential fraudulent transactions, and download processed data.
-  
-	- **Upload Interface:** Users are prompted to upload a CSV file containing transaction data. This is done using a label and input element with type "file". The upload button triggers the file selection dialog.
-  
-  	- **Submit Functionality:** Upon selecting a file, the user can click the `"Submit"` button, which triggers the `submitFile()` JavaScript function.
-  
-  	- **File Validation:** The submitFile() function checks if a file is selected and if it is a CSV file. If not, it displays an alert message.
-  
-  	- **File Upload:** If a valid CSV file is selected, the `uploadFile()` function is called, which constructs a FormData object with the file and sends it to the server using a POST request to the `"/process_csv"` 	endpoint.
-  
-  	- **Response Handling:** Upon receiving a response from the server, the `then()` method processes the JSON data returned. It updates the webpage to display the prediction result, provides download links for the 	entire CSV file and the CSV file containing fraudulent transactions (if any), and displays any fraudulent transactions found.
-  	
-* `backend.py`: This Python Flask application serves as an intermediary between a user uploading a CSV file containing transaction data and a machine learning model hosted on Google Cloud's Vertex AI platform for fraud detection.
-	- **Importing Necessary Libraries:** The code imports Flask for creating the web application, requests for making HTTP requests, and pandas for handling data manipulation tasks.
-	- **Sending Data to Vertex AI Endpoint:** There's a function `send_data_to_vertex_ai` that takes project ID, endpoint ID, location, and instances data as input. This function sends the instances data to the specified Vertex AI endpoint for prediction using a `POST request.`
-	- **CSV File Processing Endpoint:** A route `/process_csv` is defined to handle POST requests containing CSV files. Upon receiving a CSV file, it reads the file into a pandas DataFrame, converts it into a format expected by the Vertex AI endpoint, sends the data for prediction, and saves the prediction results along with the original data as CSV files.
-	- **Processing the Predictions:** The predicted results are added to the DataFrame and saved as a CSV file. Additionally, fraudulent transactions are filtered and saved separately.
-	- **JSON Response:** Finally, the Flask app returns a JSON response containing download links for the processed CSV files.
 
 **Google Cloud Storage Bucket**
 ![picture alt](Bucket.jpg)

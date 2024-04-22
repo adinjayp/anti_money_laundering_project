@@ -2,41 +2,47 @@
 <html>
 <head>
     <title>Anti Money Laundering System</title>
-<style>
+    <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
-            background-image: url('cash-money-bills-on-woodgrain.jpg'); /* Replace 'background_image.jpg' with the path to your image */
+            background-image: url('cash-money-bills-on-woodgrain.jpg');
             background-size: cover;
             background-position: center;
-            background-blend-mode: lighten;
-            background-color: rgba(255,255,255,0.4);
+            background-blend-mode: overlay;
+            background-color: rgba(255,255,255,0.8);
             color: #333;
         }
+
         .container {
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
             text-align: center;
         }
+
         .headline {
             font-size: 36px;
             font-weight: bold;
             margin-bottom: 20px;
-            color: #000000;
+            color: #ffffff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
+
         .subheadline {
             font-size: 18px;
             margin-bottom: 30px;
             color: #313030;
         }
+
         .upload-text {
             font-size: 16px;
             margin-bottom: 30px;
             color: #424040;
         }
-        .upload-button {
+
+        .upload-button, #submit-button {
             background-color: #0c9c11;
             color: white;
             padding: 15px 40px;
@@ -49,17 +55,21 @@
             cursor: pointer;
             transition: background-color 0.3s;
         }
-        .upload-button:hover {
+
+        .upload-button:hover, #submit-button:hover {
             background-color: #128317;
         }
+
         #csv-file {
             display: none;
         }
+
         #prediction-result {
             margin-top: 30px;
             font-size: 18px;
             color: #fff;
         }
+
         .fraudulent-transactions {
             margin-top: 30px;
             text-align: left;
@@ -71,10 +81,10 @@
     <div class="container">
         <div class="headline">Anti Money Laundering System</div>
         <div class="subheadline">Safeguarding Financial Transactions</div>
-        <div class="upload-text">Please upload the CSV file of transactions in the required format.</div>
-        <label for="csv-file" class="upload-button">Upload CSV File</label>
+        <div class="upload-text">Please upload the CSV file of financial transactions for analysis.</div>
+        <label for="csv-file" class="upload-button">Upload Transaction Data</label>
         <input type="file" id="csv-file" name="csv-file" accept=".csv">
-        <button onclick="submitFile()">Submit</button>
+        <button id="submit-button" onclick="submitFile()">Analyze</button>
     </div>
 
     <div id="prediction-result"></div>
@@ -109,26 +119,26 @@
             })
             .then(response => response.json())
             .then(data => {
-                document.getElementById("prediction-result").innerText = "Prediction: " + data.prediction;
+                document.getElementById("prediction-result").innerText = "AML Prediction: " + data.prediction;
                 // Create download link for entire CSV file
                 var entireCsvDownloadLink = document.createElement('a');
                 entireCsvDownloadLink.setAttribute('href', data.entire_csv_download_link);
-                entireCsvDownloadLink.innerText = 'Download Entire CSV';
+                entireCsvDownloadLink.innerText = 'Download Analyzed Transactions';
                 document.getElementById("prediction-result").appendChild(entireCsvDownloadLink);
-                // Create download link for CSV file containing fraudulent transactions
-                var fraudulentTransactionsDownloadLink = document.createElement('a');
-                fraudulentTransactionsDownloadLink.setAttribute('href', data.fraudulent_transactions_download_link);
-                fraudulentTransactionsDownloadLink.innerText = 'Download Fraudulent Transactions CSV';
-                document.getElementById("prediction-result").appendChild(fraudulentTransactionsDownloadLink);
-                // Display fraudulent transactions
-                if (data.fraudulent_transactions.length > 0) {
-                    var fraudulentTransactionsDiv = document.getElementById("fraudulent-transactions");
-                    fraudulentTransactionsDiv.innerHTML = "<h3>Fraudulent Transactions:</h3>";
-                    data.fraudulent_transactions.forEach(transaction => {
-                        fraudulentTransactionsDiv.innerHTML += "<p>" + transaction + "</p>";
+                // Create download link for CSV file containing flagged transactions
+                var flaggedTransactionsDownloadLink = document.createElement('a');
+                flaggedTransactionsDownloadLink.setAttribute('href', data.flagged_transactions_download_link);
+                flaggedTransactionsDownloadLink.innerText = 'Download Flagged Transactions CSV';
+                document.getElementById("prediction-result").appendChild(flaggedTransactionsDownloadLink);
+                // Display flagged transactions
+                if (data.flagged_transactions.length > 0) {
+                    var flaggedTransactionsDiv = document.getElementById("fraudulent-transactions");
+                    flaggedTransactionsDiv.innerHTML = "<h3>Flagged Transactions:</h3>";
+                    data.flagged_transactions.forEach(transaction => {
+                        flaggedTransactionsDiv.innerHTML += "<p>" + transaction + "</p>";
                     });
                 } else {
-                    document.getElementById("fraudulent-transactions").innerText = "No fraudulent transactions found.";
+                    document.getElementById("fraudulent-transactions").innerText = "No flagged transactions found.";
                 }
             })
             .catch(error => console.error("Error:", error));
