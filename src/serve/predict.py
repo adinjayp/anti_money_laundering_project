@@ -16,7 +16,7 @@ def initialize_variables():
         tuple: The project id and bucket name.
     """
     project_id = "skilful-alpha-415221"
-    bucket_name = "aml_mlops_bucket"
+    bucket_name = "aml_bucket_mlops"
     return project_id, bucket_name
 
 def initialize_client_and_bucket(bucket_name):

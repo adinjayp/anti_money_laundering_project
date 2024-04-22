@@ -8,8 +8,8 @@ def predict_custom_trained_model(
     project: str,
     endpoint_id: str,
     instances: Union[Dict, List[Dict]],
-    location: str = "us-east1",
-    api_endpoint: str = "us-east1-aiplatform.googleapis.com",
+    location: str = "us-central1",
+    api_endpoint: str = "us-central1-aiplatform.googleapis.com",
 ):
     """Make a prediction to a deployed custom trained model
     Args:
@@ -49,7 +49,7 @@ def predict_custom_trained_model(
 predict_custom_trained_model(
     project="497741562136",
     endpoint_id="1974151137439252480",
-    location="us-east1",
+    location="us-central1",
     instances= {
             "PT08.S1(CO)": 0.651435622,
             "NMHC(GT)": 0.154088375,

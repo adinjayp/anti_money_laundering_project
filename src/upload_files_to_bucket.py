@@ -80,6 +80,22 @@ def upload_file_to_gcs(dagtype, **kwargs):
             # Log the upload
             logging.info(f"File '{file[1]}' uploaded successfully to GCS bucket '{bucket_name}' as '{file_url}'")
 
+        if dagtype=='inference':
+            train_pickle_file_path = 'gs://aml_bucket_mlops/airflow_files/train_preprocessed_ddfaf_csv.pickle'
+            # Load the train pickled data from the file into a DataFrame
+            with fs.open(gcs_train_data_path, 'rb') as f:
+                preprocessed_train_df = pickle.load(f).reset_index()
+            preprocessed_inf_df = pickle.loads(merged_ddf_bytes)
+            tain_and_inf_df = pd.concat([preprocessed_train_df, preprocessed_inf_df], axis=0)
+            tain_and_inf_df_bytes = pickle.dumps(tain_and_inf_df)
+            blob = bucket.blob(f"{folder_name}/train_preprocessed_ddfaf_csv.pickle")
+            blob.upload_from_string(tain_and_inf_df_bytes, content_type='application/octet-stream')
+            # Construct the URL of the uploaded file
+            file_url = f'gs://{bucket_name}/{folder_name}/train_preprocessed_ddfaf_csv.pickle'
+            # Log the upload
+            logging.info("File trainwinf_preprocessed_ddfaf_csv uploaded successfully to GCS bucket")
+
+
         return 
     
     except Exception as e:
