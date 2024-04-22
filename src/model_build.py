@@ -41,7 +41,7 @@ def normalize_data(train_X, val_X):
 
     return train_X, val_X
 
-def resample_vae(train_X, train_y):
+def resample_vae(train_X, train_y, val_X, val_y):
    # Define and train a Variational Autoencoder
     input_dim = train_X.shape[1]
     latent_dim = 10  # Choose an appropriate latent dimension
@@ -138,7 +138,7 @@ def build_model(**kwargs):
 
     train_X, val_X = normalize_data(train_X, val_X)
 
-    X_train_resampled, y_train_resampled = resample_vae(train_X, val_X)
+    X_train_resampled, y_train_resampled = resample_vae(train_X, train_y, val_X, val_y)
     logging.info(f"train data resampled")
 
     model, accuracy, classification_report_metrics = randomforestmodeling( X_train_resampled, y_train_resampled, val_X, val_y)
