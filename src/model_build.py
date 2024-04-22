@@ -42,59 +42,61 @@ def normalize_data(train_X, val_X):
     return train_X, val_X
 
 def resample_vae(train_X, train_y):
-    # Define and train a Variational Autoencoder
+   # Define and train a Variational Autoencoder
     input_dim = train_X.shape[1]
     latent_dim = 10  # Choose an appropriate latent dimension
-
+ 
     # Define the encoder
-    encoder_inputs = Input(shape=(input_dim,), sparse=True)
+    encoder_inputs = Input(shape=(input_dim,))
     encoded = Dense(128, activation='relu')(encoder_inputs)
     z_mean = Dense(latent_dim)(encoded)
     z_log_var = Dense(latent_dim)(encoded)
-
+ 
     # Define the sampling layer
     def sampling(args):
         z_mean, z_log_var = args
         epsilon = K.random_normal(shape=(K.shape(z_mean)[0], latent_dim),
                                 mean=0., stddev=1.)
         return z_mean + K.exp(0.5 * z_log_var) * epsilon
-
+ 
     z = Lambda(sampling)([z_mean, z_log_var])
-
+ 
     # Define the decoder
     decoder_inputs = Input(shape=(latent_dim,))
     decoded = Dense(128, activation='relu')(decoder_inputs)
     decoded_outputs = Dense(input_dim, activation='sigmoid')(decoded)
-
+ 
     # Define the models
     encoder = Model(encoder_inputs, z_mean)
     decoder = Model(decoder_inputs, decoded_outputs)
     decoder_outputs = decoder(z)
     vae = Model(encoder_inputs, decoder_outputs)
-
+ 
     # Define the VAE loss
     reconstruction_loss = MeanSquaredError()(encoder_inputs, decoder_outputs)
     kl_loss = KLDivergence()(z_mean, z_log_var)
     vae_loss = reconstruction_loss + kl_loss
     vae.add_loss(vae_loss)
     vae.compile(optimizer=Adam())
-
+ 
     # Train the VAE
     vae.fit(train_X, epochs=10, batch_size=32, validation_data=(val_X, None))
-
+ 
     # Generate synthetic samples for minority class
     minority_class_indices = np.where(train_y == 1)[0]
     minority_class_samples = train_X.iloc[minority_class_indices]
     synthetic_samples = vae.predict(minority_class_samples)
-
+ 
     # Combine original and synthetic samples
     X_train_balanced = np.concatenate([train_X, synthetic_samples], axis=0)
     y_train_balanced = np.concatenate([train_y, np.ones(len(synthetic_samples))], axis=0)
-
+ 
     # Optionally, you can further balance the dataset using SMOTE
     smote = SMOTE(random_state=42)
     X_train_resampled, y_train_resampled = smote.fit_resample(X_train_balanced, y_train_balanced)
-
+ 
+    # Now, you can train your classifier using X_train_resampled and y_train_resampled
+ 
     return X_train_resampled, y_train_resampled
 
 def randomforestmodeling(X_train_resampled, y_train_resampled, val_X, val_y):
