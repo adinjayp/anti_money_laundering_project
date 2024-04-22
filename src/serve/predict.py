@@ -7,7 +7,11 @@ from dotenv import load_dotenv
 import pickle
 import time
 from sklearn.preprocessing import MinMaxScaler
+import gcsfs
+import pandas as pd
+import logging
 
+fs = gcsfs.GCSFileSystem()
 
 load_dotenv()
 
