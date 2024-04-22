@@ -33,7 +33,7 @@ def process_csv_file():
     instances = df.to_dict(orient='records')
     
     # Send CSV data to Vertex AI endpoint
-    prediction_results = send_data_to_vertex_ai("YOUR_PROJECT_ID", "YOUR_ENDPOINT_ID", "us-central1", instances)
+    prediction_results = send_data_to_vertex_ai("skilful-alpha-415221", "7340064749125632000", "us-central1", instances)
     
     # Add prediction results to DataFrame
     df_with_predictions = pd.DataFrame(prediction_results)
