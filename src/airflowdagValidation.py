@@ -21,7 +21,7 @@ from preprocessingTest import initial_preprocessing_test
 from perform_eda import perform_eda
 from perform_visualization_EDA import analyze_with_tfdv
 from airflowdag import data_split_task
-from model_inference import predict_custom_trained_model
+from model_inference import model_inference_def
 
 # G = None 
 # scheduler_address = 'tcp://10.128.0.5:8786'
@@ -127,8 +127,8 @@ with DAG(
     )
 
     prediction_task = PythonOperator(
-        task_id='predict_custom_trained_model',
-        python_callable=predict_custom_trained_model,
+        task_id='model_inference',
+        python_callable=model_inference_def,
         provide_context=True,  # Allows accessing task context
         dag=dag
     )

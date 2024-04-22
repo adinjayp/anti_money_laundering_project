@@ -147,10 +147,10 @@ def build_model(**kwargs):
     model_bytes = pickle.dumps(model)
     classification_report_metrics_bytes = pickle.dumps(classification_report_metrics)
 
-    blob = bucket.blob(f"{folder_name}/'model_from_airflow.pickle'")
+    blob = bucket.blob(f"{folder_name}/model_from_airflow.pickle")
     blob.upload_from_string(model_bytes, content_type='application/octet-stream')
 
-    blob = bucket.blob(f"{folder_name}/'classification_report_from_airflow.pickle'")
+    blob = bucket.blob(f"{folder_name}/classification_report_from_airflow.pickle")
     blob.upload_from_string(classification_report_metrics_bytes, content_type='application/octet-stream')
 
     logging.info(f"Files model and classification report uploaded successfully to GCS bucket")
