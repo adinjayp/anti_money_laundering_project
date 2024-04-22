@@ -2,6 +2,8 @@ from typing import Dict, List, Union
 from google.cloud import aiplatform
 from google.protobuf import json_format
 from google.protobuf.struct_pb2 import Value
+import gcsfs
+from google.cloud import storage
 
 
 def predict_custom_trained_model(
@@ -45,23 +47,17 @@ def predict_custom_trained_model(
     for prediction in predictions:
         print(" prediction:", dict(prediction))
 
+fs = gcsfs.GCSFileSystem()
+bucket = storage_client.bucket(bucket_name)
+blob = bucket.blob('hi_medium_df.pickle')
+hi_medium_df_bytes = blob.download_as_string()
+test_df = pickle.loads(hi_medium_df_bytes)
+test_df = test_df.astype(str)
+df_json = df.to_json(orient='records')
 
 predict_custom_trained_model(
     project="497741562136",
     endpoint_id="1974151137439252480",
     location="us-central1",
-    instances= {
-            "PT08.S1(CO)": 0.651435622,
-            "NMHC(GT)": 0.154088375,
-            "C6H6(GT)": 0.198980682,
-            "PT08.S2(NMHC)": 0.406771327,
-            "NOx(GT)": 0.608617903,
-            "PT08.S3(NOx)": 0.340316247,
-            "NO2(GT)": 0.604898307,
-            "PT08.S4(NO2)": 0.354166125,
-            "PT08.S5(O3)": 0.670583278,
-            "T": 0.080010396,
-            "RH": 0.098031541,
-            "AH": 0.146104239
-        }
+    instances=df_json
 )
