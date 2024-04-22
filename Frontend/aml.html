@@ -60,6 +60,11 @@
             font-size: 18px;
             color: #fff;
         }
+        .fraudulent-transactions {
+            margin-top: 30px;
+            text-align: left;
+            color: #ff0000;
+        }
     </style>
 </head>
 <body>
@@ -73,6 +78,7 @@
     </div>
 
     <div id="prediction-result"></div>
+    <div id="fraudulent-transactions" class="fraudulent-transactions"></div>
 
     <script>
         function submitFile() {
@@ -87,16 +93,16 @@
                 clearFile();
                 return;
             }
-            uploadFile();
+            uploadFile(file);
         }
 
         function clearFile() {
             document.getElementById("csv-file").value = '';
         }
 
-        function uploadFile() {
+        function uploadFile(file) {
             var formData = new FormData();
-            formData.append("file", document.getElementById("csv-file").files[0]);
+            formData.append("file", file);
             fetch("/process_csv", {
                 method: "POST",
                 body: formData
@@ -104,12 +110,26 @@
             .then(response => response.json())
             .then(data => {
                 document.getElementById("prediction-result").innerText = "Prediction: " + data.prediction;
-                // Create download link for CSV file
-                var downloadLink = document.createElement('a');
-                downloadLink.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(data.csv_content));
-                downloadLink.setAttribute('download', 'prediction_result.csv');
-                downloadLink.innerText = 'Download CSV';
-                document.getElementById("prediction-result").appendChild(downloadLink);
+                // Create download link for entire CSV file
+                var entireCsvDownloadLink = document.createElement('a');
+                entireCsvDownloadLink.setAttribute('href', data.entire_csv_download_link);
+                entireCsvDownloadLink.innerText = 'Download Entire CSV';
+                document.getElementById("prediction-result").appendChild(entireCsvDownloadLink);
+                // Create download link for CSV file containing fraudulent transactions
+                var fraudulentTransactionsDownloadLink = document.createElement('a');
+                fraudulentTransactionsDownloadLink.setAttribute('href', data.fraudulent_transactions_download_link);
+                fraudulentTransactionsDownloadLink.innerText = 'Download Fraudulent Transactions CSV';
+                document.getElementById("prediction-result").appendChild(fraudulentTransactionsDownloadLink);
+                // Display fraudulent transactions
+                if (data.fraudulent_transactions.length > 0) {
+                    var fraudulentTransactionsDiv = document.getElementById("fraudulent-transactions");
+                    fraudulentTransactionsDiv.innerHTML = "<h3>Fraudulent Transactions:</h3>";
+                    data.fraudulent_transactions.forEach(transaction => {
+                        fraudulentTransactionsDiv.innerHTML += "<p>" + transaction + "</p>";
+                    });
+                } else {
+                    document.getElementById("fraudulent-transactions").innerText = "No fraudulent transactions found.";
+                }
             })
             .catch(error => console.error("Error:", error));
         }
