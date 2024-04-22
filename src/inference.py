@@ -4,6 +4,7 @@ from google.protobuf import json_format
 from google.protobuf.struct_pb2 import Value
 import gcsfs
 from google.cloud import storage
+fs = gcsfs.GCSFileSystem()
 
 
 def predict_custom_trained_model(
@@ -47,7 +48,7 @@ def predict_custom_trained_model(
     for prediction in predictions:
         print(" prediction:", dict(prediction))
 
-fs = gcsfs.GCSFileSystem()
+storage_client = storage.Client()
 bucket = storage_client.bucket(bucket_name)
 blob = bucket.blob('hi_medium_df.pickle')
 hi_medium_df_bytes = blob.download_as_string()
