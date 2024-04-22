@@ -1,6 +1,7 @@
 import pandas as pd
 from google.cloud import storage
 import pickle
+import logging
 
 logging.basicConfig(filename='model_inferencing.log', level=logging.INFO)
 # Define a stream handler to write log messages to the terminal
