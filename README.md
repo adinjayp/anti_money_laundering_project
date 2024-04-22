@@ -242,8 +242,8 @@ ________________________________________________________________________________
 **DAG Flow**
 
 ![picture alt](DAG.jpg)
-
-
+![picture alt](dag1.jpg)
+![picture alt](dag2.jpg)
 
 ### Data Pipeline Components
 
