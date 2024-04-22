@@ -131,7 +131,7 @@ def build_model(**kwargs):
 
     train_X = preprocessed_train_df.drop(columns=['Is_Laundering', 'Index'])
     train_y = preprocessed_train_df['Is_Laundering']
-    val_X = preprocessed_val_df.drop(columns=['Is_Laundering', 'Index', 'index'])
+    val_X = preprocessed_val_df.drop(columns=['Is_Laundering', 'Index'])
     val_y = preprocessed_val_df['Is_Laundering']
 
     train_X, val_X = normalize_data(train_X, val_X)
