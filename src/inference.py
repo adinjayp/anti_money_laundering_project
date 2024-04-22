@@ -49,7 +49,7 @@ def predict_custom_trained_model(
         print(" prediction:", dict(prediction))
 
 storage_client = storage.Client()
-bucket = storage_client.bucket("am_bucket_mlops")
+bucket = storage_client.bucket("aml_bucket_mlops")
 blob = bucket.blob('hi_medium_df.pickle')
 hi_medium_df_bytes = blob.download_as_string()
 test_df = pickle.loads(hi_medium_df_bytes)
