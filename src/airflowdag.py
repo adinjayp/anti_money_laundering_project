@@ -17,7 +17,7 @@ from feature_extraction import extract_graph_features
 from dask_handling import create_dask_dataframe
 from graph_operations import merge_trans_with_gf
 from upload_files_to_bucket import upload_file_to_gcs
-from model_build import init_ai_and_model_train
+from model_build import build_model
 
 # G = None 
 # scheduler_address = 'tcp://10.128.0.5:8786'
