@@ -38,6 +38,11 @@ def download_data_from_bucket(**kwargs):
 
         logging.info("Successfully downloaded and deserialized graph from bucket.")
 
+        #Download the hi_medium dataframe from the bucket
+        blob = bucket.blob('hi_medium_df.pickle')
+        hi_medium_df_bytes = blob.download_as_string()
+        train_df = pickle.loads(hi_medium_df_bytes)
+
         # first_timestamp, currency_dict, payment_format_dict, bank_account_dict, account_dict FROM BUCKET!!
         # Specify the name of the files in the bucket
         file_names = ["account_dict.json", "currency_dict.json", "payment_format_dict.json",
@@ -72,12 +77,12 @@ def download_data_from_bucket(**kwargs):
         logging.info("Successfully downloaded and parsed dictionaries from bucket.")
 
         # Read data from GCS bucket
-        gcs_bucket_path = "gs://aml_mlops_bucket/"
-        raw_data_pandas = pd.read_csv(gcs_bucket_path + 'HI_Medium_Trans_1.csv').astype(str)
-        test_df = raw_data_pandas.head(25)
+        #gcs_bucket_path = "gs://aml_mlops_bucket/"
+        #raw_data_pandas = pd.read_csv(gcs_bucket_path + 'HI_Medium_Trans_1.csv').astype(str)
+        #test_df = raw_data_pandas.head(25)
         
         logging.info("test_df (HI_Medium_Trans) head: %s", str(test_df.head()))
-        
+
         try:
             # Load the train pickled data from the file into a DataFrame
             gcs_test_data_path = "gs://aml_bucket_mlops/airflow_files/inference_original_csv.pickle"
