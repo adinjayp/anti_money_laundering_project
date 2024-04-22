@@ -118,7 +118,7 @@ def build_model(**kwargs):
 
     #Download the hi_medium dataframe from the bucket
     bucket_name = "aml_mlops_bucket"
-    folder_name = "airflowfiles"
+    folder_name = "airflow_files"
     file_name = "inference_preprocessed_ddfaf_csv.pickle"
 
     storage_client = storage.Client()
