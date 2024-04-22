@@ -2,6 +2,9 @@ import logging
 import pandas as pd
 import dask.dataframe as dd
 import datatable as dt
+from google.cloud import storage
+import pickle
+
 
 class IngestData:
     """
@@ -14,7 +17,14 @@ class IngestData:
 
     def get_data(self) -> pd.DataFrame:
         logging.info(f"Ingesting data from Google Cloud Storage")
-        raw_data_pandas = pd.read_csv(self.gcs_bucket_path).astype(str)
+        storage_client = storage.Client()
+        bucket_name='aml_mlops_bucket'
+        bucket = storage_client.bucket(bucket_name)
+        blob = bucket.blob('HI_Small_Trans.pickle')
+        HI_Small_Trans_bytes = blob.download_as_string()
+        raw_data_pandas = pickle.loads(HI_Small_Trans_bytes)
+        raw_data_pandas = raw_data_pandas.astype(str)
+        #raw_data_pandas = pd.read_csv(self.gcs_bucket_path).astype(str)
         return raw_data_pandas.head(100)
 
 def ingest_data(**kwargs) -> dt.Frame:
