@@ -284,22 +284,22 @@ The `build.py` script is responsible for building and deploying the model to the
 #### 8. Building the Frontend and Backend
 * `aml.html`: This HTML file creates an interactive interface for users to upload transaction data, receive predictions on potential fraudulent transactions, and download processed data.
   
-	-**Upload Interface:** Users are prompted to upload a CSV file containing transaction data. This is done using a label and input element with type "file". The upload button triggers the file selection dialog.
+	- **Upload Interface:** Users are prompted to upload a CSV file containing transaction data. This is done using a label and input element with type "file". The upload button triggers the file selection dialog.
   
-  	-**Submit Functionality:** Upon selecting a file, the user can click the `"Submit"` button, which triggers the `submitFile()` JavaScript function.
+  	- **Submit Functionality:** Upon selecting a file, the user can click the `"Submit"` button, which triggers the `submitFile()` JavaScript function.
   
-  	-**File Validation:** The submitFile() function checks if a file is selected and if it is a CSV file. If not, it displays an alert message.
+  	- **File Validation:** The submitFile() function checks if a file is selected and if it is a CSV file. If not, it displays an alert message.
   
-  	-**File Upload:** If a valid CSV file is selected, the `uploadFile()` function is called, which constructs a FormData object with the file and sends it to the server using a POST request to the `"/process_csv"` 	endpoint.
+  	- **File Upload:** If a valid CSV file is selected, the `uploadFile()` function is called, which constructs a FormData object with the file and sends it to the server using a POST request to the `"/process_csv"` 	endpoint.
   
-  	-**Response Handling:** Upon receiving a response from the server, the `then()` method processes the JSON data returned. It updates the webpage to display the prediction result, provides download links for the 	entire CSV file and the CSV file containing fraudulent transactions (if any), and displays any fraudulent transactions found.
+  	- **Response Handling:** Upon receiving a response from the server, the `then()` method processes the JSON data returned. It updates the webpage to display the prediction result, provides download links for the 	entire CSV file and the CSV file containing fraudulent transactions (if any), and displays any fraudulent transactions found.
   	
 * `backend.py`: This Python Flask application serves as an intermediary between a user uploading a CSV file containing transaction data and a machine learning model hosted on Google Cloud's Vertex AI platform for fraud detection.
-	-**Importing Necessary Libraries:** The code imports Flask for creating the web application, requests for making HTTP requests, and pandas for handling data manipulation tasks.
-	-**Sending Data to Vertex AI Endpoint:** There's a function `send_data_to_vertex_ai` that takes project ID, endpoint ID, location, and instances data as input. This function sends the instances data to the specified Vertex AI endpoint for prediction using a `POST request.`
-	-**CSV File Processing Endpoint:** A route `/process_csv` is defined to handle POST requests containing CSV files. Upon receiving a CSV file, it reads the file into a pandas DataFrame, converts it into a format expected by the Vertex AI endpoint, sends the data for prediction, and saves the prediction results along with the original data as CSV files.
-	-**Processing the Predictions:** The predicted results are added to the DataFrame and saved as a CSV file. Additionally, fraudulent transactions are filtered and saved separately.
-	-**JSON Response:** Finally, the Flask app returns a JSON response containing download links for the processed CSV files.
+	- **Importing Necessary Libraries:** The code imports Flask for creating the web application, requests for making HTTP requests, and pandas for handling data manipulation tasks.
+	- **Sending Data to Vertex AI Endpoint:** There's a function `send_data_to_vertex_ai` that takes project ID, endpoint ID, location, and instances data as input. This function sends the instances data to the specified Vertex AI endpoint for prediction using a `POST request.`
+	- **CSV File Processing Endpoint:** A route `/process_csv` is defined to handle POST requests containing CSV files. Upon receiving a CSV file, it reads the file into a pandas DataFrame, converts it into a format expected by the Vertex AI endpoint, sends the data for prediction, and saves the prediction results along with the original data as CSV files.
+	- **Processing the Predictions:** The predicted results are added to the DataFrame and saved as a CSV file. Additionally, fraudulent transactions are filtered and saved separately.
+	- **JSON Response:** Finally, the Flask app returns a JSON response containing download links for the processed CSV files.
 
 **Google Cloud Storage Bucket**
 ![picture alt](Bucket.jpg)
