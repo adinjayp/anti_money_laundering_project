@@ -55,7 +55,7 @@ blob = bucket.blob('hi_medium_df.pickle')
 hi_medium_df_bytes = blob.download_as_string()
 test_df = pickle.loads(hi_medium_df_bytes)
 test_df = test_df.astype(str)
-df_json = df.to_json(orient='records')
+df_json = test_df.to_json(orient='records')
 
 predict_custom_trained_model(
     project="497741562136",
