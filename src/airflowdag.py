@@ -122,7 +122,7 @@ with DAG(
 
     build_model = PythonOperator(
         task_id='model_build',
-        python_callable=model_build,
+        python_callable=build_model,
         provide_context=True,  # Allows accessing task context
         dag=dag
     )
