@@ -5,6 +5,7 @@ from google.protobuf.struct_pb2 import Value
 import gcsfs
 from google.cloud import storage
 fs = gcsfs.GCSFileSystem()
+import pickle
 
 
 def predict_custom_trained_model(
