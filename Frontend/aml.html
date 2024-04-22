@@ -97,7 +97,7 @@
         function uploadFile() {
             var formData = new FormData();
             formData.append("file", document.getElementById("csv-file").files[0]);
-            fetch("/process_csv", {
+            fetch("http://34.70.224.200:5000/process_csv", {
                 method: "POST",
                 body: formData
             })
