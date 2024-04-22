@@ -25,7 +25,7 @@ class IngestData:
         raw_data_pandas = pickle.loads(HI_Small_Trans_bytes)
         raw_data_pandas = raw_data_pandas.astype(str)
         #raw_data_pandas = pd.read_csv(self.gcs_bucket_path).astype(str)
-        return raw_data_pandas.head(100)
+        return raw_data_pandas.head(100000)
 
 def ingest_data(**kwargs) -> dt.Frame:
     """
