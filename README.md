@@ -283,11 +283,16 @@ The `build.py` script is responsible for building and deploying the model to the
 
 #### 8. Building the Frontend and Backend
 * `aml.html`: This HTML file creates an interactive interface for users to upload transaction data, receive predictions on potential fraudulent transactions, and download processed data.
-	1. **Upload Interface:** Users are prompted to upload a CSV file containing transaction data. This is done using a label and input element with type "file". The upload button triggers the file selection dialog.
+  
+	**1. Upload Interface:** Users are prompted to upload a CSV file containing transaction data. This is done using a label and input element with type "file". The upload button triggers the file selection dialog.
+  
   	**2. Submit Functionality:** Upon selecting a file, the user can click the `"Submit"` button, which triggers the `submitFile()` JavaScript function.
+  
   	**3. File Validation:** The submitFile() function checks if a file is selected and if it is a CSV file. If not, it displays an alert message.
-  	**4. File Upload:** If a valid CSV file is selected, the `uploadFile()` function is called, which constructs a FormData object with the file and sends it to the server using a POST request to the `"/process_csv"` endpoint.
-  	**5. Response Handling:** Upon receiving a response from the server, the `then()` method processes the JSON data returned. It updates the webpage to display the prediction result, provides download links for the entire CSV file and the CSV file containing fraudulent transactions (if any), and displays any fraudulent transactions found.
+  
+  	**4. File Upload:** If a valid CSV file is selected, the `uploadFile()` function is called, which constructs a FormData object with the file and sends it to the server using a POST request to the `"/process_csv"` 	endpoint.
+  
+  	**5. Response Handling:** Upon receiving a response from the server, the `then()` method processes the JSON data returned. It updates the webpage to display the prediction result, provides download links for the 	entire CSV file and the CSV file containing fraudulent transactions (if any), and displays any fraudulent transactions found.
   	
 * `backend.py`: This Python Flask application serves as an intermediary between a user uploading a CSV file containing transaction data and a machine learning model hosted on Google Cloud's Vertex AI platform for fraud detection.
 	**1. Importing Necessary Libraries:** The code imports Flask for creating the web application, requests for making HTTP requests, and pandas for handling data manipulation tasks.
