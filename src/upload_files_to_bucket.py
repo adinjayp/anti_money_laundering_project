@@ -3,6 +3,10 @@ import logging
 import pickle
 import json
 from google.cloud import storage
+import gcsfs
+
+fs = gcsfs.GCSFileSystem()
+
 
 def upload_file_to_gcs(dagtype, **kwargs):
     """
