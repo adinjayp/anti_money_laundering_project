@@ -58,8 +58,8 @@ test_df = test_df.astype(str)
 df_json = test_df.to_json(orient='records')
 
 predict_custom_trained_model(
-    project="497741562136",
-    endpoint_id="1974151137439252480",
+    project="287941977155",
+    endpoint_id="2835198484359938048",
     location="us-central1",
     instances=df_json
 )
