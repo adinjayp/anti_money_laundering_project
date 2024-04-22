@@ -41,7 +41,8 @@ def download_data_from_bucket(**kwargs):
         #Download the hi_medium dataframe from the bucket
         blob = bucket.blob('hi_medium_df.pickle')
         hi_medium_df_bytes = blob.download_as_string()
-        train_df = pickle.loads(hi_medium_df_bytes)
+        test_df = pickle.loads(hi_medium_df_bytes)
+        test_df = test_df.astype(str)
 
         # first_timestamp, currency_dict, payment_format_dict, bank_account_dict, account_dict FROM BUCKET!!
         # Specify the name of the files in the bucket
