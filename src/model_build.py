@@ -129,7 +129,7 @@ def build_model(**kwargs):
 
     logging.info(f"train and val retreived from GCS bucket")
 
-    train_X = preprocessed_train_df.drop(columns=['Is_Laundering', 'Index', 'index'])
+    train_X = preprocessed_train_df.drop(columns=['Is_Laundering', 'Index'])
     train_y = preprocessed_train_df['Is_Laundering']
     val_X = preprocessed_val_df.drop(columns=['Is_Laundering', 'Index', 'index'])
     val_y = preprocessed_val_df['Is_Laundering']
