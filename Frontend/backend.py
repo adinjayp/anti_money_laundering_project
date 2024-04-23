@@ -47,7 +47,7 @@ def process_csv_file():
     blob = bucket.blob(f"{folder_name}/{file_name}")
     blob.upload_from_string(inference_df_bytes, content_type='application/octet-stream')
     #wait for airflow dag2 to preprocess the inference df
-    time.sleep(30)
+    #time.sleep(30)
     #retrieve the preprocessed inference df
     inf_X = pd.DataFrame()
 
@@ -75,7 +75,7 @@ def process_csv_file():
     model = pickle.loads(model_bytes)
 
     y_pred = model.predict(inf_X)
-    df_with_predictions = pd.concat([inf_X, pd.DataFrame(y_pred, columns=['Is_Laundering_Prediction'])], axis=1)
+    df_with_predictions = pd.concat([df, pd.DataFrame(y_pred, columns=['Is_Laundering_Prediction'])], axis=1)
     print(df_with_predictions)
     # Save DataFrame with prediction results as CSV file
     output_csv_file = 'prediction_result.csv'
