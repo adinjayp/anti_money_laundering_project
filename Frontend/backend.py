@@ -1,24 +1,9 @@
 from flask import Flask, request, jsonify
 import requests
 import pandas as pd
+from google.cloud import storage
 
 app = Flask(__name__)
-
-# Function to send data to the Vertex AI endpoint
-def send_data_to_vertex_ai(project, endpoint_id, location, instances):
-    endpoint_url = f"https://{location}-aiplatform.googleapis.com/v1/projects/{project}/locations/{location}/endpoints/{endpoint_id}:predict"
-    headers = {
-        "Authorization": f"Bearer {YOUR_ACCESS_TOKEN}"  # Replace YOUR_ACCESS_TOKEN with your access token
-    }
-    payload = {
-        "instances": instances
-    }
-    response = requests.post(endpoint_url, headers=headers, json=payload)
-    if response.status_code == 200:
-        prediction_results = response.json()["predictions"]
-        return prediction_results
-    else:
-        return "Failed to send data to Vertex AI endpoint"
 
 # Define route to handle CSV file upload
 @app.route('/process_csv', methods=['POST'])
@@ -28,15 +13,44 @@ def process_csv_file():
     
     # Read CSV file into pandas DataFrame
     df = pd.read_csv(csv_file)
-    
-    # Convert DataFrame to instances format expected by Vertex AI endpoint
-    instances = df.to_dict(orient='records')
-    
-    # Send CSV data to Vertex AI endpoint
-    prediction_results = send_data_to_vertex_ai("skilful-alpha-415221", "7340064749125632000", "us-central1", instances)
-    
-    # Add prediction results to DataFrame
-    df_with_predictions = pd.DataFrame(prediction_results)
+    #push inference dataframe to bucket
+    inference_df_bytes = pickle.dumps(df)
+    file_name = "inference_original_csv.pickle"
+    bucket_name = 'aml_bucket_mlops'
+    folder_name = "airflow_files"
+    storage_client = storage.Client()
+    bucket = storage_client.bucket(bucket_name)
+    blob = bucket.blob(f"{folder_name}/{file_name}")
+    blob.upload_from_string(inference_df_bytes, content_type='application/octet-stream')
+    #wait for airflow dag2 to preprocess the inference df
+    time.sleep(30)
+    #retrieve the preprocessed inference df
+    inf_X = pd.DataFrame()
+
+    try:
+        # Load the train pickled data from the file into a DataFrame
+        gcs_test_data_path = "gs://aml_bucket_mlops/airflow_files/inference_preprocessed_ddfaf_csv.pickle"
+        with fs.open(gcs_test_data_path, 'rb') as f:
+            preprocessed_inf_df = pickle.load(f).reset_index()
+            inf_X = preprocessed_inf_df.drop(columns=['Is_Laundering', 'Index', 'index'])
+            inf_y = preprocessed_inf_df['Is_Laundering']
+            # Fit the scaler to your data and transform it
+            normalized_data = scaler.fit_transform(inf_X)
+            # Convert the normalized data back to a DataFrame
+            inf_X = pd.DataFrame(normalized_data, columns=inf_X.columns)
+    except Exception as e:
+        logging.error(f"An error occurred while loading inference_preprocessed_ddfaf_csv data: {e}")
+
+    file_name = "'model_from_airflow.pickle'"
+
+    storage_client = storage.Client()
+    bucket = storage_client.bucket(bucket_name)
+    blob = bucket.blob(f"{folder_name}/{file_name}")
+    model_bytes = blob.download_as_string()
+    model = pickle.loads(model_bytes)
+
+    y_pred = model.predict(inf_X)
+    df_with_predictions = pd.concat([inf_X, pd.DataFrame(y_pred, columns=['Is_Laundering_Prediction'])], axis=1)
     
     # Save DataFrame with prediction results as CSV file
     output_csv_file = 'prediction_result.csv'
