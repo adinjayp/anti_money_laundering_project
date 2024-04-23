@@ -56,7 +56,6 @@ test_df = pickle.loads(hi_medium_df_bytes)
 test_df = test_df.astype(str)
 df_json = test_df.to_json(orient='records')
 
-
 predict_custom_trained_model(
     project="287941977155",
     endpoint_id="2835198484359938048",
