@@ -1,7 +1,7 @@
 # Money Laundering Detection using Machine Learning
 [Adinjay Phadkule](https://github.com/adinjayp) | [Krishna Barfiwala](https://github.com/krishnabx) | [Navya Pragathi](https://github.com/Navya-89) | [Utkarsh Singh](https://github.com/UtkarshS007) |  [Vishal Basutkar](https://github.com/vishalbns) | [Yash Gaikwad](https://github.com/YashRGaikwad)
 
-![alt text](CoverPic.jpg)
+![alt text](images\CoverPic.jpg)
 ## Introduction
  Money laundering is a significant financial crime involving the process of making illicitly obtained money appear to come from a legitimate source. Our project aims to address this issue by creating an automated Anti-Money Laundering (AML) detection product using Machine Learning (ML). The goal is to develop a clean and streamlined solution that adheres to the latest MLOps recommendations and procedures learned in the IE7374 Machine Learning Operations course at Northeastern University, under the guidance of Prof. Ramin Mohammadi.
 
@@ -236,14 +236,14 @@ GCP empowers efficient implementation of machine learning pipelines while ensuri
 
 To leverage GCP's services, initialization of a service account is essential. This account serves as a secure identity for your application within the GCP ecosystem. It grants the application the necessary permissions to access and utilize GCP's resources and services.
 ## Data Pipeline
-![picture alt](pipelineFlow1-2.jpg)
+![picture alt](images\pipelineFlow1-2.jpg)
 
 ________________________________________________________________________________________________________________________________________________________________________
 **DAG Flow**
 
-![picture alt](DAG.jpg)
-![picture alt](dag1.png)
-![picture alt](dag2.png)
+![picture alt](images\DAG.jpg)
+![picture alt](images\dag1.png)
+![picture alt](images\dag2.png)
 
 ### Data Pipeline Components
 
@@ -252,7 +252,6 @@ ________________________________________________________________________________
 
 #### 2. Exploratory Analysis and Tensor Flow Data Validation
 We performed EDA on the train and validation data separately in a Jupyter notebook - TFDV_EDA.ipynb. Since this data is clean transactional data, we found there were no null values or datatype issues to handle during preprocessing. This notebook is to understand the transactions, accounts, banks, the split of payment modes, etc.
-
 
 
 #### 3. Data Ingestion and Split
@@ -277,59 +276,57 @@ We performed EDA on the train and validation data separately in a Jupyter notebo
 #### 6. Data preparation for inference dataset
 * `inference.py`: Retrieves updated graph and other dictionaries, performs data validation checks, performs preprocessing and updates the graph and pushes the updated data to the bucket.
 
-#### 7. Building and Deploying the Model
+#### 7. Data Card After Preprocessing and Feature Engineering
+
+Variable Name      |      Role     |    DType      | Description
+:-------------     | :-------------: | :------------: | :-------------
+`Index`              |    ID           | int64          |
+`From_ID`            |    ID           | int64          | Hexadecimal code for account where transaction originates
+`To_ID`              |    ID           | int64          | Hexadecimal code for account where transaction ends
+`Timestamp`          |    ID           | float64        |
+`Amount_Paid`        |  Feature        | float64        | Monetary amount paid (in currency units of the next column)
+`Payment_Currency`   |  Feature        | int64          | Currency such as dollars, euros, etc of From account
+`Amount_Received`    |  Feature        | float64        | Monetary amount received in From account (in currency units of the next column)
+`Receiving_Currency` |  Feature        | int64          | Monetary amount received in From account (in currency units of the next column)
+`Payment_Format`     |  Feature        | int64          | How the transaction was conducted, e.g. cheque, ACH, wire, credit cards, etc.
+`Is_Laundering`      |  Feature        | int64          | Binary Value: 1 if it is laundering, 0 if not.
+`from_degree`        |     Feature     | int64          | number of edges incident on a node originating from it. 
+`from_in_degree`     |     Feature     | int64          | The number of edges pointing towards a node, indicating incoming edges to the node.
+`from_out_degree`    |     Feature     | int64          | The number of edges originating from a node, indicating outgoing edges from the node.
+`from_clustering_coeff`|   Feature     | float64        | This measures the degree to which nodes in a graph tend to cluster together. 
+`from_degree_centrality`|  Feature     | float64        | It measures the importance of a node in a graph based on the number of edges incident upon it. 
+`to_degree`          |     Feature     | int64          | Similar to from_degree, but concerning the target node of an edge.
+`to_in_degree`       |     Feature     | int64          | The number of edges pointing towards a node, but specifically for the target node of an edge.
+`to_out_degree`      |     Feature     | int64          | The number of edges originating from a node, but specifically for the target node of an edge.
+`to_clustering_coeff`|     Feature     | float64        | Similar to from_clustering_coeff, but concerning the target node of an edge.
+`to_degree_centrality`|    Feature     | float64        | Similar to from_degree_centrality, but concerning the target node of an edge.
+
+#### 8. Building and Deploying the Model
 The `build.py` script is responsible for building and deploying the model to the Vertex AI Platform. It uses the aiplatform library to create a custom container training job and deploy the model to an endpoint. The `CustomContainerTrainingJob` class is a part of Google Cloud's Vertex AI Python client library, which allows users to create and manage custom container training jobs for machine learning models. A custom container training job enables you to run your training application in a Docker container that you can customize.
 
-#### 8. Building the Frontend and Backend
+Artifact Registry:
+![picture alt](images\Repository.png)
+
+Model:
+![picture alt](images\model.png)
+
+Endpoint:
+![picture alt](images\enddpoint.png)
+
+#### 9. Building the Frontend and Backend
 * **aml.html:** This HTML file creates an interactive interface for users to upload transaction data, receive predictions on potential fraudulent transactions, and download processed data.
  	- File Upload: If a valid CSV file is selected, the `uploadFile()` function is called, which constructs a FormData object with the file and sends it to the server using a POST request to the `/process_csv` endpoint.
-
-
-
-
-
 
 * **backend.py:** This Python Flask application serves as an intermediary between a user uploading a CSV file containing transaction data and a machine learning model hosted on Google Cloud's Vertex AI platform for fraud detection.
 	- CSV File Processing Endpoint: A route `/process_csv` is defined to handle POST requests containing CSV files. Upon receiving a CSV file, it reads the file into a pandas DataFrame, converts it into a format expected by the Vertex AI endpoint, sends the data for prediction, and saves the prediction results along with the original data as CSV files.
 
 
-
 **Front End Screenshot**
 ![picture alt](Frontend/frontendimage.png)
+
 **Google Cloud Storage Bucket**
-![picture alt](Bucket.jpg)
+![picture alt](images\Bucket.jpg)
+ 
 
-## Data Card After Preprocessing and Feature Engineering
 
-Variable Name      |      Role     |    DType      | Description
-:-------------     | :-------------: | :------------: | :-------------
-Index              |    ID           | int64          |
-From_ID            |    ID           | int64          | Hexadecimal code for account where transaction originates
-To_ID              |    ID           | int64          | Hexadecimal code for account where transaction ends
-Timestamp          |    ID           | float64        |
-Amount_Paid        |  Feature        | float64        | Monetary amount paid (in currency units of the next column)
-Payment_Currency   |  Feature        | int64          | Currency such as dollars, euros, etc of From account
-Amount_Received    |  Feature        | float64        | Monetary amount received in From account (in currency units of the next column)
-Receiving_Currency |  Feature        | int64          | Monetary amount received in From account (in currency units of the next column)
-Payment_Format     |  Feature        | int64          | How the transaction was conducted, e.g. cheque, ACH, wire, credit cards, etc.
-Is_Laundering      |  Feature        | int64          | Binary Value: 1 if it is laundering, 0 if not.
-from_degree        |     Feature     | int64          | number of edges incident on a node originating from it. 
-from_in_degree     |     Feature     | int64          | The number of edges pointing towards a node, indicating incoming edges to the node.
-from_out_degree    |     Feature     | int64          | The number of edges originating from a node, indicating outgoing edges from the node.
-from_clustering_coeff|   Feature     | float64        | This measures the degree to which nodes in a graph tend to cluster together. 
-from_degree_centrality|  Feature     | float64        | It measures the importance of a node in a graph based on the number of edges incident upon it. 
-to_degree          |     Feature     | int64          | Similar to from_degree, but concerning the target node of an edge.
-to_in_degree       |     Feature     | int64          | The number of edges pointing towards a node, but specifically for the target node of an edge.
-to_out_degree      |     Feature     | int64          | The number of edges originating from a node, but specifically for the target node of an edge.
-to_clustering_coeff|     Feature     | float64        | Similar to from_clustering_coeff, but concerning the target node of an edge.
-to_degree_centrality|    Feature     | float64        | Similar to from_degree_centrality, but concerning the target node of an edge.
-Preprocessed_train_data with graph features
 
-* **From_ID:** The From Account Node number in the graph. Original account number can be retrieved from the account_dict from the bucket. (int64)
-* **To_ID:** The To Account Node number in the graph. (int64)
-* **Timestamp:** Formatted timestamp (int64)
-* **Amount_Paid:** No change from original dataset. (Float64)
-* **Payment_Currency:** Payment currency encoded to number. currency_dict in the bucket can be used to retrieve the original currency from the numbers. (int64)
-* **Amount_Received:** No change from original dataset. (Float64)
-* **Receiving_Currency:** Receiving currency encoded to number. currency_dict in the bucket can be used to retrieve the original currency from the numbers. (int64)
-* **Payment_Format:** Payment format encoded to number. payment_format_dict in the bucket can be used to retrieve the original currency from the numbers. (int64)
