@@ -2,6 +2,25 @@ from flask import Flask, request, jsonify
 import requests
 import pandas as pd
 from google.cloud import storage
+import pickle
+import logging
+import time
+from sklearn.preprocessing import MinMaxScaler
+import gcsfs
+
+fs = gcsfs.GCSFileSystem()
+
+logging.basicConfig(filename='backend.log', level=logging.INFO)
+# Define a stream handler to write log messages to the terminal
+console = logging.StreamHandler()
+console.setLevel(logging.INFO)
+
+# Create a formatter and set it to the handler
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+console.setFormatter(formatter)
+
+# Add the handler to the root logger
+logging.getLogger('').addHandler(console)
 
 app = Flask(__name__)
 
@@ -35,6 +54,7 @@ def process_csv_file():
             inf_X = preprocessed_inf_df.drop(columns=['Is_Laundering', 'Index', 'index'])
             inf_y = preprocessed_inf_df['Is_Laundering']
             # Fit the scaler to your data and transform it
+            scaler = MinMaxScaler()
             normalized_data = scaler.fit_transform(inf_X)
             # Convert the normalized data back to a DataFrame
             inf_X = pd.DataFrame(normalized_data, columns=inf_X.columns)
@@ -57,7 +77,7 @@ def process_csv_file():
     df_with_predictions.to_csv(output_csv_file, index=False)
     
     # Filter fraudulent transactions
-    fraudulent_transactions = df_with_predictions[df_with_predictions['prediction'] == 1]
+    fraudulent_transactions = df_with_predictions[df_with_predictions['Is_Laundering_Prediction'] == 1]
     
     # Save fraudulent transactions as CSV file
     fraudulent_transactions_csv_file = 'fraudulent_transactions.csv'
@@ -72,3 +92,23 @@ def process_csv_file():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+'''
+Code steps: 
+
+It defines a Flask application.
+It sets up logging to both a file (backend.log) and the console.
+It defines a route (/process_csv) to handle CSV file uploads via POST requests.
+Upon receiving a CSV file, it reads it into a pandas DataFrame.
+It uploads the DataFrame as a pickled object to a Google Cloud Storage bucket.
+It waits for 30 seconds (you might adjust this value as needed).
+It retrieves a preprocessed inference DataFrame from another location in the same bucket.
+It normalizes the inference DataFrame using a MinMaxScaler.
+It downloads a pickled machine learning model from the bucket.
+It uses the model to make predictions on the normalized inference DataFrame.
+It concatenates the predictions with the inference DataFrame.
+It saves the DataFrame with prediction results as a CSV file (prediction_result.csv).
+It filters fraudulent transactions based on the predictions.
+It saves the fraudulent transactions as a separate CSV file (fraudulent_transactions.csv).
+It returns a JSON response containing download links for both CSV files.
+'''
