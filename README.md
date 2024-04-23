@@ -314,7 +314,7 @@ Endpoint:
 ![picture alt](images/enddpoint.png)
 
 Retrain:
-![picture alt](images/Retrain-3.png)
+![picture alt](images/RetrainPipeline.jpg)
 
 #### 9. Building the Frontend and Backend
 * **aml.html:** This HTML file creates an interactive interface for users to upload transaction data, receive predictions on potential fraudulent transactions, and download processed data.
