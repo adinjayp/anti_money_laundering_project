@@ -41,7 +41,7 @@ file and the CSV file containing fraudulent transactions (if any), and displays 
             font-size: 36px;
             font-weight: bold;
             margin-bottom: 20px;
-            color: #ffffff;
+            color: #000000;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
 
@@ -138,11 +138,13 @@ file and the CSV file containing fraudulent transactions (if any), and displays 
                 // Create download link for entire CSV file
                 var entireCsvDownloadLink = document.createElement('a');
                 entireCsvDownloadLink.setAttribute('href', data.entire_csv_download_link);
+                entireCsvDownloadLink.setAttribute('download', 'prediction_result.csv');
                 entireCsvDownloadLink.innerText = 'Download Analyzed Transactions';
                 document.getElementById("prediction-result").appendChild(entireCsvDownloadLink);
                 // Create download link for CSV file containing flagged transactions
                 var flaggedTransactionsDownloadLink = document.createElement('a');
-                flaggedTransactionsDownloadLink.setAttribute('href', data.flagged_transactions_download_link);
+                flaggedTransactionsDownloadLink.setAttribute('href', data.fraudulent_transactions_download_link);
+                flaggedTransactionsDownloadLink.setAttribute('download', 'fraudulent_transactions.csv');
                 flaggedTransactionsDownloadLink.innerText = 'Download Flagged Transactions CSV';
                 document.getElementById("prediction-result").appendChild(flaggedTransactionsDownloadLink);
                 // Display flagged transactions
