@@ -313,6 +313,9 @@ Model:
 Endpoint:
 ![picture alt](images/enddpoint.png)
 
+Retrain:
+![picture alt](images/Retrain-3.png)
+
 #### 9. Building the Frontend and Backend
 * **aml.html:** This HTML file creates an interactive interface for users to upload transaction data, receive predictions on potential fraudulent transactions, and download processed data.
  	- File Upload: If a valid CSV file is selected, the `uploadFile()` function is called, which constructs a FormData object with the file and sends it to the server using a POST request to the `/process_csv` endpoint.
