@@ -126,40 +126,65 @@ file and the CSV file containing fraudulent transactions (if any), and displays 
         }
 
         function uploadFile(file) {
-            var formData = new FormData();
-            formData.append("file", document.getElementById("csv-file").files[0]);
-            fetch("http://34.70.224.200:5000/process_csv", {
-                method: "POST",
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById("prediction-result").innerText = "AML Prediction: " + data.prediction;
-                // Create download link for entire CSV file
-                var entireCsvDownloadLink = document.createElement('a');
-                entireCsvDownloadLink.setAttribute('href', data.entire_csv_download_link);
-                entireCsvDownloadLink.setAttribute('download', 'prediction_result.csv');
-                entireCsvDownloadLink.innerText = 'Download Analyzed Transactions';
-                document.getElementById("prediction-result").appendChild(entireCsvDownloadLink);
-                // Create download link for CSV file containing flagged transactions
-                var flaggedTransactionsDownloadLink = document.createElement('a');
-                flaggedTransactionsDownloadLink.setAttribute('href', data.fraudulent_transactions_download_link);
-                flaggedTransactionsDownloadLink.setAttribute('download', 'fraudulent_transactions.csv');
-                flaggedTransactionsDownloadLink.innerText = 'Download Flagged Transactions CSV';
-                document.getElementById("prediction-result").appendChild(flaggedTransactionsDownloadLink);
-                // Display flagged transactions
-                if (data.flagged_transactions.length > 0) {
-                    var flaggedTransactionsDiv = document.getElementById("fraudulent-transactions");
-                    flaggedTransactionsDiv.innerHTML = "<h3>Flagged Transactions:</h3>";
-                    data.flagged_transactions.forEach(transaction => {
-                        flaggedTransactionsDiv.innerHTML += "<p>" + transaction + "</p>";
-                    });
-                } else {
-                    document.getElementById("fraudulent-transactions").innerText = "No flagged transactions found.";
-                }
-            })
-            .catch(error => console.error("Error:", error));
+    var formData = new FormData();
+    formData.append("file", file);
+    fetch("http://34.70.224.200:5000/process_csv", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Function to convert dictionary data to CSV format
+        function convertToCSV(dataArray) {
+            var csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += Object.keys(dataArray[0]).join(",") + "\n";
+            dataArray.forEach(function (item) {
+                csvContent += Object.values(item).join(",") + "\n";
+            });
+            return csvContent;
         }
+
+        // Function to create a downloadable file from CSV data
+        function createDownloadableFile(csvData, fileName) {
+            var blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
+            var link = document.createElement("a");
+            if (link.download !== undefined) {
+                var url = URL.createObjectURL(blob);
+                link.setAttribute("href", url);
+                link.setAttribute("download", fileName);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        }
+
+        // Download entire CSV file
+        document.getElementById("entire-csv-download-link").addEventListener('click', function() {
+            var csvData = convertToCSV(data.df_with_predictions);
+            createDownloadableFile(csvData, 'prediction_result.csv');
+        });
+
+        // Download CSV file containing flagged transactions
+        document.getElementById("fraudulent-transactions-download-link").addEventListener('click', function() {
+            var csvData = convertToCSV(data.fraudulent_transactions);
+            createDownloadableFile(csvData, 'fraudulent_transactions.csv');
+        });
+
+        // Display flagged transactions
+        var flaggedTransactionsDiv = document.getElementById("fraudulent-transactions");
+        flaggedTransactionsDiv.innerHTML = "<h3>Flagged Transactions:</h3>";
+        if (data.fraudulent_transactions.length > 0) {
+            data.fraudulent_transactions.forEach(transaction => {
+                flaggedTransactionsDiv.innerHTML += "<p>" + JSON.stringify(transaction) + "</p>";
+            });
+        } else {
+            flaggedTransactionsDiv.innerText = "No flagged transactions found.";
+        }
+    })
+    .catch(error => console.error("Error:", error));
+}
+
     </script>
 </body>
 </html>

@@ -76,23 +76,25 @@ def process_csv_file():
 
     y_pred = model.predict(inf_X)
     df_with_predictions = pd.concat([inf_X, pd.DataFrame(y_pred, columns=['Is_Laundering_Prediction'])], axis=1)
-    
+    print(df_with_predictions)
     # Save DataFrame with prediction results as CSV file
     output_csv_file = 'prediction_result.csv'
     df_with_predictions.to_csv(output_csv_file, index=False)
     
     # Filter fraudulent transactions
     fraudulent_transactions = df_with_predictions[df_with_predictions['Is_Laundering_Prediction'] == 1]
-    
+    print(fraudulent_transactions)
     # Save fraudulent transactions as CSV file
     fraudulent_transactions_csv_file = 'fraudulent_transactions.csv'
     fraudulent_transactions.to_csv(fraudulent_transactions_csv_file, index=False)
     
     # Return JSON response with download links
     response_data = {
-        'entire_csv_download_link': f'/download/{output_csv_file}',
-        'fraudulent_transactions_download_link': f'/download/{fraudulent_transactions_csv_file}'
-    }
+    'df_with_predictions': df_with_predictions.to_dict(orient='records'),
+    'fraudulent_transactions': fraudulent_transactions.to_dict(orient='records'),
+    'entire_csv_download_link': f'/download/{output_csv_file}',
+    'fraudulent_transactions_download_link': f'/download/{fraudulent_transactions_csv_file}'
+}
     return jsonify(response_data)
 
 if __name__ == '__main__':
