@@ -24,6 +24,11 @@ logging.getLogger('').addHandler(console)
 
 app = Flask(__name__)
 
+# Define route for the root URL
+@app.route('/')
+def index():
+    return 'Welcome to the Flask API!'
+
 # Define route to handle CSV file upload
 @app.route('/process_csv', methods=['POST'])
 def process_csv_file():
