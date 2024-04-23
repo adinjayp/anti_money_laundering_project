@@ -7,7 +7,6 @@ from google.cloud import storage
 fs = gcsfs.GCSFileSystem()
 import pickle
 
-
 def predict_custom_trained_model(
     project: str,
     endpoint_id: str,
@@ -20,8 +19,8 @@ def predict_custom_trained_model(
         project (str): Project ID
         endpoint_id (str): Endpoint ID
         instances (Union[Dict, List[Dict]]): Dictionary containing instances to predict
-        location (str, optional): Location. Defaults to "us-east1".
-        api_endpoint (str, optional): API Endpoint. Defaults to "us-east1-aiplatform.googleapis.com".
+        location (str, optional): Location. Defaults to "us-central1".
+        api_endpoint (str, optional): API Endpoint. Defaults to "us-central1-aiplatform.googleapis.com".
     """
     
     # The AI Platform services require regional API endpoints.
@@ -56,6 +55,7 @@ hi_medium_df_bytes = blob.download_as_string()
 test_df = pickle.loads(hi_medium_df_bytes)
 test_df = test_df.astype(str)
 df_json = test_df.to_json(orient='records')
+
 
 predict_custom_trained_model(
     project="287941977155",
