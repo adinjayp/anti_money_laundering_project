@@ -20,8 +20,8 @@ def predict_custom_trained_model(
         project (str): Project ID
         endpoint_id (str): Endpoint ID
         instances (Union[Dict, List[Dict]]): Dictionary containing instances to predict
-        location (str, optional): Location. Defaults to "us-east1".
-        api_endpoint (str, optional): API Endpoint. Defaults to "us-east1-aiplatform.googleapis.com".
+        location (str, optional): Location. Defaults to "us-central1".
+        api_endpoint (str, optional): API Endpoint. Defaults to "us-central1-aiplatform.googleapis.com".
     """
     
     # The AI Platform services require regional API endpoints.
