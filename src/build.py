@@ -9,8 +9,8 @@ REGION="us-central1"
 PROJECT_ID="skilful-alpha-415221"
 BASE_OUTPUT_DIR="gs://aml_bucket_mlops"
 BUCKET ="aml_mlops_bucket"  # Should be same as AIP_STORAGE_URI specified in the docker file
-CONTAINER_URI="us-central1-docker.pkg.dev/skilful-alpha-415221/amlartifactrepo2/trainer:v1"
-MODEL_SERVING_CONTAINER_IMAGE_URI ="us-central1-docker.pkg.dev/skilful-alpha-415221/amlartifactrepo2/serve:v1"
+CONTAINER_URI="us-central1-docker.pkg.dev/skilful-alpha-415221/amlartifactrepo2/trainer:v3"
+MODEL_SERVING_CONTAINER_IMAGE_URI ="us-central1-docker.pkg.dev/skilful-alpha-415221/amlartifactrepo2/serve:v3"
 DISPLAY_NAME="endpointdisplayname"
 SERVICE_ACCOUNT_EMAIL="amlmlops-serviceacc@skilful-alpha-415221.iam.gserviceaccount.com"
 

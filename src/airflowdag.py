@@ -17,7 +17,7 @@ from feature_extraction import extract_graph_features
 from dask_handling import create_dask_dataframe
 from graph_operations import merge_trans_with_gf
 from upload_files_to_bucket import upload_file_to_gcs
-from model_build import init_ai_and_model_train
+from model_build import build_model
 
 # G = None 
 # scheduler_address = 'tcp://10.128.0.5:8786'
@@ -120,9 +120,9 @@ with DAG(
         dag=dag
     )
 
-    aiplatform_model_train_task = PythonOperator(
-        task_id='init_ai_and_model_train',
-        python_callable=init_ai_and_model_train,
+    build_model = PythonOperator(
+        task_id='model_build',
+        python_callable=build_model,
         provide_context=True,  # Allows accessing task context
         dag=dag
     )
@@ -138,5 +138,5 @@ with DAG(
     merge_trans_with_gf_task.set_upstream([add_edges_task, feature_Extraction_task])
     upload_files_to_gcs_task.set_upstream([add_edges_task, preprocess_data_task, merge_trans_with_gf_task])
 
-    aiplatform_model_train_task.set_upstream(upload_files_to_gcs_task)
+    build_model.set_upstream([merge_trans_with_gf_task, upload_files_to_gcs_task])
     #ingest_data_task >> data_split_task >> preprocess_data_task >> create_graph_task >> feature_Extraction_task >> create_dask_dataframe_task >> merge_trans_with_gf_task >> upload_files_to_gcs_task

@@ -127,8 +127,8 @@ file and the CSV file containing fraudulent transactions (if any), and displays 
 
         function uploadFile(file) {
             var formData = new FormData();
-            formData.append("file", file);
-            fetch("/process_csv", {
+            formData.append("file", document.getElementById("csv-file").files[0]);
+            fetch("http://34.70.224.200:5000/process_csv", {
                 method: "POST",
                 body: formData
             })

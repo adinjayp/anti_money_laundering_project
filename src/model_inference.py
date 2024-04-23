@@ -1,17 +1,22 @@
-from typing import Dict, List, Union
-from google.cloud import aiplatform
-from google.protobuf import json_format
-from google.protobuf.struct_pb2 import Value
+import pandas as pd
+from google.cloud import storage
 import pickle
+import logging
+
+logging.basicConfig(filename='model_inferencing.log', level=logging.INFO)
+# Define a stream handler to write log messages to the terminal
+console = logging.StreamHandler()
+console.setLevel(logging.INFO)
+
+# Create a formatter and set it to the handler
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+console.setFormatter(formatter)
+
+# Add the handler to the root logger
+logging.getLogger('').addHandler(console)
 
 
-def predict_custom_trained_model(
-    project: str,
-    endpoint_id: str,
-    location: str = "us-east1",
-    api_endpoint: str = "us-east1-aiplatform.googleapis.com",
-    **kwargs
-):
+def model_inference_def(**kwargs):
     """Make a prediction to a deployed custom trained model
     Args:
         project (str): Project ID
@@ -21,29 +26,28 @@ def predict_custom_trained_model(
         api_endpoint (str, optional): API Endpoint. Defaults to "us-east1-aiplatform.googleapis.com".
     """
     merged_ddf_bytes = kwargs['task_instance'].xcom_pull(task_ids='merge_trans_with_gf', key='merged_ddf_bytes')
-    inference_df = pickle.loads(merged_ddf_bytes)
-    instances = inference_df.to_dict(orient='records')
-    # The AI Platform services require regional API endpoints.
-    client_options = {"api_endpoint": api_endpoint}
-    # Initialize client that will be used to create and send requests.
-    # This client only needs to be created once, and can be reused for multiple requests.
-    client = aiplatform.gapic.PredictionServiceClient(client_options=client_options)
-    # The format of each instance should conform to the deployed model's prediction input schema.
-    instances = instances if isinstance(instances, list) else [instances]
-    instances = [
-        json_format.ParseDict(instance_dict, Value()) for instance_dict in instances
-    ]
-    parameters_dict = {}
-    parameters = json_format.ParseDict(parameters_dict, Value())
-    endpoint = client.endpoint_path(
-        project=project, location=location, endpoint=endpoint_id
-    )
-    response = client.predict(
-        endpoint=endpoint, instances=instances, parameters=parameters
-    )
-    print("response")
-    print(" deployed_model_id:", response.deployed_model_id)
-    # The predictions are a google.protobuf.Value representation of the model's predictions.
-    predictions = response.predictions
-    for prediction in predictions:
-        print(" prediction:", dict(prediction))
+    preprocessed_inference_df = pickle.loads(merged_ddf_bytes)
+    inf_X = preprocessed_inference_df.drop(columns=['Is_Laundering', 'Index'])
+    inf_y_orig = preprocessed_inference_df['Is_Laundering']
+
+    #Download the hi_medium dataframe from the bucket
+    bucket_name = "aml_mlops_bucket"
+    folder_name = "airflow_files"
+    file_name = "'model_from_airflow.pickle'"
+
+    storage_client = storage.Client()
+    bucket = storage_client.bucket(bucket_name)
+    blob = bucket.blob(f"{folder_name}/{file_name}")
+    model_bytes = blob.download_as_string()
+    model = pickle.loads(model_bytes)
+
+    y_pred = model.predict(inf_X)
+    inference_df_with_prediction = pd.concat([inf_X, pd.DataFrame(y_pred, columns=['Is_Laundering_Prediction'])], axis=1)
+    inference_df_with_prediction_bytes = pickle.dumps(inference_df_with_prediction)
+    # Upload the file to the bucket
+    blob = bucket.blob(f"{folder_name}/inference_df_with_prediction.pickle")
+    blob.upload_from_string(inference_df_with_prediction_bytes, content_type='application/octet-stream')
+    # Log the upload
+    logging.info(f"File inference_df_with_prediction uploaded successfully to GCS bucket.'")
+
+    return None

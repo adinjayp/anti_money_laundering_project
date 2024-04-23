@@ -2,7 +2,10 @@ from typing import Dict, List, Union
 from google.cloud import aiplatform
 from google.protobuf import json_format
 from google.protobuf.struct_pb2 import Value
-import logging
+import gcsfs
+from google.cloud import storage
+fs = gcsfs.GCSFileSystem()
+import pickle
 
 def predict_custom_trained_model(
     project: str,
@@ -22,48 +25,41 @@ def predict_custom_trained_model(
     
     # The AI Platform services require regional API endpoints.
     client_options = {"api_endpoint": api_endpoint}
-    try:
-        # Initialize client that will be used to create and send requests.
-        # This client only needs to be created once, and can be reused for multiple requests.
-        client = aiplatform.gapic.PredictionServiceClient(client_options=client_options)
-        # The format of each instance should conform to the deployed model's prediction input schema.
-        instances = instances if isinstance(instances, list) else [instances]
-        instances = [
-            json_format.ParseDict(instance_dict, Value()) for instance_dict in instances
-        ]
-        parameters_dict = {}
-        parameters = json_format.ParseDict(parameters_dict, Value())
-        endpoint = client.endpoint_path(
-            project=project, location=location, endpoint=endpoint_id
-        )
-        response = client.predict(
-            endpoint=endpoint, instances=instances, parameters=parameters
-        )
-        print("Response:")
-        print("Deployed model ID:", response.deployed_model_id)
-        # The predictions are a google.protobuf.Value representation of the model's predictions.
-        predictions = response.predictions
-        for prediction in predictions:
-            print("Prediction:", dict(prediction))
-    except Exception as e:
-        logging.error(f"Error occurred: {e}")
+    # Initialize client that will be used to create and send requests.
+    # This client only needs to be created once, and can be reused for multiple requests.
+    client = aiplatform.gapic.PredictionServiceClient(client_options=client_options)
+    # The format of each instance should conform to the deployed model's prediction input schema.
+    instances = instances if isinstance(instances, list) else [instances]
+    instances = [
+        json_format.ParseDict(instance_dict, Value()) for instance_dict in instances
+    ]
+    parameters_dict = {}
+    parameters = json_format.ParseDict(parameters_dict, Value())
+    endpoint = client.endpoint_path(
+        project=project, location=location, endpoint=endpoint_id
+    )
+    response = client.predict(
+        endpoint=endpoint, instances=instances, parameters=parameters
+    )
+    print("response")
+    print(" deployed_model_id:", response.deployed_model_id)
+    # The predictions are a google.protobuf.Value representation of the model's predictions.
+    predictions = response.predictions
+    for prediction in predictions:
+        print(" prediction:", dict(prediction))
+
+storage_client = storage.Client()
+bucket = storage_client.bucket("aml_bucket_mlops")
+blob = bucket.blob('hi_medium_df.pickle')
+hi_medium_df_bytes = blob.download_as_string()
+test_df = pickle.loads(hi_medium_df_bytes)
+test_df = test_df.astype(str)
+df_json = test_df.to_json(orient='records')
+
 
 predict_custom_trained_model(
-    project="497741562136",
-    endpoint_id="1974151137439252480",
+    project="287941977155",
+    endpoint_id="2835198484359938048",
     location="us-central1",
-    instances= {
-            "PT08.S1(CO)": 0.651435622,
-            "NMHC(GT)": 0.154088375,
-            "C6H6(GT)": 0.198980682,
-            "PT08.S2(NMHC)": 0.406771327,
-            "NOx(GT)": 0.608617903,
-            "PT08.S3(NOx)": 0.340316247,
-            "NO2(GT)": 0.604898307,
-            "PT08.S4(NO2)": 0.354166125,
-            "PT08.S5(O3)": 0.670583278,
-            "T": 0.080010396,
-            "RH": 0.098031541,
-            "AH": 0.146104239
-        }
+    instances=df_json
 )

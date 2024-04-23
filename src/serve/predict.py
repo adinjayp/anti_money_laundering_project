@@ -4,6 +4,14 @@ import joblib
 import os
 import json
 from dotenv import load_dotenv
+import pickle
+import time
+from sklearn.preprocessing import MinMaxScaler
+import gcsfs
+import pandas as pd
+import logging
+
+fs = gcsfs.GCSFileSystem()
 
 load_dotenv()
 
@@ -15,8 +23,8 @@ def initialize_variables():
     Returns:
         tuple: The project id and bucket name.
     """
-    project_id = "skilful-alpha-415221"
-    bucket_name = "aml_bucket_mlops"
+    project_id="skilful-alpha-415221"
+    bucket_name="aml_bucket_mlops"
     return project_id, bucket_name
 
 def initialize_client_and_bucket(bucket_name):
@@ -67,22 +75,37 @@ def fetch_latest_model(bucket_name, prefix="model/model_"):
 
     return latest_blob_name
 
+def preprocess_data(df):
+    #push inference dataframe to bucket
+    inference_df_bytes = pickle.dumps(df)
+    file_name = "inference_original_csv.pickle"
+    bucket_name = 'aml_bucket_mlops'
+    folder_name = "airflow_files"
+    storage_client = storage.Client()
+    bucket = storage_client.bucket(bucket_name)
+    blob = bucket.blob(f"{folder_name}/{file_name}")
+    blob.upload_from_string(inference_df_bytes, content_type='application/octet-stream')
+    #wait for airflow dag2 to preprocess the inference df
+    time.sleep(30)
+    #retrieve the preprocessed inference df
+    inf_X = pd.DataFrame()
 
-# def normalize_data(instance, stats):
-#     """
-#     Normalizes a data instance using provided statistics.
-#     Args:
-#         instance (dict): A dictionary representing the data instance.
-#         stats (dict): A dictionary with 'mean' and 'std' keys for normalization.
-#     Returns:
-#         dict: A dictionary representing the normalized instance.
-#     """
-#     normalized_instance = {}
-#     for feature, value in instance.items():
-#         mean = stats["mean"].get(feature, 0)
-#         std = stats["std"].get(feature, 1)
-#         normalized_instance[feature] = (value - mean) / std
-#     return normalized_instance
+    try:
+        # Load the train pickled data from the file into a DataFrame
+        gcs_test_data_path = "gs://aml_bucket_mlops/airflow_files/inference_preprocessed_ddfaf_csv.pickle"
+        with fs.open(gcs_test_data_path, 'rb') as f:
+            preprocessed_inf_df = pickle.load(f).reset_index()
+            inf_X = preprocessed_inf_df.drop(columns=['Is_Laundering', 'Index', 'index'])
+            inf_y = preprocessed_inf_df['Is_Laundering']
+            # Fit the scaler to your data and transform it
+            normalized_data = scaler.fit_transform(inf_X)
+            # Convert the normalized data back to a DataFrame
+            inf_X = pd.DataFrame(normalized_data, columns=inf_X.columns)
+    except Exception as e:
+        logging.error(f"An error occurred while loading inference_preprocessed_ddfaf_csv data: {e}")
+
+    return inf_X
+
 
 @app.route(os.environ['AIP_HEALTH_ROUTE'], methods=['GET'])
 def health_check():
@@ -102,31 +125,15 @@ def predict():
     request_json = request.get_json()
     request_instances = request_json['instances']
 
-    # Normalize and format each instance
-    formatted_instances = []
-    # for instance in request_instances:
-    #     normalized_instance = normalize_data(instance, stats)
-    #     formatted_instance = [
-    #         normalized_instance['PT08.S1(CO)'],
-    #         normalized_instance['NMHC(GT)'],
-    #         normalized_instance['C6H6(GT)'],
-    #         normalized_instance['PT08.S2(NMHC)'],
-    #         normalized_instance['NOx(GT)'],
-    #         normalized_instance['PT08.S3(NOx)'],
-    #         normalized_instance['NO2(GT)'],
-    #         normalized_instance['PT08.S4(NO2)'],
-    #         normalized_instance['PT08.S5(O3)'],
-    #         normalized_instance['T'],
-    #         normalized_instance['RH'],
-    #         normalized_instance['AH']
-    #     ]
-    #     formatted_instances.append(formatted_instance)
+    # Parse the JSON string containing CSV data into a DataFrame
+    df = pd.read_json(request_instances)
+
+    preprocessed_infdf = preprocess_data(df)
 
     # Make predictions with the model
-    prediction = model.predict(formatted_instances)
-    prediction = prediction.tolist()
-    output = {'predictions': [{'result': pred} for pred in prediction]}
-    return jsonify(output)
+    prediction = model.predict(preprocessed_infdf)
+    inf_data_with_prediction = pd.concat([preprocessed_infdf, pd.DataFrame(prediction, columns=['Is_Laundering_Prediction'])], axis=1)
+    return jsonify(inf_data_with_prediction)
 
 project_id, bucket_name = initialize_variables()
 storage_client, bucket = initialize_client_and_bucket(bucket_name)
@@ -135,4 +142,4 @@ model = load_model(bucket, bucket_name)
 
 
 if __name__ == '__main__':
-    app.run(host='34.70.224.200', port=9000)
+    app.run(host='0.0.0.0', port=8080)

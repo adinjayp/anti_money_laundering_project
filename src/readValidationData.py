@@ -4,7 +4,11 @@ import json
 from google.cloud import storage
 import pandas as pd
 import datatable as dt
+import gcsfs
 #from dask.distributed import Client
+
+fs = gcsfs.GCSFileSystem()
+
 
 def download_data_from_bucket(**kwargs):
     try:
@@ -33,6 +37,12 @@ def download_data_from_bucket(**kwargs):
         #G = pickle.loads(graph_bytes)
 
         logging.info("Successfully downloaded and deserialized graph from bucket.")
+
+        #Download the hi_medium dataframe from the bucket
+        blob = bucket.blob('hi_medium_df.pickle')
+        hi_medium_df_bytes = blob.download_as_string()
+        test_df = pickle.loads(hi_medium_df_bytes)
+        test_df = test_df.astype(str)
 
         # first_timestamp, currency_dict, payment_format_dict, bank_account_dict, account_dict FROM BUCKET!!
         # Specify the name of the files in the bucket
@@ -68,10 +78,23 @@ def download_data_from_bucket(**kwargs):
         logging.info("Successfully downloaded and parsed dictionaries from bucket.")
 
         # Read data from GCS bucket
-        gcs_bucket_path = "gs://aml_mlops_bucket/"
-        raw_data_pandas = pd.read_csv(gcs_bucket_path + 'HI_Medium_Trans_1.csv').astype(str)
-        test_df = raw_data_pandas.head(25)
-        logging.info("test_df head: %s", str(test_df.head()))
+        #gcs_bucket_path = "gs://aml_mlops_bucket/"
+        #raw_data_pandas = pd.read_csv(gcs_bucket_path + 'HI_Medium_Trans_1.csv').astype(str)
+        #test_df = raw_data_pandas.head(25)
+        
+        logging.info("test_df (HI_Medium_Trans) head: %s", str(test_df.head()))
+
+        try:
+            # Load the train pickled data from the file into a DataFrame
+            gcs_test_data_path = "gs://aml_bucket_mlops/airflow_files/inference_original_csv.pickle"
+            with fs.open(gcs_test_data_path, 'rb') as f:
+               test_df = pickle.load(f).reset_index()
+
+        except Exception as e:
+            logging.error(f"An error occurred while loading inference_original_csv data: {e}")
+            # Handle the error or continue gracefully
+        
+        logging.info("test_df (inference) head: %s", str(test_df.head()))
 
         logging.info("Successfully read data from GCS bucket.")
 
