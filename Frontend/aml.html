@@ -103,11 +103,11 @@ file and the CSV file containing fraudulent transactions (if any), and displays 
     </div>
 
     <div id="prediction-result">
-        <a id="entire-csv-download-link" href="#">Download Entire CSV</a>
+        <!-- Initially hidden download links -->
+        <a id="entire-csv-download-link" href="#" style="display: none;">Download Entire CSV</a>
         <br>
-        <a id="fraudulent-transactions-download-link" href="#">Download Fraudulent Transactions CSV</a>
+        <a id="fraudulent-transactions-download-link" href="#" style="display: none;">Download Fraudulent Transactions CSV</a>
     </div>
-    <div id="fraudulent-transactions" class="fraudulent-transactions"></div>
     
     <script>
         function submitFile() {
@@ -161,6 +161,10 @@ file and the CSV file containing fraudulent transactions (if any), and displays 
                         document.body.removeChild(link);
                     }
                 }
+
+                // Show download links
+                document.getElementById("entire-csv-download-link").style.display = 'inline'; // Show the link
+                document.getElementById("fraudulent-transactions-download-link").style.display = 'inline'; // Show the link
 
                 // Download entire CSV file
                 document.getElementById("entire-csv-download-link").addEventListener('click', function() {
