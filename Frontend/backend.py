@@ -40,7 +40,7 @@ def process_csv_file():
     #push inference dataframe to bucket
     inference_df_bytes = pickle.dumps(df)
     file_name = "inference_original_csv.pickle"
-    bucket_name = 'aml_bucket_mlops'
+    bucket_name = 'aml_mlops_bucket'
     folder_name = "airflow_files"
     storage_client = storage.Client()
     bucket = storage_client.bucket(bucket_name)
