@@ -102,7 +102,11 @@ file and the CSV file containing fraudulent transactions (if any), and displays 
         <button id="submit-button" onclick="submitFile()">Analyze</button>
     </div>
 
-    <div id="prediction-result"></div>
+    <div id="prediction-result">
+        <a id="entire-csv-download-link" href="#">Download Entire CSV</a>
+        <br>
+        <a id="fraudulent-transactions-download-link" href="#">Download Fraudulent Transactions CSV</a>
+    </div>
     <div id="fraudulent-transactions" class="fraudulent-transactions"></div>
     
     <script>
