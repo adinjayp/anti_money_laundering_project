@@ -295,7 +295,7 @@ The `build.py` script is responsible for building and deploying the model to the
 
 
 **Front End Screenshot**
-![picture alt](frontendimage.png)
+![picture alt](Frontend/frontendimage.png)
 **Google Cloud Storage Bucket**
 ![picture alt](Bucket.jpg)
 
