@@ -1,7 +1,7 @@
 # Money Laundering Detection using Machine Learning
 [Adinjay Phadkule](https://github.com/adinjayp) | [Krishna Barfiwala](https://github.com/krishnabx) | [Navya Pragathi](https://github.com/Navya-89) | [Utkarsh Singh](https://github.com/UtkarshS007) |  [Vishal Basutkar](https://github.com/vishalbns) | [Yash Gaikwad](https://github.com/YashRGaikwad)
 
-![alt text](images\CoverPic.jpg)
+![alt text](images/CoverPic.jpg)
 ## Introduction
  Money laundering is a significant financial crime involving the process of making illicitly obtained money appear to come from a legitimate source. Our project aims to address this issue by creating an automated Anti-Money Laundering (AML) detection product using Machine Learning (ML). The goal is to develop a clean and streamlined solution that adheres to the latest MLOps recommendations and procedures learned in the IE7374 Machine Learning Operations course at Northeastern University, under the guidance of Prof. Ramin Mohammadi.
 
@@ -236,14 +236,14 @@ GCP empowers efficient implementation of machine learning pipelines while ensuri
 
 To leverage GCP's services, initialization of a service account is essential. This account serves as a secure identity for your application within the GCP ecosystem. It grants the application the necessary permissions to access and utilize GCP's resources and services.
 ## Data Pipeline
-![picture alt](images\pipelineFlow1-2.jpg)
+![picture alt](images/pipelineFlow1-2.jpg)
 
 ________________________________________________________________________________________________________________________________________________________________________
 **DAG Flow**
 
-![picture alt](images\DAG.jpg)
-![picture alt](images\dag1.png)
-![picture alt](images\dag2.png)
+![picture alt](images/DAG.jpg)
+![picture alt](images/dag1.png)
+![picture alt](images/dag2.png)
 
 ### Data Pipeline Components
 
@@ -305,13 +305,13 @@ Variable Name      |      Role     |    DType      | Description
 The `build.py` script is responsible for building and deploying the model to the Vertex AI Platform. It uses the aiplatform library to create a custom container training job and deploy the model to an endpoint. The `CustomContainerTrainingJob` class is a part of Google Cloud's Vertex AI Python client library, which allows users to create and manage custom container training jobs for machine learning models. A custom container training job enables you to run your training application in a Docker container that you can customize.
 
 Artifact Registry:
-![picture alt](images\Repository.png)
+![picture alt](images/Repository.png)
 
 Model:
-![picture alt](images\model.png)
+![picture alt](images/model.png)
 
 Endpoint:
-![picture alt](images\enddpoint.png)
+![picture alt](images/enddpoint.png)
 
 #### 9. Building the Frontend and Backend
 * **aml.html:** This HTML file creates an interactive interface for users to upload transaction data, receive predictions on potential fraudulent transactions, and download processed data.
@@ -325,7 +325,7 @@ Endpoint:
 ![picture alt](Frontend/frontendimage.png)
 
 **Google Cloud Storage Bucket**
-![picture alt](images\Bucket.jpg)
+![picture alt](images/Bucket.jpg)
  
 
 
