@@ -49,13 +49,16 @@ Is Laundering | Feature  | Integer | Binary Value: 1 if it is laundering, 0 if n
 
 This data is released under the [CDLA-Sharing-1.0 license](https://spdx.org/licenses/CDLA-Sharing-1.0.html). 
 
+## Project Workflow
+![picture alt](images/pipelineFlow1-2.jpg)
+
 
 ## Installation
-This project uses `Python >= 3.9`. Please ensure that the correct version is installed on your device. This project also works on Windows, Linux and Mac.
+This project uses `Python=3.9`. Please ensure that the correct version is installed on your device.
 
 ### Prerequisites
    1. git
-   2. python>=3.9
+   2. python=3.9
    3. Google Cloud Platform (G.C.P.)
 
 ### User Installation
@@ -80,32 +83,28 @@ https://cloud.google.com/iam/docs/service-accounts-create
 https://cloud.google.com/blog/products/data-analytics/improve-data-science-experience-using-scalable-python-data-processing
 ```
 
-* **Initial Access (SSH) :** Connect each Virtual VM using SSH. Allows to execute commands on remote machine to set up dask cluster.
-* **Master Node :** start the Dask scheduler on the master node.
+**Facilitating Access with Service Accounts** 
+
+To leverage GCP's services, initialization of a service account is essential. This account serves as a secure identity for your application within the GCP ecosystem. It grants the application the necessary permissions to access and utilize GCP's resources and services.
+
+
+* **Initial Access (SSH) :** SSH into the 3 VMs on GCP CLI using the service account. Check Python Version (3.9 only!)
+
+* ** Initialize Dask cluster - Master and Worker modes-
+  
+* **Master Node:** Start the Dask scheduler on the master node.
 ```
 python -m distributed.cli.dask_scheduler
 ```
 scheduler acts as the central coordinator for the cluster, receiving tasks from your program and assigning them to available worker nodes.
 
-* **Worker Node :** Start Dask Worker on each node
+* **Worker Node:** Start Dask Worker on each node
 ```
 python -m distributed.cli.dask_worker <scheduler address>
 ```
 `<scheduler address>` needs to be replaced with the actual IP address or hostname of the master node where the scheduler is running.
 
-* SSH into the 3 VMs on GCP CLI using the service account.
-
-3. Check python version >= 3.9
-
-```
-python --version
-```
-4. Installing GCSFS
-
-```
-pip install gcsfs
-```
-5. Intsalling other dependencies
+3. Installing other dependencies
 
 ```
 pip install pandas
@@ -114,175 +113,155 @@ pip install dask[complete]
 pip install distributed
 pip install networkx
 pip install numpy
-pip install airflow
-```
-6. Installation for TFDV
-
-```
+pip install apache-airflow
+pip install tensorflow=2.15.0
 !python3 -m pip install scikit-learn
 pip install tensorflow_data_validation
 pip install utils
+pip install gcsfs
+pip install dvc[gs]
+pip install dvc[all]
+
 ```
 
-7. Clone repository onto the Master Virtual machine
+4. Clone the repository onto the Master Virtual machine
 
 ```
 git clone https://github.com/adinjayp/anti_money_laundering_project/blob/main/AML%20Data%20Preprocessing.ipynb
 ```
-8. Installing DVC and Dependencies
+
+5. Setup DAG path in airflow.cfg and initialize Airflow Database
 ```
-pip install dvc[gs]
-pip install dvc[all]
+dag path: /anti_money_laundering_project/src/
 ```
-* Connecting To Bucket on GCS
+Run the below command to initialize the db
 ```
-dvc remote modify --local myremote credentialpath <JSON_PATH = './skilful-alpha-415221-4b349448e629.json'>
-```
-9. Install airflow using pip and Initialize Airflow Database
-```
-pip install apache-airflow
 airflow db init
 ```
-10. Start Airflow Web Server and Scheduler:
+6. Start Airflow Web Server and Scheduler:
 Airflow consists of several components, primarily the web server and the scheduler.
 Start the web server by running:
 ```
-airflow webserver --port 8080
-airflow scheduler
+airflow webserver -D
+airflow scheduler -D
 ```
 
-11. 2 DAGs are created for the projected:
-    - `airflowdag.py` - for initial training. Located in src/airflowdag.py
-    - `airflowdagValidation.py` - for inference. Located in src/airflowdagValidation.py
+## Tools used in this project
 
-13. After your code is deployed from GitHub through Actions to the VM, you are good to run the project. Run python `airflowdag.py`
-
-
-
-
-
-
-
-## Tool used for MLOps
-
-* GitHub Actions
-* TFDV
-* Docker
+* GitHub
+* Google Cloud Platform (GCP) (VM, Bucket, Artifact Registry, Vertex AI)
 * Airflow
 * DVC
 * Dask
-* Google Cloud Platform (GCP)
+* Docker
+* Jupyter notebook (Python 3.9)
+* Flask API
+* TFDV
 
-### GitHub Actions
-GitHub Actions workflows are set on push and on pull requests for all branches.
+  
+### GitHub
+GitHub is used for code versioning and Git Actions are set up to push code to GCP VM. (Secrets are removed from this repo hence Deployments have failed.)
 Setting up Github Actions-
 	Get the private key of the service account and store in secrets as `$SSH_PRIVATE_KEY.`
 	Also store `$GCP_VM_HOST` and `$GCP_VM_USER` to the secrets.
-`Deploy.yaml` file in Git Actions will deploy code to VM on every push to main branch.
+`Deploy.yaml` file in Git Actions will deploy code to the VM on every push to the main branch.
 
+### Google Cloud Platform
+We used GCP to host our data and all other services on it. 
+GCP VM - We created 3 VM instances on GCP - 1. Master Instance and the other two Worker VMs. 
+GCP Bucket - Stores training data, inference data, ML model trained in Vertex AI and Airflow DAG, and preprocessing required files
+GCP Vertex AI - Trains model, model registry versions it, and provides an endpoint to test
+GCP Artifact Registry - Stores the docker builds of trainer and serve explained below.
 
 ### TFDV
-Tensor Flow Data Validation is used to provide exploratory data analysis of the train data, and validate and compare drift for the incoming batches of test data. TFDV_EDA.ipynb file is created for train data EDA. Test Data Validation will be done soon.
+Tensor Flow Data Validation is used to provide exploratory data analysis of the train data, and validate and compare drift for the incoming batches of test data. TFDV_EDA.ipynb file is created for train data EDA. Test Data Validation is performed in Airflow DAG2.
+
 ### Airflow
-This Airflow Directed Acyclic Graph (DAG) orchestrates a series of tasks for an Antimoney Laundering (AML) project. The DAG is designed to ingest, preprocess, analyze, and merge transactional data with graph features using Dask distributed computing. There are two DAGS that are being used to understand the series of tasks that need to be performed. One of the DAGS works with tasks related to the train data while the other DAG deals with tasks in accordance with validation and test data. The following tasks are involved in the train DAG:- 
+
+This Airflow Directed Acyclic Graph (DAG) orchestrates a series of tasks for an Antimoney Laundering (AML) project. The DAG is designed to ingest, preprocess, analyze, and merge transactional data with graph features using Dask distributed computing. Two DAGS are being used to understand the series of tasks that need to be performed. One of the DAGS works with tasks related to the train data while the other DAG deals with tasks by validation and test data. The following tasks are involved in the train DAG:- 
+
+### Airflow Dag 1 (airflowdag.py)
+
+This pipeline reads train data from the bucket, creates graph, performs feature engineering, builds model and pushes the model and graphs to bucket.
 
 ingest_data: Task to ingest data.
 data_split: Task to split the raw data.
 preprocess_data_task: Task to perform initial data preprocessing.
-create_graph_task: Task to create a graph representation of the data.
+create_graph_task: Task to create a networkx graph of the data.
+add_edges_task: Converts accounts to nodes and appends the nodes and edges to the networkx graph.
 feature_Extraction_task: Task to extract features from the graph data.
-create_dask_dataframe_task: Task to create a Dask dataframe for parallel processing.
 merge_trans_with_gf_task: Task to merge transactions with graph features.
 upload_files_to_gcs_task: Task to upload the necessary files to the buckets to be stored for later use. 
-Execution Flow:
-The execution flow of tasks is as follows:
+model_train: Balances the dataset using VAE, trains the Random Forest model, and pushes the pickled model to Bucket.
 
-ingest_data_task >> data_split_task >> preprocess_data_task >> create_graph_task >> feature_Extraction_task >> create_dask_dataframe_task >> merge_trans_with_gf_task >> upload_files_to_gcs_task
+![picture alt](images/dag1.png)
 
-Task Dependencies:
-ingest_data_task output feeds into data_split_task.
-data_split_task output is used by preprocess_data_task.
-preprocess_data_task output is utilized by create_graph_task.
-create_graph_task outputs are inputs for both process_graph_data_task and merge_trans_with_gf_task.
-process_graph_data_task output is consumed by create_dask_dataframe_task.
-create_dask_dataframe_task output is passed to merge_trans_with_gf_task.
+### Airflow Dag 2 (airflowdagValidation.py)
 
-The validation and test DAG, similar to the train DAG performs almost similar tasks with a minor few changes in the functions passed. The tasks are as follows:- 
+This pipeline is used for inference - retrieve test data, graph, and model from the bucket, preprocess data and pushes the data with predictions back to the bucket along with the classification report.
 
 ingest_validation_data_task: This performs the task read the validation and test datasets from the GCS buckets.
 EDA_task: Here, analysis and visualizations are produced to better understand the datasets.
 preprocess_validation_data_task: This tasks perform initial preprocessing of the validation and test dataset while using the dictionaries present in the GCS bucket to be passed as parameters to produce the desired results. 
-create_graph_task: This produced a graph of the given datasets.
 feature_Extraction_task: This tasks extracts the important features from the graphs that are required for the model.
 create_dask_dataframe_task: Task to create a Dask dataframe for parallel processing.
 merge_trans_with_gf_task: Task to merge transactions with graph features.
 upload_files_to_gcs_task: This task is used to upload the results and required files to the GCS buckets for later use. 
 The execution flow of tasks is as follows:
 
-read_validation_data_task >> preprocess_validation_data_task >> create_graph_task >> feature_Extraction_task >> create_dask_dataframe_task >> merge_trans_with_gf_task >> upload_files_to_gcs_task 
+![picture alt](images/dag2.png)
+
+
+### Data and Model Versioning
+_____________________________________________________________________________________________________________________________________________________________________________
+
+* To Version Bucket:
+```
+gsutil versioning set on gs://{BUCKET_NAME}/
+```
+
+* To See Versions:
+```
+gsutil ls -a gs://{BUCKET_NAME}
+```
+
+**Model Versioning:**
+![picture alt](images/model_versioning.png)
 
 ### DVC
 DVC facilitates the versioning of datasets and machine learning models. By creating snapshots of the data used for training alongside the corresponding code, DVC ensures reproducibility and traceability. This allows you to recreate any previous state of your project, providing a vital audit trail.
 
-DVC operates by storing only metadata, keeping the actual data in cloud storage or other designated remote locations. This promotes efficiency by keeping the codebase clean and lightweight. DVC integrates seamlessly with Git, enabling you to leverage Git repositories for managing code while using DVC repositories specifically for data and models. This two-repository approach offers a clear separation of concerns, promoting better organization and manageability.
 
-### Google Cloud Platform
-We used GCP to host our data and all other services on it. We created 3 VM instances on GCP - 1. Master Instance and the other two Worker VMs. 
-
-GCP empowers efficient implementation of machine learning pipelines while ensuring proper management of intermediate files generated during modular tasks. Its functionalities are particularly well-suited for the temporary storage and retrieval of data needed within the various stages of a modularized workflow.
-
-
-**Facilitating Access with Service Accounts** 
-
-To leverage GCP's services, initialization of a service account is essential. This account serves as a secure identity for your application within the GCP ecosystem. It grants the application the necessary permissions to access and utilize GCP's resources and services.
-## Project Workflow
-![picture alt](images/pipelineFlow1-2.jpg)
-
-________________________________________________________________________________________________________________________________________________________________________
-## Airflow DAGs
-
-### Airflow Dag 1 (airflowdag.py)
-
-This pipeline reads train data from the bucket, creates graph, performs feature engineering, builds model and pushes the model and graphs to bucket.
-![picture alt](images/dag1.png)
-
-### Airflow Dag 2 (airflowdagValidation.py)
-
-This pipeline is used for inference - retrieve test data, graph, and model from the bucket, preprocess data and pushes the data with predictions back to the bucket along with the classification report.
-![picture alt](images/dag2.png)
-
-### Data Pipeline Components
+### Data Download and EDA
 
 #### 1. Downloading the data
-   Data was downloaded from the [IBM Link](https://ibm.ent.box.com/v/AML-Anti-Money-Laundering-Data) and uploaded on board the Google Cloud Storage.
+   Data was downloaded from the [IBM Link](https://ibm.ent.box.com/v/AML-Anti-Money-Laundering-Data) and uploaded to the Google Cloud Storage Bucket.
 
-#### 2. Exploratory Analysis and Tensor Flow Data Validation
+#### 2. Exploratory Analysis and TensorFlow Data Validation
 We performed EDA on the train and validation data separately in a Jupyter notebook - TFDV_EDA.ipynb. Since this data is clean transactional data, we found there were no null values or datatype issues to handle during preprocessing. This notebook is to understand the transactions, accounts, banks, the split of payment modes, etc.
 
+### Source Code Files
 
-#### 3. Data Ingestion and Split
+#### 1. Data Ingestion and Split
 
 * `ingest_data.py`: Retrieves train and test data from Google Cloud Storage bucket.
 * `data_split.py`: Splits the train data into train and validation datasets.
 
 `**All below files are in the src folder**`
-#### 4. Initial Preprocessing and Graph creation
+#### 2. Initial Preprocessing and Graph creation
 
 * `preprocessing.py`: Performs initial preprocessing on the transaction data like timestamp formatting and converting account numbers to nodes.
 * `create_graph.py`: This uses the initial train data and creates a Graph by calling add_edges_to_graph.py.
 * `add_edges_to_graph.py`: Receives the graph object and a dataframe; Identifies nodes and adds edges to the graph. Dask is used to perform the addition of edges in parallel.
 
-#### 5. Feature engineering and Final Data Preparation
+#### 3. Feature engineering and Final Data Preparation
 * `feature_Extraction.py`: Creates a dask data frame of unique nodes.
 * `pre_extraction.py`: Receives the nodes and returns graph features like degree, centrality etc.
 * `dask_handling.py`: Creates and returns a dask dataframe of the graph features.
 * `graph_operations.py`: Merges the train data frame with the graph features data frame for the to and from nodes.
 * `update_bucket.py`: Pushes updated Graph and a few data dictionaries that are required for inferencing.
 
-#### 6. Data preparation for inference dataset
-* `inference.py`: Retrieves updated graph and other dictionaries, performs data validation checks, performs preprocessing and updates the graph and pushes the updated data to the bucket.
-
-#### 7. Data Card After Preprocessing and Feature Engineering
+  #### Data Card After Preprocessing and Feature Engineering
 
 Variable Name      |      Role     |    DType      | Description
 :-------------     | :-------------: | :------------: | :-------------
@@ -307,13 +286,23 @@ Variable Name      |      Role     |    DType      | Description
 `to_clustering_coeff`|     Feature     | float64        | Similar to from_clustering_coeff, but concerning the target node of an edge.
 `to_degree_centrality`|    Feature     | float64        | Similar to from_degree_centrality, but concerning the target node of an edge.
 
-#### 8. Configuring Docker
+
+#### 4. Model Train and Inference 
+* `build.py`: Initializes vertex aiplatform, trains the model and saves in bucket.
+* `inference.py`: Utilizes the predict function for inference
+
+#### 5. Build docker images for train and serve
+
+Setup Docker, create train and serve docker images, push to Artifact Repository:
 
 * To use the gcloud command-line tool as a credential helper:
 ```
 gcloud auth configure-docker us-central1-docker.pkg.dev
 ```
-* Build docker images of train and serve to push to vertex ai using below commands
+
+#### src/trainer and src/serve and the dockerfiles for each and train.py and predict.py files respectively.
+
+* Build docker images of train and serve to push to vertex ai using the below commands
 ```
 File path: src/trainer/Dockerfile and src/serve/Dockerfile
 
@@ -323,13 +312,15 @@ docker push us-east1-docker.pkg.dev/[YOUR_PROJECT_ID]/[FOLDER_NAME]/trainer:v1
 
 docker buildx build --platform linux/amd64 -f serve/Dockerfile -t us-east1-docker.pkg.dev/[YOUR_PROJECT_ID]/[FOLDER_NAME]/serve:v1 . --load
 
-docker push us-east1-docker.pkg.dev/[YOUR_PROJECT_ID]/[FOLDER_NAME]/serve:v1 
+docker push us-east1-docker.pkg.dev/[YOUR_PROJECT_ID]/[FOLDER_NAME]/serve:v1
 ```
-#### 9. Building and Deploying the Model
-The `build.py` script is responsible for building and deploying the model to the Vertex AI Platform. It uses the aiplatform library to create a custom container training job and deploy the model to an endpoint. The `CustomContainerTrainingJob` class is a part of Google Cloud's Vertex AI Python client library, which allows users to create and manage custom container training jobs for machine learning models. A custom container training job enables you to run your training application in a Docker container that you can customize.
 
 Artifact Registry:
 ![picture alt](images/Repository.png)
+
+
+#### 9. Building and Deploying the Model
+The `build.py` script is responsible for building and deploying the model to the Vertex AI Platform. It uses the aiplatform library to create a custom container training job and deploy the model to an endpoint. The `CustomContainerTrainingJob` class is a part of Google Cloud's Vertex AI Python client library, which allows users to create and manage custom container training jobs for machine learning models. A custom container training job enables you to run your training application in a Docker container that you can customize.
 
 Model:
 ![picture alt](images/model.png)
@@ -354,21 +345,5 @@ Retrain:
 **Google Cloud Storage Bucket**
 ![picture alt](images/Bucket.jpg)
  
-### Data and Model Versioning
-_____________________________________________________________________________________________________________________________________________________________________________
-
-* To Version Bucket:
-```
-gsutil versioning set on gs://{BUCKET_NAME}/
-```
-
-* To See Versions:
-```
-gsutil ls -a gs://{BUCKET_NAME}
-```
-
-**Model Versioning:**
-![picture alt](images/model_versioning.png)
-
 
 
