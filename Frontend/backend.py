@@ -47,7 +47,7 @@ def process_csv_file():
     blob = bucket.blob(file_name)
     blob.upload_from_string(inference_df_bytes, content_type='application/octet-stream')
     #wait for airflow dag2 to preprocess the inference df
-    time.sleep(60)
+    time.sleep(120)
     #retrieve the preprocessed inference df
     inf_X = pd.DataFrame()
 
