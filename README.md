@@ -321,16 +321,16 @@ Artifact Registry:
 ![picture alt](images/Repository.png)
 
 
-#### 6. Building and Deploying the Model
+### 6. Building and Deploying the Model
 The `build.py` script is responsible for building and deploying the model to the Vertex AI Platform. It uses the aiplatform library to create a custom container training job and deploy the model to an endpoint. The `CustomContainerTrainingJob` class is a part of Google Cloud's Vertex AI Python client library, which allows users to create and manage custom container training jobs for machine learning models. A custom container training job enables you to run your training application in a Docker container that you can customize.
 
-## Model:
+### Model in Vertex AI:
 ![picture alt](images/model.png)
 
-## Endpoint:
+### Endpoint in Vertex AI for Online Prediction:
 ![picture alt](images/enddpoint.png)
 
-## Model retrain pipeline:
+### Model Retrain pipeline:
 * Inference Data after preprocessing and prediction, get appended to original train data. Dag1 reads the train data every day and retrains the model using the latest data.
   
 ![picture alt](images/RetrainPipeline.jpg)
