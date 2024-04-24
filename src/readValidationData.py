@@ -63,15 +63,15 @@ def download_data_from_bucket(**kwargs):
             # Download the file's contents as a string
             file_contents = blob.download_as_string()
             # Decode the bytes to a string and parse the JSON data
-            if file_name == "account_dict.json":
+            if file_name == "account_dictaf.json":
                 account_dict = json.loads(file_contents.decode('utf-8'))
-            elif file_name == "currency_dict.json":
+            elif file_name == "currency_dictaf.json":
                 currency_dict = json.loads(file_contents.decode('utf-8'))
-            elif file_name == "payment_format_dict.json":
+            elif file_name == "payment_format_dictaf.json":
                 payment_format_dict = json.loads(file_contents.decode('utf-8'))
-            elif file_name == "bank_account_dict.json":
+            elif file_name == "bank_account_dictaf.json":
                 bank_account_dict = json.loads(file_contents.decode('utf-8'))
-            elif file_name == "first_timestamp.json":
+            elif file_name == "first_timestampaf.json":
                 first_timestamp_dict = json.loads(file_contents.decode('utf-8'))
                 first_timestamp = int(first_timestamp_dict['first_timestamp'])
 
