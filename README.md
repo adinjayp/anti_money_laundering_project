@@ -239,7 +239,7 @@ To leverage GCP's services, initialization of a service account is essential. Th
 ![picture alt](images/pipelineFlow1-2.jpg)
 
 ________________________________________________________________________________________________________________________________________________________________________
-**DAG Flow**
+## Airflow DAGs
 
 ### Airflow Dag 1 (airflowdag.py)
 
