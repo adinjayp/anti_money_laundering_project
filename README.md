@@ -301,7 +301,25 @@ Variable Name      |      Role     |    DType      | Description
 `to_clustering_coeff`|     Feature     | float64        | Similar to from_clustering_coeff, but concerning the target node of an edge.
 `to_degree_centrality`|    Feature     | float64        | Similar to from_degree_centrality, but concerning the target node of an edge.
 
-#### 8. Building and Deploying the Model
+#### 8. Configuring Docker
+
+* To use the gcloud command-line tool as a credential helper:
+```
+gcloud auth configure-docker us-central1-docker.pkg.dev
+```
+* Build docker images of train and serve to push to vertex ai using below commands
+```
+File path: src/trainer/Dockerfile and src/serve/Dockerfile
+
+docker buildx build --platform linux/amd64 -f trainer/Dockerfile -t us-east1-docker.pkg.dev/[YOUR_PROJECT_ID]/[FOLDER_NAME]/trainer:v1 . --load
+
+docker push us-east1-docker.pkg.dev/[YOUR_PROJECT_ID]/[FOLDER_NAME]/trainer:v1
+
+docker buildx build --platform linux/amd64 -f serve/Dockerfile -t us-east1-docker.pkg.dev/[YOUR_PROJECT_ID]/[FOLDER_NAME]/serve:v1 . --load
+
+docker push us-east1-docker.pkg.dev/[YOUR_PROJECT_ID]/[FOLDER_NAME]/serve:v1 
+```
+#### 9. Building and Deploying the Model
 The `build.py` script is responsible for building and deploying the model to the Vertex AI Platform. It uses the aiplatform library to create a custom container training job and deploy the model to an endpoint. The `CustomContainerTrainingJob` class is a part of Google Cloud's Vertex AI Python client library, which allows users to create and manage custom container training jobs for machine learning models. A custom container training job enables you to run your training application in a Docker container that you can customize.
 
 Artifact Registry:
@@ -316,7 +334,7 @@ Endpoint:
 Retrain:
 ![picture alt](images/RetrainPipeline.jpg)
 
-#### 9. Building the Frontend and Backend
+#### 10. Building the Frontend and Backend
 * **aml.html:** This HTML file creates an interactive interface for users to upload transaction data, receive predictions on potential fraudulent transactions, and download processed data.
  	- File Upload: If a valid CSV file is selected, the `uploadFile()` function is called, which constructs a FormData object with the file and sends it to the server using a POST request to the `/process_csv` endpoint.
 
