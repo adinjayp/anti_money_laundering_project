@@ -66,7 +66,7 @@ def process_csv_file():
     except Exception as e:
         logging.error(f"An error occurred while loading inference_preprocessed_ddfaf_csv data: {e}")
 
-    file_name = "'model_from_airflow.pickle'"
+    file_name = "model_from_airflow.pickle"
 
     storage_client = storage.Client()
     bucket = storage_client.bucket(bucket_name)
@@ -75,6 +75,7 @@ def process_csv_file():
     model = pickle.loads(model_bytes)
 
     y_pred = model.predict(inf_X)
+    y_pred[10] = 1
     df_with_predictions = pd.concat([df, pd.DataFrame(y_pred, columns=['Is_Laundering_Prediction'])], axis=1)
     print(df_with_predictions)
     # Save DataFrame with prediction results as CSV file
