@@ -41,9 +41,10 @@ def add_edges_to_graph(dagtype, **kwargs):
         # GET G FROM BUCKET
         storage_client = storage.Client()
         bucket_name = 'aml_mlops_bucket'
-        file_name = 'graph.gpickle'
+        folder_name = 'airflow_files'
+        file_name = 'graphaf.gpickle'
         bucket = storage_client.bucket(bucket_name)
-        blob = bucket.blob(file_name)
+        blob = bucket.blob(f"{folder_name}/{file_name}")
         graph_bytes = blob.download_as_string()
         G = pickle.loads(graph_bytes)
         logging.info("Successfully downloaded and deserialized graph from bucket.")
