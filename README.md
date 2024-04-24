@@ -241,8 +241,14 @@ To leverage GCP's services, initialization of a service account is essential. Th
 ________________________________________________________________________________________________________________________________________________________________________
 **DAG Flow**
 
-![picture alt](images/DAG.jpg)
+### Airflow Dag 1 (airflowdag.py)
+
+This pipeline reads train data from the bucket, creates graph, performs feature engineering, builds model and pushes the model and graphs to bucket.
 ![picture alt](images/dag1.png)
+
+### Airflow Dag 2 (airflowdagValidation.py)
+
+This pipeline is used for inference - retrieve test data, graph, and model from the bucket, preprocess data and pushes the data with predictions back to the bucket along with the classification report.
 ![picture alt](images/dag2.png)
 
 ### Data Pipeline Components
