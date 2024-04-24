@@ -46,8 +46,8 @@ def download_data_from_bucket(**kwargs):
 
         # first_timestamp, currency_dict, payment_format_dict, bank_account_dict, account_dict FROM BUCKET!!
         # Specify the name of the files in the bucket
-        file_names = ["account_dict.json", "currency_dict.json", "payment_format_dict.json",
-                      "bank_account_dict.json", "first_timestamp.json"]
+        file_names = ["account_dictaf.json", "currency_dictaf.json", "payment_format_dictaf.json",
+                      "bank_account_dictaf.json", "first_timestampaf.json"]
 
         # Initialize empty dictionaries to store the data
         account_dict = {}
