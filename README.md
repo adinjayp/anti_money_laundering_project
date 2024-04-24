@@ -233,8 +233,13 @@ gsutil versioning set on gs://{BUCKET_NAME}/
 ```
 gsutil ls -a gs://{BUCKET_NAME}
 ```
+**Google Cloud Storage Bucket**
+
+![picture alt](images/Bucket.jpg)
 
 **Model Versioning:**
+Model Registry of Vertex AI does the model versioning and Artifact Registry versions the docker images.
+
 ![picture alt](images/model_versioning.png)
 
 #### DVC
@@ -348,9 +353,11 @@ The `build.py` script is responsible for building and deploying the model to the
 
 ![picture alt](Frontend/frontendimage.png)
 
-**Google Cloud Storage Bucket**
+**Back End API Response Screenshot**
 
-![picture alt](images/Bucket.jpg)
+POSTing a CSV file of transactions that goes through AIRFLOW DAG 2 for data preprocessing, appends the new transactions to the train dataset for retraining scheduled daily at midnight, generates predictions, appends to the transactions as returns as a dataframe along with downloadable links.
+
+![picture alt](Frontend/backendimage.png)
  
 
 
