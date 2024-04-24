@@ -59,7 +59,7 @@ def download_data_from_bucket(**kwargs):
         # Loop through each file and download its contents
         for file_name in file_names:
             # Get the blob object
-            blob = storage_client.bucket(bucket_name).blob(file_name)
+            blob = storage_client.bucket(bucket_name).blob(f"{folder_name}/{file_name}")
             # Download the file's contents as a string
             file_contents = blob.download_as_string()
             # Decode the bytes to a string and parse the JSON data
