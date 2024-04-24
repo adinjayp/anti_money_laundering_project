@@ -130,11 +130,11 @@ pip install dvc[all]
 git clone https://github.com/adinjayp/anti_money_laundering_project/blob/main/AML%20Data%20Preprocessing.ipynb
 ```
 
-5. Setup DAG path in airflow.cfg and initialize Airflow Database
+5. Setup DAG path in airflow.cfg
 ```
 dag path: /anti_money_laundering_project/src/
 ```
-Run the below command to initialize the db
+Run the below command to initialize the DB
 ```
 airflow db init
 ```
