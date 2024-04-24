@@ -330,6 +330,21 @@ Retrain:
 **Google Cloud Storage Bucket**
 ![picture alt](images/Bucket.jpg)
  
+### Data and Model Versioning
+_____________________________________________________________________________________________________________________________________________________________________________
+
+* To Version Bucket:
+```
+gsutil versioning set on gs://{BUCKET_NAME}/
+```
+
+* To See Versions:
+```
+gsutil ls -a gs://{BUCKET_NAME}
+```
+
+** Model Versioning: **
+![picture alt](images/model_versioning.jpg)
 
 
 
