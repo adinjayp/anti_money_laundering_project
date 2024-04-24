@@ -29,6 +29,7 @@ def model_inference_def(**kwargs):
     preprocessed_inference_df = pickle.loads(merged_ddf_bytes)
     inf_X = preprocessed_inference_df.drop(columns=['Is_Laundering', 'Index'])
     inf_y_orig = preprocessed_inference_df['Is_Laundering']
+    print("Number of Records: ", len(inf_X))
 
     #Download the hi_medium dataframe from the bucket
     bucket_name = "aml_mlops_bucket"
@@ -42,6 +43,7 @@ def model_inference_def(**kwargs):
     model = pickle.loads(model_bytes)
 
     y_pred = model.predict(inf_X)
+    print("Number of Predictions: ", len(y_pred))
     inference_df_with_prediction = pd.concat([inf_X, pd.DataFrame(y_pred, columns=['Is_Laundering_Prediction'])], axis=1)
     inference_df_with_prediction_bytes = pickle.dumps(inference_df_with_prediction)
     # Upload the file to the bucket
