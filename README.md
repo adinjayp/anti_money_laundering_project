@@ -55,7 +55,7 @@ This data is released under the [CDLA-Sharing-1.0 license](https://spdx.org/lice
 
 ## Project Workflow
 
-![picture alt](images/pipelineFlow3-2.jpg)
+![picture alt](images/pipelineflow3-2.jpg)
 
 
 ## Installation
