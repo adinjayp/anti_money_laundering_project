@@ -235,7 +235,7 @@ GCP empowers efficient implementation of machine learning pipelines while ensuri
 **Facilitating Access with Service Accounts** 
 
 To leverage GCP's services, initialization of a service account is essential. This account serves as a secure identity for your application within the GCP ecosystem. It grants the application the necessary permissions to access and utilize GCP's resources and services.
-## Data Pipeline
+## Project Workflow
 ![picture alt](images/pipelineFlow1-2.jpg)
 
 ________________________________________________________________________________________________________________________________________________________________________
