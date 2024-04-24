@@ -343,7 +343,7 @@ gsutil versioning set on gs://{BUCKET_NAME}/
 gsutil ls -a gs://{BUCKET_NAME}
 ```
 
-** Model Versioning: **
+**Model Versioning:**
 ![picture alt](images/model_versioning.png)
 
 
