@@ -192,15 +192,15 @@ This Airflow Directed Acyclic Graph (DAG) orchestrates a series of tasks for an 
 
 This pipeline reads train data from the bucket, creates graph, performs feature engineering, builds model and pushes the model and graphs to bucket.
 
-* ingest_data: Task to ingest data.
-* data_split: Task to split the raw data.
-* preprocess_data_task: Task to perform initial data preprocessing.
-* create_graph_task: Task to create a networkx graph of the data.
-* add_edges_task: Converts accounts to nodes and appends the nodes and edges to the networkx graph.
-* feature_Extraction_task: Task to extract features from the graph data.
-* merge_trans_with_gf_task: Task to merge transactions with graph features.
-* upload_files_to_gcs_task: Task to upload the necessary files to the buckets to be stored for later use. 
-* model_train: Balances the dataset using VAE, trains the Random Forest model, and pushes the pickled model to Bucket.
+* `ingest_data`: Task to ingest data.
+* `data_split`: Task to split the raw data.
+* `preprocess_data_task`: Task to perform initial data preprocessing.
+* `create_graph_task`: Task to create a networkx graph of the data.
+* `add_edges_task`: Converts accounts to nodes and appends the nodes and edges to the networkx graph.
+* `feature_Extraction_task`: Task to extract features from the graph data.
+* `merge_trans_with_gf_task`: Task to merge transactions with graph features.
+* `upload_files_to_gcs_task`: Task to upload the necessary files to the buckets to be stored for later use. 
+* `model_train`: Balances the dataset using VAE, trains the Random Forest model, and pushes the pickled model to Bucket.
 
 ![picture alt](images/dag1.png)
 
@@ -208,14 +208,14 @@ This pipeline reads train data from the bucket, creates graph, performs feature 
 
 This pipeline is used for inference - retrieve test data, graph, and model from the bucket, preprocess data and pushes the data with predictions back to the bucket along with the classification report.
 
-* ingest_validation_data_task: This performs the task read the validation and test datasets from the GCS buckets.
-* EDA_task: Here, analysis and visualizations are produced to better understand the datasets.
-* preprocess_validation_data_task: This tasks perform initial preprocessing of the validation and test dataset while using the dictionaries present in the GCS bucket to be passed as parameters to produce the desired results. 
-* feature_Extraction_task: This tasks extracts the important features from the graphs that are required for the model.
-* create_dask_dataframe_task: Task to create a Dask dataframe for parallel processing.
-* merge_trans_with_gf_task: Task to merge transactions with graph features.
-* upload_files_to_gcs_task: This task is used to upload the results and required files to the GCS buckets for later use.
-* inference_task: pulls model, predicts the labels, appends the label column to dataframe and pushes to bucket.
+* `ingest_validation_data_task`: This performs the task read the validation and test datasets from the GCS buckets.
+* `EDA_task`: Here, analysis and visualizations are produced to better understand the datasets.
+* `preprocess_validation_data_task`: This tasks perform initial preprocessing of the validation and test dataset while using the dictionaries present in the GCS bucket to be passed as parameters to produce the desired results. 
+* `feature_Extraction_task`: This tasks extracts the important features from the graphs that are required for the model.
+* `create_dask_dataframe_task`: Task to create a Dask dataframe for parallel processing.
+* `merge_trans_with_gf_task`: Task to merge transactions with graph features.
+* `upload_files_to_gcs_task`: This task is used to upload the results and required files to the GCS buckets for later use.
+* `inference_task`: pulls model, predicts the labels, appends the label column to dataframe and pushes to bucket.
 The execution flow of tasks is as follows:
 
 ![picture alt](images/dag2.png)
