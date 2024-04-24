@@ -115,7 +115,7 @@ pip install networkx
 pip install numpy
 pip install apache-airflow
 pip install tensorflow=2.15.0
-!python3 -m pip install scikit-learn
+pip install scikit-learn
 pip install tensorflow_data_validation
 pip install utils
 pip install gcsfs
