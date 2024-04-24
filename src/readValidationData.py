@@ -39,7 +39,7 @@ def download_data_from_bucket(**kwargs):
         logging.info("Successfully downloaded and deserialized graph from bucket.")
 
         #Download the hi_small dataframe from the bucket
-        blob = bucket.blob('inference_original_csv.pickle.pickle')
+        blob = bucket.blob('inference_original_csv.pickle')
         inf_df_bytes = blob.download_as_string()
         test_df = pickle.loads(inf_df_bytes)
         test_df = test_df.astype(str)
