@@ -47,7 +47,7 @@ def process_csv_file():
     blob = bucket.blob(f"{folder_name}/{file_name}")
     blob.upload_from_string(inference_df_bytes, content_type='application/octet-stream')
     #wait for airflow dag2 to preprocess the inference df
-    #time.sleep(30)
+    time.sleep(60)
     #retrieve the preprocessed inference df
     inf_X = pd.DataFrame()
 
@@ -90,8 +90,8 @@ def process_csv_file():
     
     # Return JSON response with download links
     response_data = {
-    'df_with_predictions': df_with_predictions.to_dict(orient='records'),
     'fraudulent_transactions': fraudulent_transactions.to_dict(orient='records'),
+    'df_with_predictions': df_with_predictions.to_dict(orient='records'),
     'entire_csv_download_link': f'/download/{output_csv_file}',
     'fraudulent_transactions_download_link': f'/download/{fraudulent_transactions_csv_file}'
 }

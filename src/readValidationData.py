@@ -38,10 +38,10 @@ def download_data_from_bucket(**kwargs):
 
         logging.info("Successfully downloaded and deserialized graph from bucket.")
 
-        #Download the hi_medium dataframe from the bucket
-        blob = bucket.blob('hi_medium_df.pickle')
-        hi_medium_df_bytes = blob.download_as_string()
-        test_df = pickle.loads(hi_medium_df_bytes)
+        #Download the hi_small dataframe from the bucket
+        blob = bucket.blob('inference_original_csv.pickle.pickle')
+        inf_df_bytes = blob.download_as_string()
+        test_df = pickle.loads(inf_df_bytes)
         test_df = test_df.astype(str)
 
         # first_timestamp, currency_dict, payment_format_dict, bank_account_dict, account_dict FROM BUCKET!!
