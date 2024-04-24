@@ -344,7 +344,7 @@ gsutil ls -a gs://{BUCKET_NAME}
 ```
 
 ** Model Versioning: **
-![picture alt](images/model_versioning.jpg)
+![picture alt](images/model_versioning.png)
 
 
 
