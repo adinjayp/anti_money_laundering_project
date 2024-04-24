@@ -241,13 +241,14 @@ DVC facilitates the versioning of datasets and machine learning models. By creat
 We performed EDA on the train and validation data separately in a Jupyter notebook - TFDV_EDA.ipynb. Since this data is clean transactional data, we found there were no null values or datatype issues to handle during preprocessing. This notebook is to understand the transactions, accounts, banks, the split of payment modes, etc.
 
 ### Source Code Files
+`**The below files are in the src folder**`
 
 #### 1. Data Ingestion and Split
 
 * `ingest_data.py`: Retrieves train and test data from Google Cloud Storage bucket.
 * `data_split.py`: Splits the train data into train and validation datasets.
 
-`**All below files are in the src folder**`
+
 #### 2. Initial Preprocessing and Graph creation
 
 * `preprocessing.py`: Performs initial preprocessing on the transaction data like timestamp formatting and converting account numbers to nodes.
