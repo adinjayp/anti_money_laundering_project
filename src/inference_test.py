@@ -128,18 +128,39 @@ print(preprocessed_test_df.head())
 
 print("test data is preprocessed. next step - ML Prediction")
 
-# model.predict(preprocessed_test_df)
+inf_X = preprocessed_test_df.drop(columns=['Is_Laundering', 'Index'])
+inf_y_orig = preprocessed_test_df['Is_Laundering']
+
+# Initialize the MinMaxScaler
+scaler = MinMaxScaler()
+# Fit the scaler to your data and transform it
+normalized_data = scaler.fit_transform(inf_X)
+inf_X = pd.DataFrame(normalized_data, columns=inf_X.columns)
 
 
-# save G, first_timestamp, currency_dict, payment_format_dict, bank_account_dict, account_dict IN BUCKET!!
+#Download the hi_medium dataframe from the bucket
+bucket_name = "aml_mlops_bucket"
+folder_name = "airflow_files"
+file_name = "'model_from_airflow.pickle'"
 
-# GET LAST PREPROCESSED_TRAIN_DF FROM BUCKET
+storage_client = storage.Client()
+bucket = storage_client.bucket(bucket_name)
+blob = bucket.blob(f"{folder_name}/{file_name}")
+model_bytes = blob.download_as_string()
+model = pickle.loads(model_bytes)
 
-# LAST_PREPROCESSED_TRAIN_DF = 
+y_pred = model.predict(inf_X)
+inference_df_with_prediction = pd.concat([raw_data_pandas, pd.DataFrame(y_pred, columns=['Is_Laundering_Prediction'])], axis=1)
 
+print("Fraudulent transactions head: \n", inference_df_with_prediction[inference_df_with_prediction['Is_Laundering_Prediction'] == 1].head())
+print("Total number of fraud transactions: ", len(inference_df_with_prediction[inference_df_with_prediction['Is_Laundering_Prediction'] == 1]))
 
-# PD.CONCAT(PREPROCESSED_TEST_DF WITH CORRECT/ PREDICTED ANSWERS, LAST_PREPROCESSED_TRAIN_DF) 
-# AND SAVE INTO BUCKET FOR NEXT TRAINING
+inference_df_with_prediction_bytes = pickle.dumps(inference_df_with_prediction)
+# Upload the file to the bucket
+blob = bucket.blob(f"{folder_name}/inference_df_with_prediction.pickle")
+blob.upload_from_string(inference_df_with_prediction_bytes, content_type='application/octet-stream')
+# Log the upload
+logging.info(f"File inference_df_with_prediction uploaded successfully to GCS bucket.'")
 
 
 # UPDATING BUCKET WITH LATEST G AND OTHER DICTS
