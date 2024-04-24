@@ -145,6 +145,14 @@ Start the web server by running:
 airflow webserver -D
 airflow scheduler -D
 ```
+### Data Download and EDA
+
+#### 1. Downloading the data
+   Data was downloaded from the [IBM Link](https://ibm.ent.box.com/v/AML-Anti-Money-Laundering-Data) and uploaded to the Google Cloud Storage Bucket.
+
+#### 2. Exploratory Analysis and TensorFlow Data Validation
+We performed EDA on the train and validation data separately in a Jupyter notebook - TFDV_EDA.ipynb. Since this data is clean transactional data, we found there were no null values or datatype issues to handle during preprocessing. This notebook is to understand the transactions, accounts, banks, the split of payment modes, etc.
+
 
 ## Tools used in this project
 
@@ -228,17 +236,9 @@ gsutil ls -a gs://{BUCKET_NAME}
 **Model Versioning:**
 ![picture alt](images/model_versioning.png)
 
-### DVC
+#### DVC
 DVC facilitates the versioning of datasets and machine learning models. By creating snapshots of the data used for training alongside the corresponding code, DVC ensures reproducibility and traceability. This allows you to recreate any previous state of your project, providing a vital audit trail.
 
-
-### Data Download and EDA
-
-#### 1. Downloading the data
-   Data was downloaded from the [IBM Link](https://ibm.ent.box.com/v/AML-Anti-Money-Laundering-Data) and uploaded to the Google Cloud Storage Bucket.
-
-#### 2. Exploratory Analysis and TensorFlow Data Validation
-We performed EDA on the train and validation data separately in a Jupyter notebook - TFDV_EDA.ipynb. Since this data is clean transactional data, we found there were no null values or datatype issues to handle during preprocessing. This notebook is to understand the transactions, accounts, banks, the split of payment modes, etc.
 
 ### Source Code Files
 `**The below files are in the src folder**`
