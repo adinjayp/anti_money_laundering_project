@@ -44,7 +44,7 @@ def process_csv_file():
     folder_name = "airflow_files"
     storage_client = storage.Client()
     bucket = storage_client.bucket(bucket_name)
-    blob = bucket.blob(f"{folder_name}/{file_name}")
+    blob = bucket.blob(file_name)
     blob.upload_from_string(inference_df_bytes, content_type='application/octet-stream')
     #wait for airflow dag2 to preprocess the inference df
     time.sleep(60)
