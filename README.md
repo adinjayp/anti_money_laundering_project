@@ -210,7 +210,7 @@ This pipeline reads train data from the bucket, creates graph, performs feature 
 * `upload_files_to_gcs_task`: Task to upload the necessary files to the buckets to be stored for later use. 
 * `model_train`: Balances the dataset using VAE, trains the Random Forest model, and pushes the pickled model to Bucket.
 
-![picture alt](images/dag1.png)
+![picture alt](images/dag2.png)
 
 ### Airflow Dag 2 (airflowdagValidation.py)
 
@@ -226,7 +226,8 @@ This pipeline is used for inference - retrieve test data, graph, and model from 
 * `inference_task`: pulls model, predicts the labels, appends the label column to dataframe and pushes to bucket.
 The execution flow of tasks is as follows:
 
-![picture alt](images/dag2.png)
+![picture alt](images/dag1.png)
+
 
 **Google Cloud Storage Bucket**
 
