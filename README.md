@@ -181,6 +181,8 @@ Setting up Github Actions-
 	Also store `$GCP_VM_HOST` and `$GCP_VM_USER` to the secrets.
 `Deploy.yaml` file in Git Actions will deploy code to the VM on every push to the main branch.
 
+* Note: Git Actions successfully ran from a personal repository as a precaution from storing secrets in this repository. Successful run - https://github.com/vishalbns/anti_money_laundering_project/actions/runs/8224958263/job/22489402480
+
 ### Google Cloud Platform
 We used GCP to host our data and all other services on it. 
 * GCP VM - We created 3 VM instances on GCP - 1. Master Instance and the other two Worker VMs. 
